@@ -5,7 +5,7 @@ namespace Common\Helpers\Curls\MoscowExchange;
 use Common\Helpers\Curls\Curl;
 use Common\Helpers\Translit;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
-use Illuminate\Support\Facades\Cache;
+use Cache;
 use Carbon\Carbon;
 use Exception;
 use Common\Helpers\LoggerHelper;

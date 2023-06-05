@@ -3,7 +3,7 @@
 namespace Common\Models;
 use Common\Models\Catalog\Currency\CbCurrency;
 use Common\Models\Catalog\Currency\CbHistoryCurrencyCourse;
-use Illuminate\Support\Facades\Cache;
+use Cache;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\HasOne;

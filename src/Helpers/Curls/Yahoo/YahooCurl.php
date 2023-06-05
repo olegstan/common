@@ -2,7 +2,7 @@
 
 namespace Common\Helpers\Curls\Yahoo;
 
-use Illuminate\Support\Facades\Cache;
+use Cache;
 use Common\Helpers\Curls\Curl;
 use Common\Helpers\Translit;
 use Carbon\Carbon;
