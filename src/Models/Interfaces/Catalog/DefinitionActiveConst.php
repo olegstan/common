@@ -1,18 +1,7 @@
 <?php
 
-namespace App\Models\Actives\Interfaces;
+namespace Common\Models\Interfaces\Catalog;
 
-use App\Models\Actives\Invests\Quotes\Currency;
-use App\Models\Actives\Invests\Quotes\Pif;
-use App\Models\Actives\Invests\QuotesAndPay\Etf;
-use App\Models\Actives\Invests\QuotesAndPay\Futures;
-use App\Models\Actives\Invests\QuotesAndPay\Obligation;
-use App\Models\Actives\Invests\QuotesAndPay\Stock;
-
-/**
- * Interface DefinitionActiveConst
- * @package App\Models\Actives\Interfaces
- */
 interface DefinitionActiveConst
 {
     /**
@@ -415,14 +404,5 @@ interface DefinitionActiveConst
 
     const GROUP_CLASS_TYPES = [
         self::CUSTOM_CLASS_TYPE
-    ];
-
-    public const CATALOG_CLASSES = [
-        'stock' => Stock::class,
-        'obligation' => Obligation::class,
-        'currency' => Currency::class,
-        'etf' => Etf::class,
-        'pif' => Pif::class,
-        'futures' => Futures::class,
     ];
 }
