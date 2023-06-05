@@ -1,0 +1,445 @@
+<?php
+
+namespace App\src\Models\Catalog\Cbond;
+
+use App\Helpers\LoggerHelper;
+use App\src\Models\Catalog\BaseStock;
+use App\src\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
+use App\src\Models\Interfaces\Catalog\DefinitionActiveConst;
+use App\src\Models\Traits\Catalog\Cbond\CbondRelationshipsTrait;
+use App\src\Models\Traits\Catalog\Cbond\CbondReturnGetDataFunc;
+use App\src\Models\Traits\Catalog\CommonCatalogTrait;
+use Carbon\Carbon;
+use Throwable;
+
+/**
+ * Class CbondStock
+ *
+* @property $id
+* @property $secid
+* @property $shortname
+* @property $regnumber
+* @property $name
+* @property $isin
+* @property $is_traded
+* @property $emitent_id
+* @property $emitent_title
+* @property $emitent_inn
+* @property $emitent_okpo
+* @property $gosreg
+* @property $type
+* @property $group
+* @property $primary_boardid
+* @property $marketprice_boardid
+* @property $issuedate
+* @property $matdate
+* @property $initialfacevalue
+* @property $faceunit
+* @property $latname
+* @property $startdatemoex
+* @property $earlyrepayment
+* @property $listlevel
+* @property $daystoredemption
+* @property $issuesize
+* @property $facevalue
+* @property $isqualifiedinvestors
+* @property $couponfrequency
+* @property $coupondate
+* @property $couponpercent
+* @property $couponvalue
+* @property $typename
+* @property $groupname
+* @property $market_id
+* @property $market
+* @property $engine_id
+* @property $engine
+* @property $decimals
+* @property $lotsize
+* @property $icons
+* @property $expiration
+* @property $boardid
+* @property $prevsettleprice
+* @property $minstep
+* @property $lasttradedate
+* @property $sectype
+* @property $assetcode
+* @property $prevopenposition
+* @property $lotvolume
+* @property $initialmargin
+* @property $highlimit
+* @property $lowlimit
+* @property $stepprice
+* @property $lastsettleprice
+* @property $prevprice
+* @property $imtime
+* @property $buysellfee
+* @property $scalperfee
+* @property $negotiatedfee
+* @property $exercisefee
+* @property $tv_ticker_id
+* @property $url
+ *
+ * @package App\Models\Catalog\Cbond
+ */
+class CbondStock extends BaseStock implements \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst, CommonsFuncCatalogInterface
+{
+    //Связи с другими моделями
+    use CbondRelationshipsTrait;
+
+    //Возвращаемые данные для трансформеров, текущей сущности и тп
+    use CbondReturnGetDataFunc;
+
+    //функции запросов
+    use \App\src\Models\Traits\Catalog\Cbond\CbondScopeTrait;
+
+    //общие трейты
+    use CommonCatalogTrait;
+
+    /**
+     * @var string
+     */
+    public $table = 'cbond_stocks';
+
+    /**
+     * @var array
+     */
+    protected $fillable = [
+        'secid',
+        'shortname',
+        'regnumber',
+        'name',
+        'isin',//isin regs
+        'isin144A',//isin 144A
+        'is_traded',
+        'emitent_id',
+        'emitent_title',
+        'emitent_inn',
+        'emitent_okpo',
+        'gosreg',
+        'type',
+        'group',
+        'primary_boardid',
+        'marketprice_boardid',
+        'issuedate',
+        'matdate',
+        'initialfacevalue',
+        'faceunit',
+        'latname',
+        'startdatemoex',
+        'earlyrepayment',
+        'listlevel',
+        'daystoredemption',
+        'issuesize',
+        'facevalue',
+        'isqualifiedinvestors',
+        'couponfrequency',
+        'coupondate',
+        'couponpercent',
+        'couponvalue',
+        'typename',
+        'groupname',
+        'market_id',
+        'market',
+        'engine_id',
+        'engine',
+        'decimals',
+        'lotsize',
+        'icons',
+        'expiration',
+        'boardid',
+        'prevsettleprice',
+        'minstep',
+        'lasttradedate',
+        'sectype',
+        'assetcode',
+        'prevopenposition',
+        'lotvolume',
+        'initialmargin',
+        'highlimit',
+        'lowlimit',
+        'stepprice',
+        'lastsettleprice',
+        'prevprice',
+        'imtime',
+        'buysellfee',
+        'scalperfee',
+        'negotiatedfee',
+        'exercisefee',
+        'tv_ticker_id',
+        'url',
+        'country',
+    ];
+
+    /**
+     * @var array
+     */
+    protected $casts = [
+        'secid' => 'string',
+        'shortname' => 'string',
+        'regnumber' => 'string',
+        'name' => 'string',
+        'isin' => 'string',
+        'is_traded' => 'string',
+        'emitent_id' => 'string',
+        'emitent_title' => 'string',
+        'emitent_inn' => 'string',
+        'emitent_okpo' => 'string',
+        'gosreg' => 'string',
+        'type' => 'string',
+        'group' => 'string',
+        'primary_boardid' => 'string',
+        'marketprice_boardid' => 'string',
+
+        'issuedate' => 'string',
+        'matdate' => 'string',
+        'initialfacevalue' => 'float',
+        'faceunit' => 'string',
+        'latname' => 'string',
+        'startdatemoex' => 'string',
+        'earlyrepayment' => 'boolean',
+        'listlevel' => 'integer',
+        'daystoredemption' => 'integer',
+        'issuesize' => 'integer',
+        'facevalue' => 'float',
+        'isqualifiedinvestors' => 'boolean',
+        'couponfrequency' => 'integer',
+        'coupondate' => 'string',
+        'couponpercent' => 'float',
+        'couponvalue' => 'float',
+        'typename' => 'string',
+        'groupname' => 'string',
+
+        'market_id' => 'integer',
+        'market' => 'string',
+        'engine_id' => 'integer',
+        'engine' => 'string',
+        'decimals' => 'integer',
+        'lotsize' => 'integer',
+        'icons' => 'string',
+
+        'expiration' => 'string',
+        'boardid' => 'string',
+        'prevsettleprice' => 'double',
+        'minstep' => 'double',
+        'lasttradedate' => 'date',
+        'sectype' => 'string',
+        'assetcode' => 'string',
+        'prevopenposition' => 'integer',
+        'lotvolume' => 'integer',
+        'initialmargin' => 'double',
+        'highlimit' => 'double',
+        'lowlimit' => 'double',
+        'stepprice' => 'double',
+        'lastsettleprice' => 'double',
+        'prevprice' => 'double',
+        'imtime' => 'date',
+        'buysellfee' => 'double',
+        'scalperfee' => 'double',
+        'negotiatedfee' => 'double',
+        'exercisefee' => 'double',
+    ];
+
+    public $timestamps = false;
+
+    /**
+     * @param $userId
+     * @param $currency_id
+     * @param $accountId
+     * @param $classes
+     * @return mixed
+     */
+    public function createBindActive($userId, $currency_id, $accountId, $classes)
+    {
+        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::BOND_VALUES))
+        {
+            return $classes['obligation']::create([
+                'user_id' => $userId,
+                'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
+                'buy_sum' => $this->facevalue,
+                'buy_currency_id' => $currency_id,
+                'buy_account_id' => $accountId,
+                'sell_at' => $this->matdate ? Carbon::createFromFormat('Y-m-d', $this->matdate)->startOfDay() : null,
+                'rate_period_type_id' => $this->getCouponFrequency(),
+                'rate' => $this->couponpercent,
+                'item_type' => $this->getMorphClass(),
+                'item_id' => $this->id,
+            ]);
+        }
+
+        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::PIF_VALUES))
+        {
+            return $classes['pif']::create([
+                'user_id' => $userId,
+                'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
+                'buy_currency_id' => $currency_id,
+                'buy_account_id' => $accountId,
+                'item_type' => $this->getMorphClass(),
+                'item_id' => $this->id,
+            ]);
+        }
+
+        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::FUTURES_VALUE)){
+            return $classes['futures']::create([
+                'user_id' => $userId,
+                'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
+                'buy_currency_id' => $currency_id,
+                'buy_account_id' => $accountId,
+                'sell_at' => $this->expiration ? Carbon::createFromFormat('Y-m-d', $this->expiration) : null,
+                'item_type' => $this->getMorphClass(),
+                'item_id' => $this->id,
+            ]);
+        }
+
+        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::ETF_VALUE)){
+            return $classes['etf']::create([
+                'user_id' => $userId,
+                'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
+                'buy_currency_id' => $currency_id,
+                'buy_account_id' => $accountId,
+                'item_type' => $this->getMorphClass(),
+                'item_id' => $this->id,
+            ]);
+        }
+
+        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::CURRENCY_VALUE)){
+            return $classes['currency']::create([
+                'user_id' => $userId,
+                'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
+                'buy_currency_id' => $currency_id,
+                'buy_account_id' => $accountId,
+                'item_type' => $this->getMorphClass(),
+                'item_id' => $this->id,
+            ]);
+        }
+
+        return $classes['stock']::create([
+            'user_id' => $userId,
+            'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
+            'buy_currency_id' => $currency_id,
+            'buy_account_id' => $accountId,
+            'item_type' => $this->getMorphClass(),
+            'item_id' => $this->id,
+        ]);
+    }
+
+    /**
+     * @param $original
+     * @param $text
+     * @param $translitText
+     * @param $foundStocks
+     * @param $items
+     * @param $condition
+     * @param bool $async
+     * @return void
+     */
+    public static function createAndGet($original, $text, $translitText, $foundStocks = null, &$items, $condition = null, bool $async = true)
+    {
+        $secIds = [];
+
+        $queueIds = [];
+        if ($foundStocks) {
+            foreach ($foundStocks as $foundStock) {
+                $secIds[$foundStock['isin']] = $foundStock['isin'];
+            }
+
+            $stockQuery = self::whereIn('isin', $secIds)
+                ->get()
+                ->keyBy('isin')
+                ->toArray();
+
+            foreach ($foundStocks as $foundStock) {
+                try {
+                    if (!isset($stockQuery[$foundStock['isin']])) {
+                        /**
+                         * @var CbondStock $createdStock
+                         */
+                        $createdStock = self::create($foundStock);
+
+                        if ($createdStock) {
+                            $createdStock->saveData();
+
+                            $queueIds[] = $createdStock->id;
+                        }
+                    }
+                } catch (Throwable $e) {
+                    LoggerHelper::getLogger()->error($e);
+                    LoggerHelper::getLogger()->error('move forward');
+                }
+            }
+        }
+
+        $splitedWords = self::fullTextWildcards($text);
+
+        $stocksQuery = self::selectRaw(
+            '
+                    `cbond_stocks`.*, 
+                    MATCH (`cbond_stocks`.`name`,`cbond_stocks`.`isin`,`cbond_stocks`.`latname`,`cbond_stocks`.`shortname`) AGAINST (?) as relevance',
+            [implode(' ', $splitedWords)]
+        )
+            ->search($original, $text, $translitText);
+
+
+        if ($condition) {
+            $condition($stocksQuery);
+        }
+
+        /**
+         * @var CbondStock[] $stocks
+         */
+        $stocks = $stocksQuery->get();
+
+        if ($stocks) {
+            foreach ($stocks as $item) {
+                $typeId = $item->getType();
+
+                /**
+                 * @var CbondStock $item
+                 */
+                $items[] = [
+                    'id' => $item->id,
+                    'name' => $item->name . ' ' . $item->isin,
+                    'type_id' => $typeId,
+                    'type_text' => $item->getTypeText(),
+                    'currency_id' => $item->getCurrency(),
+                    'ticker' => 'catalog.5',
+                    'facevalue' => $item->facevalue,
+                    'couponfrequency' => $item->getCouponFrequency(),
+                    'coupondate' => $item->coupondate,
+                    'couponpercent' => $item->couponpercent,
+                    'couponvalue' => $item->couponvalue,
+                    'decimals' => $item->decimals,
+                    'lotsize' => $item->getLotSize(),
+                    'symbol' => $item->getSymbol(),
+//                    'country' => $item->tradingview ? $item->tradingview->country : '',
+//                    'industry' => $item->tradingview ? $item->tradingview->industry : '',
+//                    'sector' => $item->tradingview ? $item->tradingview->sector : '',
+//                    'capitalization' => $item->tradingview ? $item->tradingview->capitalization : '',
+                ];
+            }
+        }
+    }
+
+    /**
+     * @param $text
+     * @param string $lang
+     * @param int $limit
+     * @param bool $cache
+     * @return bool
+     */
+    public static function search($text, string $lang = 'ru', int $limit = 50, bool $cache = true): bool
+    {
+        //тк заранее все спаршено, будет заглушкой
+        return true;
+    }
+
+    /**
+     * @param $stock
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return void
+     */
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate): void
+    {
+        //тк заранее все спаршено, будет заглушкой
+    }
+}
