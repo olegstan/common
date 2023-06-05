@@ -30,6 +30,11 @@ class MoscowExchangeCurl
     public const DATE_FORMAT = 'Y-m-d';
 
     /**
+     * @var string
+     */
+    protected static string $cookies = '';
+
+    /**
      * @param $object
      * @return array|bool|float|int|string
      */
@@ -217,7 +222,6 @@ class MoscowExchangeCurl
             //example https://iss.moex.com/iss/history/engines/stock/markets/bonds/boards/TQBR/securities/RU000A105A95.xml?date=2018-12-19
             //example https://iss.moex.com/iss/history/engines/stock/markets/bonds/boards/TQBR/securities/XS2346922755.xml?date=2018-12-19
             //example https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQBR/securities/SBERP.xml?date=2018-12-19
-            $cookies = '';
             $response = Curl::get(
                 self::API_URL . 'history/engines/' . $stock->engine . '/markets/' . $stock->market . '/boards/' . $stock->primary_boardid . '/securities/' . $stock->secid . '.json',
                 [
@@ -228,7 +232,7 @@ class MoscowExchangeCurl
                 ],
                 [],
                 'moscow-exchange',
-                $cookies,
+                self::$cookies,
                 false
             );
 
@@ -270,13 +274,13 @@ class MoscowExchangeCurl
         try {
             //example https://iss.moex.com/iss/securities/RU000A100ZP9.json?limit=1
             //example https://iss.moex.com/iss/securities/RU000A105WJ8.json?limit=1
-            $cookies = '';
+            
             $response = Curl::get(self::API_URL . 'securities/' . $code . '.json', [
                 'lang' => $lang,
                 'limit' => $limit,
                 'iss.meta' => 'off',
                 'iss.only' => 'description'
-            ], [], 'moscow-exchange', $cookies, false);
+            ], [], 'moscow-exchange', self::$cookies, false);
 
             $arrayResponse = self::toArray(json_decode($response));
 
@@ -309,12 +313,12 @@ class MoscowExchangeCurl
     {
         try {
             //example https://iss.moex.com/iss/securities/FXGD.json?limit=1
-            $cookies = '';
+            
             $response = Curl::get(self::API_URL . 'securities/' . $code . '.json', [
                 'lang' => $lang,
                 'iss.meta' => 'off',
                 'iss.only' => 'boards'
-            ], [], 'moscow-exchange', $cookies, false);
+            ], [], 'moscow-exchange', self::$cookies, false);
 
             $arrayResponse = self::toArray(json_decode($response));
 
@@ -352,13 +356,13 @@ class MoscowExchangeCurl
     {
         try {
             //example https://iss.moex.com/iss/securities/FXGD.json?limit=1
-            $cookies = '';
+            
             $response = Curl::get(self::API_URL . 'securities/' . $code . '.json', [
                 'lang' => $lang,
                 'limit' => $limit,
                 'iss.meta' => 'off',
                 'iss.only' => 'boards'
-            ], [], 'moscow-exchange', $cookies, false);
+            ], [], 'moscow-exchange', self::$cookies, false);
 
             $arrayResponse = self::toArray(json_decode($response));
 
@@ -400,7 +404,7 @@ class MoscowExchangeCurl
     {
         try {
             //example https://iss.moex.com/iss/engines/stock/markets/shares/boards/tqbr/securities/SBER.json
-            $cookies = '';
+            
             $response = Curl::get(
                 self::API_URL . 'engines/' . $stock->engine . '/markets/' . $stock->market . '/boards/' . $stock->primary_boardid . '/securities/' . $stock->secid . '.json',
                 [
@@ -411,7 +415,7 @@ class MoscowExchangeCurl
                 ],
                 [],
                 'moscow-exchange',
-                $cookies,
+                self::$cookies,
                 false
             );
 
@@ -448,7 +452,7 @@ class MoscowExchangeCurl
                 'lang' => $lang,
                 'iss.meta' => 'off',
                 'iss.only' => 'coupons'
-            ], [], 'moscow-exchange', $cookies, false);
+            ], [], 'moscow-exchange', self::$cookies, false);
 
             $arrayResponse = self::toArray(json_decode($response));
 
@@ -486,7 +490,7 @@ class MoscowExchangeCurl
                 'lang' => $lang,
                 'iss.meta' => 'off',
                 'iss.only' => 'dividends'
-            ], [], 'moscow-exchange', $cookies, false);
+            ], [], 'moscow-exchange', self::$cookies, false);
 
             $arrayResponse = self::toArray(json_decode($response));
 
@@ -529,7 +533,7 @@ class MoscowExchangeCurl
                 ],
                 [],
                 'moscow-exchange',
-                $cookies,
+                self::$cookies,
                 false
             );
 
@@ -583,7 +587,7 @@ class MoscowExchangeCurl
                 'iss.only' => 'securities'
             ], [],
                 'moscow-exchange',
-                $cookies,
+                self::$cookies,
                 false
             );
 

@@ -28,6 +28,11 @@ class YahooCurl
     public const INTERVAL_1_MONTH = '1mo';
 
     /**
+     * @var string
+     */
+    protected static string $cookies = '';
+
+    /**
      * @param $text
      * @param bool $cache
      * @return array|false
@@ -127,8 +132,6 @@ class YahooCurl
     public static function getHistoricalData($symbol, $interval, Carbon $startDate, Carbon $endDate)
     {
         try{
-            $cookies = '';
-
             $url = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol);
 
             $response = Curl::get($url, [
@@ -138,7 +141,7 @@ class YahooCurl
                 'events' => 'history'
             ], [
 
-            ], 'yahoo', $cookies);
+            ], 'yahoo', self::$cookies);
 
             return YahooDecoder::transformHistoricalDataResult($response);
         }catch (Exception $e){
