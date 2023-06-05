@@ -1,8 +1,8 @@
 <?php
 
-namespace App\src\Models\Catalog\Tinkoff;
+namespace Common\Models\Catalog\Tinkoff;
 
-use App\src\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseStock;
 
 /**
  * Class TinkoffStock

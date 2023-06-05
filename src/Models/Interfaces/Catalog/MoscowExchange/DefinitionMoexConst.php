@@ -1,6 +1,6 @@
 <?php
 
-namespace App\src\Models\Interfaces\Catalog\MoscowExchange;
+namespace Common\Models\Interfaces\Catalog\MoscowExchange;
 
 interface DefinitionMoexConst
 {

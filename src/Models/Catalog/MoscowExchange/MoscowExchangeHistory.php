@@ -1,8 +1,8 @@
 <?php
 
-namespace App\src\Models\Catalog\MoscowExchange;
+namespace Common\Models\Catalog\MoscowExchange;
 
-use App\src\Models\BaseModel;
+use Common\Models\BaseModel;
 
 /**
  * @property $tradedate

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\src\Models\Catalog\Yahoo;
+namespace Common\Models\Catalog\Yahoo;
 
-use App\src\Models\BaseModel;
+use Common\Models\BaseModel;
 
 /**
  * @property $symbol

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\src\Models\Interfaces\Catalog\Yahoo;
+namespace Common\Models\Interfaces\Catalog\Yahoo;
 
 interface DefinitionYahooConst
 {

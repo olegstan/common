@@ -1,21 +1,22 @@
 <?php
 
-namespace App\src\Models\Catalog\Yahoo;
+namespace Common\Models\Catalog\Yahoo;
 
-use App\Helpers\Curls\Yahoo\YahooCurl;
-use App\Helpers\LoggerHelper;
-use App\Jobs\YahooDataJob;
-use App\Jobs\YahooJob;
-use App\src\Models\Catalog\BaseStock;
-use App\src\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
-use App\src\Models\Interfaces\Catalog\DefinitionActiveConst;
-use App\src\Models\Interfaces\Catalog\Yahoo\DefinitionYahooConst;
-use App\src\Models\Traits\Catalog\CommonCatalogTrait;
-use App\src\Models\Traits\Catalog\Yahoo\YahooRelationshipsTrait;
-use App\src\Models\Traits\Catalog\Yahoo\YahooReturnGetDataFunc;
+use Common\Helpers\Curls\Yahoo\YahooCurl;
+use Common\Helpers\LoggerHelper;
+use Common\Jobs\YahooDataJob;
+use Common\Jobs\YahooJob;
+use Common\Models\Catalog\BaseStock;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
+use Common\Models\Interfaces\Catalog\Yahoo\DefinitionYahooConst;
+use Common\Models\Traits\Catalog\CommonCatalogTrait;
+use Common\Models\Traits\Catalog\Yahoo\YahooRelationshipsTrait;
+use Common\Models\Traits\Catalog\Yahoo\YahooReturnGetDataFunc;
 use Carbon\Carbon;
 use Exception;
-use Queue;
+use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
+use Common\Models\Traits\Catalog\Yahoo\YahooScopeTrait;
+use Illuminate\Support\Facades\Queue;
 use Throwable;
 
 /**
@@ -42,7 +43,7 @@ class YahooStock extends BaseStock implements DefinitionYahooConst, CommonsFuncC
     use YahooRelationshipsTrait;
 
     //Возвращаемые данные для трансформеров, текущей сущности и тп
-    use \App\src\Models\Traits\Catalog\Yahoo\YahooScopeTrait;
+    use YahooScopeTrait;
 
     //функции запросов
     use YahooReturnGetDataFunc;
@@ -231,7 +232,7 @@ class YahooStock extends BaseStock implements DefinitionYahooConst, CommonsFuncC
      */
     public function createBindActive($userId, $accountId, $classes)
     {
-        if (in_array($this->type, \App\src\Models\Interfaces\Catalog\Yahoo\DefinitionYahooConst::FUTURES_VALUE)) {
+        if (in_array($this->type, DefinitionYahooConst::FUTURES_VALUE)) {
             $active = $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
@@ -253,7 +254,7 @@ class YahooStock extends BaseStock implements DefinitionYahooConst, CommonsFuncC
             ]);
         }
 
-        if (in_array($this->type, \App\src\Models\Interfaces\Catalog\Yahoo\DefinitionYahooConst::CURRENCY_VALUE)) {
+        if (in_array($this->type, DefinitionYahooConst::CURRENCY_VALUE)) {
             $active = $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,

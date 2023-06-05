@@ -1,9 +1,9 @@
 <?php
 
-namespace App\src\Models\Interfaces\Catalog\Custom;
+namespace Common\Models\Interfaces\Catalog\Custom;
 
 
-use App\src\Models\Interfaces\Catalog\DefinitionActiveConst;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 interface DefinitionCustomConst
 {

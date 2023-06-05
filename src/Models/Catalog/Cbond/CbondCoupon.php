@@ -1,8 +1,8 @@
 <?php
 
-namespace App\src\Models\Catalog\Cbond;
+namespace Common\Models\Catalog\Cbond;
 
-use App\src\Models\BaseModel;
+use Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 

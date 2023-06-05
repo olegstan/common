@@ -1,5 +1,5 @@
 <?php
-namespace App\src\Models\Traits\Catalog\Custom;
+namespace Common\Models\Traits\Catalog\Custom;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;

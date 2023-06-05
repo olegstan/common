@@ -1,10 +1,10 @@
 <?php
-namespace App\src\Models\Traits\Catalog\Currency;
+namespace Common\Models\Traits\Catalog\Currency;
 
-use App\src\Models\Currency;
+use Common\Models\Catalog\Currency\CbHistoryCurrencyCourse;
+use Common\Models\Currency;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait CurrencyRelationshipsTrait
 {
@@ -21,7 +21,7 @@ trait CurrencyRelationshipsTrait
      */
     public function cb_course(): HasOne
     {
-        return $this->hasOne(\App\src\Models\Catalog\Currency\CbHistoryCurrencyCourse::class, 'currency_id')->latest('date');
+        return $this->hasOne(CbHistoryCurrencyCourse::class, 'currency_id')->latest('date');
     }
 
     /**

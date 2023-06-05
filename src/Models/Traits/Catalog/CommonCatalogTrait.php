@@ -1,14 +1,10 @@
 <?php
 
-namespace App\src\Models\Traits\Catalog;
+namespace Common\Models\Traits\Catalog;
 
-use App\src\Models\Catalog\BaseStock;
-use App\src\Models\Currency;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Common\Models\Catalog\BaseStock;
+use Common\Models\Currency;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-
-use function App\Models\Traits\config;
 
 trait CommonCatalogTrait
 {
@@ -97,8 +93,8 @@ trait CommonCatalogTrait
     {
         return $this->icons
             ?
-            config('app.url') . '/images/icons/' . $this->icons . '.svg'
+            'http://fincatalog/images/icons/' . $this->icons . '.svg'
             :
-            config('app.url') . '/images/icons/default.svg';
+            'http://fincatalog/images/icons/default.svg';
     }
 }

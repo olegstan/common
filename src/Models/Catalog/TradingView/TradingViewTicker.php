@@ -1,8 +1,8 @@
 <?php
 
-namespace App\src\Models\Catalog\TradingView;
+namespace Common\Models\Catalog\TradingView;
 
-use App\src\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseStock;
 
 /**
 * Class TradingViewTicker
@@ -32,13 +32,13 @@ use App\src\Models\Catalog\BaseStock;
 class TradingViewTicker extends BaseStock
 {
     //Связи с другими моделями
-    use \App\src\Models\Traits\Catalog\TradingView\TradingViewRelationshipsTrait;
+    use \Common\Models\Traits\Catalog\TradingView\TradingViewRelationshipsTrait;
 
     //Возвращаемые данные для трансформеров, текущей сущности и тп
-    use \App\src\Models\Traits\Catalog\TradingView\TradingViewScopeTrait;
+    use \Common\Models\Traits\Catalog\TradingView\TradingViewScopeTrait;
 
     //функции запросов
-    use \App\src\Models\Traits\Catalog\TradingView\TradingViewReturnGetDataFunc;
+    use \Common\Models\Traits\Catalog\TradingView\TradingViewReturnGetDataFunc;
 
     /**
      * @var string

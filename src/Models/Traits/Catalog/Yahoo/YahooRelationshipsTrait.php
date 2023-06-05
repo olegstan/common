@@ -1,7 +1,7 @@
 <?php
-namespace App\src\Models\Traits\Catalog\Yahoo;
+namespace Common\Models\Traits\Catalog\Yahoo;
 
-use App\src\Models\Catalog\TradingView\TradingViewTicker;
+use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;

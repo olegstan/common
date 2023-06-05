@@ -1,16 +1,13 @@
 <?php
 
-namespace App\src\Models\Catalog\TradingView;
+namespace Common\Models\Catalog\TradingView;
 
-use App\Helpers\LoggerHelper;
-use App\Helpers\PythonScript\PatternScripts;
-use App\src\Models\Catalog\BaseStock;
+use Common\Helpers\PythonScript\PatternScripts;
+use Common\Helpers\LoggerHelper;
+use Common\Models\Catalog\BaseStock;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-
-use function App\Models\Catalog\TradingView\base_path;
-use function App\Models\Catalog\TradingView\object_to_array;
 
 /**
  * @property $ticker_id

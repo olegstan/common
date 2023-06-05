@@ -1,11 +1,11 @@
 <?php
-namespace App\src\Models\Traits\Catalog\Cbond;
+namespace Common\Models\Traits\Catalog\Cbond;
 
-use App\src\Models\Catalog\Cbond\CbondHistory;
-use App\src\Models\Catalog\TradingView\TradingViewTicker;
+use Common\Models\Catalog\Cbond\CbondCoupon;
+use Common\Models\Catalog\Cbond\CbondHistory;
+use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait CbondRelationshipsTrait
 {
@@ -23,7 +23,7 @@ trait CbondRelationshipsTrait
      */
     public function history(): HasOne
     {
-        return $this->hasOne(\App\src\Models\Catalog\Cbond\CbondHistory::class, 'cbond_stock_id', 'id');
+        return $this->hasOne(CbondHistory::class, 'cbond_stock_id', 'id');
     }
 
     /**
@@ -31,7 +31,7 @@ trait CbondRelationshipsTrait
      */
     public function coupons(): HasMany
     {
-        return $this->hasMany(\App\src\Models\Catalog\Cbond\CbondCoupon::class, 'cbond_stock_id')
+        return $this->hasMany(CbondCoupon::class, 'cbond_stock_id')
             ->orderBy('coupondate', 'ASC');
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\src\Models\Interfaces\Catalog\Cbond;
+namespace Common\Models\Interfaces\Catalog\Cbond;
 
 interface DefinitionCbondConst
 {

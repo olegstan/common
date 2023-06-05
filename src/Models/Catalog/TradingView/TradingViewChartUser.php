@@ -1,8 +1,8 @@
 <?php
 
-namespace App\src\Models\Catalog\TradingView;
+namespace Common\Models\Catalog\TradingView;
 
-use App\src\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseStock;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\src\Models\Catalog\Custom;
+namespace Common\Models\Catalog\Custom;
 
-use App\src\Models\Catalog\BaseStock;
-use App\src\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
-use App\src\Models\Interfaces\Catalog\DefinitionActiveConst;
-use App\src\Models\Traits\Catalog\CommonCatalogTrait;
+use Common\Models\Catalog\BaseStock;
+use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
+use Common\Models\Traits\Catalog\CommonCatalogTrait;
 
 /**
  * @property $id
@@ -18,16 +18,16 @@ use App\src\Models\Traits\Catalog\CommonCatalogTrait;
  * @property $rate_period_type_id
  * @property $rate
  */
-class CustomStock extends BaseStock implements \App\src\Models\Interfaces\Catalog\Custom\DefinitionCustomConst, CommonsFuncCatalogInterface
+class CustomStock extends BaseStock implements \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst, CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
-    use \App\src\Models\Traits\Catalog\Custom\CustomRelationshipsTrait;
+    use \Common\Models\Traits\Catalog\Custom\CustomRelationshipsTrait;
 
     //Возвращаемые данные для трансформеров, текущей сущности и тп
-    use \App\src\Models\Traits\Catalog\Custom\CustomScopeTrait;
+    use \Common\Models\Traits\Catalog\Custom\CustomScopeTrait;
 
     //функции запросов
-    use \App\src\Models\Traits\Catalog\Custom\CustomReturnGetDataFunc;
+    use \Common\Models\Traits\Catalog\Custom\CustomReturnGetDataFunc;
 
     //общие трейты
     use CommonCatalogTrait;
@@ -180,7 +180,7 @@ class CustomStock extends BaseStock implements \App\src\Models\Interfaces\Catalo
      */
     public function createBindActive($userId, $currency_id, $accountId, $classes)
     {
-        if(in_array($this->type_id, \App\src\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::BOND_VALUES))
+        if(in_array($this->type_id, \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::BOND_VALUES))
         {
             return $classes['obligation']::create([
                 'user_id' => $userId,
@@ -196,7 +196,7 @@ class CustomStock extends BaseStock implements \App\src\Models\Interfaces\Catalo
             ]);
         }
 
-        if(in_array($this->type_id, \App\src\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::PIF_VALUES))
+        if(in_array($this->type_id, \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::PIF_VALUES))
         {
             return $classes['pif']::create([
                 'user_id' => $userId,
@@ -208,7 +208,7 @@ class CustomStock extends BaseStock implements \App\src\Models\Interfaces\Catalo
             ]);
         }
 
-        if(in_array($this->type_id, \App\src\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::FUTURES_VALUE)){
+        if(in_array($this->type_id, \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::FUTURES_VALUE)){
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
@@ -220,7 +220,7 @@ class CustomStock extends BaseStock implements \App\src\Models\Interfaces\Catalo
             ]);
         }
 
-        if(in_array($this->type_id, \App\src\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::ETF_VALUE)){
+        if(in_array($this->type_id, \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::ETF_VALUE)){
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
@@ -231,7 +231,7 @@ class CustomStock extends BaseStock implements \App\src\Models\Interfaces\Catalo
             ]);
         }
 
-        if(in_array($this->type_id, \App\src\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::CURRENCY_VALUE)){
+        if(in_array($this->type_id, \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::CURRENCY_VALUE)){
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,

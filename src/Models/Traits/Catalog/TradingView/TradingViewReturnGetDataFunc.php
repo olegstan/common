@@ -1,8 +1,6 @@
 <?php
 
-namespace App\src\Models\Traits\Catalog\TradingView;
-
-use function App\Models\Traits\TradingView\__;
+namespace Common\Models\Traits\Catalog\TradingView;
 
 trait TradingViewReturnGetDataFunc
 {
@@ -31,28 +29,36 @@ trait TradingViewReturnGetDataFunc
     }
 
     /**
-     * @return array|string|null
+     * @return string
      */
-    public function getTypeText()
+    public function getTypeText(): string
     {
         switch ($this->type)
         {
             case 'futures':
-                return __('model.trading_view_ticker.type.futures');
+                return 'Фьючерс';
+//                return __('model.trading_view_ticker.type.futures');
             case 'forex':
-                return __('model.trading_view_ticker.type.forex');
+                return 'Валюта';
+//                return __('model.trading_view_ticker.type.forex');
             case 'cfd':
-                return __('model.trading_view_ticker.type.cfd');
+                return 'cfd';
+//                return __('model.trading_view_ticker.type.cfd');
             case 'index':
-                return __('model.trading_view_ticker.type.index');
+                return 'Индекс';
+//                return __('model.trading_view_ticker.type.index');
             case 'crypto':
-                return __('model.trading_view_ticker.type.crypto');
+                return 'Криптовалюта';
+//                return __('model.trading_view_ticker.type.crypto');
             case 'bond':
-                return __('model.trading_view_ticker.type.bond');
+                return 'Облигация';
+//                return __('model.trading_view_ticker.type.bond');
             case 'economic':
-                return __('model.trading_view_ticker.type.economic');
+                return 'Экономика';
+//                return __('model.trading_view_ticker.type.economic');
             default:
-                return __('model.trading_view_ticker.type.default');
+                return 'Акции';
+//                return __('model.trading_view_ticker.type.default');
         }
     }
 }

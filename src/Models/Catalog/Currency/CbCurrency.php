@@ -1,12 +1,12 @@
 <?php
 
-namespace App\src\Models\Catalog\Currency;
+namespace Common\Models\Catalog\Currency;
 
-use App\src\Models\Catalog\BaseStock;
-use App\src\Models\Currency;
-use App\src\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
-use App\src\Models\Interfaces\Catalog\DefinitionActiveConst;
-use App\src\Models\Traits\Catalog\CommonCatalogTrait;
+use Common\Models\Catalog\BaseStock;
+use Common\Models\Currency;
+use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
+use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Carbon\Carbon;
 
 /**
@@ -19,13 +19,13 @@ use Carbon\Carbon;
 class CbCurrency extends BaseStock implements CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
-    use \App\src\Models\Traits\Catalog\Currency\CurrencyRelationshipsTrait;
+    use \Common\Models\Traits\Catalog\Currency\CurrencyRelationshipsTrait;
 
     //Возвращаемые данные для трансформеров, текущей сущности и тп
-    use \App\src\Models\Traits\Catalog\Currency\CurrencyScopeTrait;
+    use \Common\Models\Traits\Catalog\Currency\CurrencyScopeTrait;
 
     //функции запросов
-    use \App\src\Models\Traits\Catalog\Currency\CurrencyReturnGetDataFunc;
+    use \Common\Models\Traits\Catalog\Currency\CurrencyReturnGetDataFunc;
 
     //общие трейты
     use CommonCatalogTrait;

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\src\Models\Catalog\Cbond;
+namespace Common\Models\Catalog\Cbond;
 
-use App\Helpers\LoggerHelper;
-use App\src\Models\Catalog\BaseStock;
-use App\src\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
-use App\src\Models\Interfaces\Catalog\DefinitionActiveConst;
-use App\src\Models\Traits\Catalog\Cbond\CbondRelationshipsTrait;
-use App\src\Models\Traits\Catalog\Cbond\CbondReturnGetDataFunc;
-use App\src\Models\Traits\Catalog\CommonCatalogTrait;
+use Common\Helpers\LoggerHelper;
+use Common\Models\Catalog\BaseStock;
+use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
+use Common\Models\Traits\Catalog\Cbond\CbondRelationshipsTrait;
+use Common\Models\Traits\Catalog\Cbond\CbondReturnGetDataFunc;
+use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Carbon\Carbon;
 use Throwable;
 
@@ -79,9 +79,9 @@ use Throwable;
 * @property $tv_ticker_id
 * @property $url
  *
- * @package App\Models\Catalog\Cbond
+ * @package Models\Catalog\Cbond
  */
-class CbondStock extends BaseStock implements \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst, CommonsFuncCatalogInterface
+class CbondStock extends BaseStock implements \Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst, CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
     use CbondRelationshipsTrait;
@@ -90,7 +90,7 @@ class CbondStock extends BaseStock implements \App\src\Models\Interfaces\Catalog
     use CbondReturnGetDataFunc;
 
     //функции запросов
-    use \App\src\Models\Traits\Catalog\Cbond\CbondScopeTrait;
+    use \Common\Models\Traits\Catalog\Cbond\CbondScopeTrait;
 
     //общие трейты
     use CommonCatalogTrait;
@@ -250,7 +250,7 @@ class CbondStock extends BaseStock implements \App\src\Models\Interfaces\Catalog
      */
     public function createBindActive($userId, $currency_id, $accountId, $classes)
     {
-        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::BOND_VALUES))
+        if(in_array($this->type, \Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::BOND_VALUES))
         {
             return $classes['obligation']::create([
                 'user_id' => $userId,
@@ -266,7 +266,7 @@ class CbondStock extends BaseStock implements \App\src\Models\Interfaces\Catalog
             ]);
         }
 
-        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::PIF_VALUES))
+        if(in_array($this->type, \Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::PIF_VALUES))
         {
             return $classes['pif']::create([
                 'user_id' => $userId,
@@ -278,7 +278,7 @@ class CbondStock extends BaseStock implements \App\src\Models\Interfaces\Catalog
             ]);
         }
 
-        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::FUTURES_VALUE)){
+        if(in_array($this->type, \Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::FUTURES_VALUE)){
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
@@ -290,7 +290,7 @@ class CbondStock extends BaseStock implements \App\src\Models\Interfaces\Catalog
             ]);
         }
 
-        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::ETF_VALUE)){
+        if(in_array($this->type, \Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::ETF_VALUE)){
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
@@ -301,7 +301,7 @@ class CbondStock extends BaseStock implements \App\src\Models\Interfaces\Catalog
             ]);
         }
 
-        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::CURRENCY_VALUE)){
+        if(in_array($this->type, \Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst::CURRENCY_VALUE)){
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,

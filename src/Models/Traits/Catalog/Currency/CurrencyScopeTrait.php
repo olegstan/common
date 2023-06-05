@@ -1,5 +1,5 @@
 <?php
-namespace App\src\Models\Traits\Catalog\Currency;
+namespace Common\Models\Traits\Catalog\Currency;
 
 
 trait CurrencyScopeTrait

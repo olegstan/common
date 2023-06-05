@@ -1,9 +1,9 @@
 <?php
 
-namespace App\src\Models\Catalog\TradingView;
+namespace Common\Models\Catalog\TradingView;
 
 
-use App\src\Models\BaseModel;
+use Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\hasMany;
 use Illuminate\Database\Eloquent\Relations\hasOne;
 

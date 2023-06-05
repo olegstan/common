@@ -1,5 +1,5 @@
 <?php
-namespace App\src\Models\Traits\Catalog\MoscowExchange;
+namespace Common\Models\Traits\Catalog\MoscowExchange;
 
 
 trait MoexScopeTrait

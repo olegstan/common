@@ -1,10 +1,10 @@
 <?php
 
-namespace App\src\Models\Catalog\Currency;
+namespace Common\Models\Catalog\Currency;
 
-use App\Helpers\Curls\Currency\CbCurl;
-use App\src\Models\BaseModel;
-use App\src\Models\Currency;
+use Common\Helpers\Curls\Currency\CbCurl;
+use Common\Models\BaseModel;
+use Common\Models\Currency;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 

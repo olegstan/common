@@ -1,20 +1,20 @@
 <?php
 
-namespace App\src\Models\Catalog\MoscowExchange;
+namespace Common\Models\Catalog\MoscowExchange;
 
-use App\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
-use App\Helpers\LoggerHelper;
-use App\Jobs\MoscowExchangeDataJob;
-use App\Jobs\MoscowExchangeJob;
-use App\src\Models\Catalog\BaseStock;
-use App\src\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
-use App\src\Models\Interfaces\Catalog\DefinitionActiveConst;
-use App\src\Models\Traits\Catalog\CommonCatalogTrait;
-use App\src\Models\Traits\Catalog\MoscowExchange\MoexReturnGetDataFunc;
-use App\src\Models\Traits\Catalog\MoscowExchange\MoexScopeTrait;
+use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
+use Common\Jobs\MoscowExchangeDataJob;
+use Common\Jobs\MoscowExchangeJob;
+use Common\Helpers\LoggerHelper;
+use Common\Models\Catalog\BaseStock;
+use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
+use Common\Models\Traits\Catalog\CommonCatalogTrait;
+use Common\Models\Traits\Catalog\MoscowExchange\MoexReturnGetDataFunc;
+use Common\Models\Traits\Catalog\MoscowExchange\MoexScopeTrait;
 use Carbon\Carbon;
-use DB;
-use Queue;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Throwable;
 
 /**
@@ -81,12 +81,12 @@ use Throwable;
  * @property $scalperfee
  * @property $negotiatedfee
  *
- * @package App\Models\Catalog\MoscowExchange
+ * @package Models\Catalog\MoscowExchange
  */
-class MoscowExchangeStock extends BaseStock implements \App\src\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst, CommonsFuncCatalogInterface
+class MoscowExchangeStock extends BaseStock implements \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst, CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
-    use \App\src\Models\Traits\Catalog\MoscowExchange\MoexRelationshipsTrait;
+    use \Common\Models\Traits\Catalog\MoscowExchange\MoexRelationshipsTrait;
 
     //Возвращаемые данные для трансформеров, текущей сущности и тп
     use MoexReturnGetDataFunc;
@@ -250,7 +250,7 @@ class MoscowExchangeStock extends BaseStock implements \App\src\Models\Interface
      */
     public function createBindActive($userId, $currency_id, $accountId, $classes)
     {
-        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::BOND_VALUES))
+        if(in_array($this->type, \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::BOND_VALUES))
         {
             return $classes['obligation']::create([
                 'user_id' => $userId,
@@ -266,7 +266,7 @@ class MoscowExchangeStock extends BaseStock implements \App\src\Models\Interface
             ]);
         }
 
-        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::PIF_VALUES))
+        if(in_array($this->type, \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::PIF_VALUES))
         {
             return $classes['pif']::create([
                 'user_id' => $userId,
@@ -278,7 +278,7 @@ class MoscowExchangeStock extends BaseStock implements \App\src\Models\Interface
             ]);
         }
 
-        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::FUTURES_VALUE)){
+        if(in_array($this->type, \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::FUTURES_VALUE)){
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
@@ -290,7 +290,7 @@ class MoscowExchangeStock extends BaseStock implements \App\src\Models\Interface
             ]);
         }
 
-        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::ETF_VALUE)){
+        if(in_array($this->type, \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::ETF_VALUE)){
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
@@ -301,7 +301,7 @@ class MoscowExchangeStock extends BaseStock implements \App\src\Models\Interface
             ]);
         }
 
-        if(in_array($this->type, \App\src\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::CURRENCY_VALUE)){
+        if(in_array($this->type, \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::CURRENCY_VALUE)){
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,

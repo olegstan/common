@@ -1,9 +1,9 @@
 <?php
 
-namespace App\src\Models;
-use App\src\Models\Catalog\Currency\CbCurrency;
-use App\src\Models\Catalog\Currency\CbHistoryCurrencyCourse;
-use Cache;
+namespace Common\Models;
+use Common\Models\Catalog\Currency\CbCurrency;
+use Common\Models\Catalog\Currency\CbHistoryCurrencyCourse;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -17,29 +17,28 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property $order
  * @property CbCurrency $cb_currency
  *
- * @package App\Models
+ * @package Models
  */
 class Currency extends BaseModel
 {
-    public const RUBBLE_ID = 1;
-    public const DOLLAR_ID = 11;
-    public const EURO_ID = 12;
+    const RUBBLE_ID = 1;
+    const DOLLAR_ID = 11;
+    const EURO_ID = 12;
 
-    public const RUB = 'RUB';
-    public const USD = 'USD';
-    public const EUR = 'EUR';
-    public const GBP = 'GBP';
-    public const HKD = 'HKD';
-    public const CHF = 'CHF';
-    public const JPY = 'JPY';
-    public const CNY = 'CNY';
-    public const TRL = 'TRY';
+    const RUB = 'RUB';
+    const USD = 'USD';
+    const EUR = 'EUR';
+    const GBP = 'GBP';
+    const HKD = 'HKD';
+    const CHF = 'CHF';
+    const JPY = 'JPY';
+    const CNY = 'CNY';
+    const TRL = 'TRY';
 
     /**
      * @var string
      */
     public $table = 'currencies';
-    protected $connection = 'catalog';
 
     /**
      * @var bool

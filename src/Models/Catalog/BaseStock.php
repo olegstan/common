@@ -1,8 +1,8 @@
 <?php
 
-namespace App\src\Models\Catalog;
+namespace Common\Models\Catalog;
 
-use App\src\Models\BaseModel;
+use Common\Models\BaseModel;
 
 /**
  * Class BaseStock

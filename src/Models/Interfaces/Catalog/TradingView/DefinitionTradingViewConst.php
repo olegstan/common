@@ -1,6 +1,6 @@
 <?php
 
-namespace App\src\Models\Interfaces\Catalog\TradingView;
+namespace Common\Models\Interfaces\Catalog\TradingView;
 
 
 interface DefinitionTradingViewConst

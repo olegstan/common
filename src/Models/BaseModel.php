@@ -1,16 +1,15 @@
 <?php
 
-namespace App\src\Models;
+namespace Common\Models;
 
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Sofa\Eloquence\Subquery;
-
-use function App\Models\str_random;
-use function App\Models\with;
 
 /**
  * Class BaseModel
@@ -51,7 +50,7 @@ class BaseModel extends Model
     public static function getUniqueHash($field, $count = 32)
     {
         if (self::$uniqueHash) {
-            $hash = str_random($count);
+            $hash = Str::random($count);
             $item = static::where($field, $hash)->first();
             if ($item) {
                 self::getUniqueHash($field, $count);
@@ -109,8 +108,9 @@ class BaseModel extends Model
 
     /**
      *
+     * @param array $options
      */
-    public function saveQuietly()
+    public function saveQuietly(array $options = [])
     {
         $dispatcher = self::getEventDispatcher();
 
@@ -193,7 +193,7 @@ class BaseModel extends Model
      * @param null $foreignKey
      * @param null $ownerKey
      * @param null $relation
-     * @return $this|\Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null)
     {

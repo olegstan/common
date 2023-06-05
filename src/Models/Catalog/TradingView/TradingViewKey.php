@@ -1,8 +1,8 @@
 <?php
 
-namespace App\src\Models\Catalog\TradingView;
+namespace Common\Models\Catalog\TradingView;
 
-use App\src\Models\BaseModel;
+use Common\Models\BaseModel;
 
 /**
  * @property int $id

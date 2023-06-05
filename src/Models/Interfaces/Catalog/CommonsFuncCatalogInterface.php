@@ -1,6 +1,6 @@
 <?php
 
-namespace App\src\Models\Interfaces\Catalog;
+namespace Common\Models\Interfaces\Catalog;
 
 interface CommonsFuncCatalogInterface
 {

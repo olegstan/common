@@ -1,10 +1,8 @@
 <?php
 
-namespace App\src\Models\Traits\Catalog\Custom;
+namespace Common\Models\Traits\Catalog\Custom;
 
-use App\src\Models\Interfaces\Catalog\DefinitionActiveConst;
-
-use function App\Models\Traits\Custom\__;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 trait CustomReturnGetDataFunc
 {
@@ -65,27 +63,30 @@ trait CustomReturnGetDataFunc
     }
 
     /**
-     * @return array|string|null
+     * @return string
      */
-    public function getTypeText()
+    public function getTypeText(): string
     {
         switch ($this->type_id)
         {
-            case DefinitionActiveConst::STOCK:
-                return __('model.moscow_exchange_stock.type_text.common_share');
             case DefinitionActiveConst::CURRENCY:
-                return __('model.moscow_exchange_stock.type_text.currency');
+                return 'Валюта';
+//                return __('model.moscow_exchange_stock.type_text.currency');
             case DefinitionActiveConst::BOND:
             case DefinitionActiveConst::OBLIGATION:
-                return __('model.moscow_exchange_stock.type_text.exchange_bond');
+                return 'Биржевая облигация';
+//                return __('model.moscow_exchange_stock.type_text.exchange_bond');
             case DefinitionActiveConst::FUTURES:
-                return __('model.moscow_exchange_stock.type_text.futures');
+                return 'Фьючерс';
+//                return __('model.moscow_exchange_stock.type_text.futures');
             case DefinitionActiveConst::ETF:
             case DefinitionActiveConst::PIF:
             case DefinitionActiveConst::BPIF:
-                return __('model.moscow_exchange_stock.type_text.etf_ppif');
+                return 'ETF';
+//                return __('model.moscow_exchange_stock.type_text.etf_ppif');
             default:
-                return __('model.yahoo_stock.type_text.default');
+                return 'Акции';
+//                return __('model.yahoo_stock.type_text.default');
         }
     }
 }

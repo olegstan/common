@@ -1,8 +1,8 @@
 <?php
 
-namespace App\src\Models\Traits\Catalog\Currency;
+namespace Common\Models\Traits\Catalog\Currency;
 
-use App\src\Models\Interfaces\Catalog\DefinitionActiveConst;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 trait CurrencyReturnGetDataFunc
 {

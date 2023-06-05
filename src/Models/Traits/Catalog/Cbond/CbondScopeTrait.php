@@ -1,5 +1,5 @@
 <?php
-namespace App\src\Models\Traits\Catalog\Cbond;
+namespace Common\Models\Traits\Catalog\Cbond;
 
 
 trait CbondScopeTrait

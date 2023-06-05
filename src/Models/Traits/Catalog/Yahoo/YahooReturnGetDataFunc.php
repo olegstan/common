@@ -1,10 +1,8 @@
 <?php
 
-namespace App\src\Models\Traits\Catalog\Yahoo;
+namespace Common\Models\Traits\Catalog\Yahoo;
 
-use App\src\Models\Interfaces\Catalog\DefinitionActiveConst;
-
-use function App\Models\Traits\Yahoo\__;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 trait YahooReturnGetDataFunc
 {
@@ -49,17 +47,20 @@ trait YahooReturnGetDataFunc
     }
 
     /**
-     * @return array|string|null
+     * @return string
      */
-    public function getTypeText()
+    public function getTypeText(): string
     {
         switch ($this->type_disp) {
             case 'ETF':
-                return __('model.yahoo_stock.type_text.etf');
+//                return __('model.yahoo_stock.type_text.etf');
+                return 'ETF';
             case 'Currency':
-                return __('model.yahoo_stock.type_text.currency');
+                return 'Валюта';
+//                return __('model.yahoo_stock.type_text.currency');
             default:
-                return __('model.yahoo_stock.type_text.default');
+                return 'Акции';
+//                return __('model.yahoo_stock.type_text.default');
         }
     }
 

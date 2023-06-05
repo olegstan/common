@@ -1,6 +1,5 @@
 <?php
-namespace App\src\Models\Traits\Catalog\Yahoo;
-
+namespace Common\Models\Traits\Catalog\Yahoo;
 
 trait YahooScopeTrait
 {

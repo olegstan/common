@@ -1,5 +1,5 @@
 <?php
-namespace App\src\Models\Traits\Catalog\Custom;
+namespace Common\Models\Traits\Catalog\Custom;
 
 
 
