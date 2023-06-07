@@ -3,13 +3,12 @@
 namespace Common\Models\Catalog\Cbond;
 
 use Common\Helpers\LoggerHelper;
-use Common\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Traits\Catalog\Cbond\CbondRelationshipsTrait;
 use Common\Models\Traits\Catalog\Cbond\CbondReturnGetDataFunc;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
-use Carbon\Carbon;
 use Throwable;
 
 /**
@@ -81,7 +80,7 @@ use Throwable;
  *
  * @package Models\Catalog\Cbond
  */
-class CbondStock extends BaseStock implements \Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst, CommonsFuncCatalogInterface
+class CbondStock extends BaseCatalog implements \Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst, CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
     use CbondRelationshipsTrait;

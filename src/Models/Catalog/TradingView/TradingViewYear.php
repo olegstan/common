@@ -4,6 +4,7 @@ namespace Common\Models\Catalog\TradingView;
 
 
 use Common\Models\BaseModel;
+use Common\Models\Catalog\BaseCatalog;
 use Illuminate\Database\Eloquent\Relations\hasMany;
 use Illuminate\Database\Eloquent\Relations\hasOne;
 
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\hasOne;
  * @property $percent
  * @property $ticker_id
  */
-class TradingViewYear extends BaseModel
+class TradingViewYear extends BaseCatalog
 {
     /**
      * @var string

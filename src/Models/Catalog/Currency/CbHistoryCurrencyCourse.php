@@ -4,6 +4,7 @@ namespace Common\Models\Catalog\Currency;
 
 use Common\Helpers\Curls\Currency\CbCurl;
 use Common\Models\BaseModel;
+use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property $nominal
  * @property $date
  */
-class CbHistoryCurrencyCourse extends BaseModel
+class CbHistoryCurrencyCourse extends BaseCatalog
 {
     /**
      * @var string

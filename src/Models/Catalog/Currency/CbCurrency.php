@@ -2,7 +2,7 @@
 
 namespace Common\Models\Catalog\Currency;
 
-use Common\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -16,7 +16,7 @@ use Carbon\Carbon;
  * @property $nominal
  * @property $name
  */
-class CbCurrency extends BaseStock implements CommonsFuncCatalogInterface
+class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
     use \Common\Models\Traits\Catalog\Currency\CurrencyRelationshipsTrait;

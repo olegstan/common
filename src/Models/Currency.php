@@ -1,6 +1,7 @@
 <?php
 
 namespace Common\Models;
+use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Catalog\Currency\CbCurrency;
 use Common\Models\Catalog\Currency\CbHistoryCurrencyCourse;
 use Cache;
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *
  * @package Models
  */
-class Currency extends BaseModel
+class Currency extends BaseCatalog
 {
     const RUBBLE_ID = 1;
     const DOLLAR_ID = 11;

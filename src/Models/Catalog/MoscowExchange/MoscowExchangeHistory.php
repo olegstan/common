@@ -3,6 +3,7 @@
 namespace Common\Models\Catalog\MoscowExchange;
 
 use Common\Models\BaseModel;
+use Common\Models\Catalog\BaseCatalog;
 
 /**
  * @property $tradedate
@@ -23,7 +24,7 @@ use Common\Models\BaseModel;
  * @property $waval
  * @property $faceunit
  */
-class MoscowExchangeHistory extends BaseModel
+class MoscowExchangeHistory extends BaseCatalog
 {
     /**
      * @var string

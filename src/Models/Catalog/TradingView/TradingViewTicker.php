@@ -2,7 +2,7 @@
 
 namespace Common\Models\Catalog\TradingView;
 
-use Common\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseCatalog;
 
 /**
 * Class TradingViewTicker
@@ -29,7 +29,7 @@ use Common\Models\Catalog\BaseStock;
 * @property $capitalization
 * @property $is_parse
  **/
-class TradingViewTicker extends BaseStock
+class TradingViewTicker extends BaseCatalog
 {
     //Связи с другими моделями
     use \Common\Models\Traits\Catalog\TradingView\TradingViewRelationshipsTrait;

@@ -2,12 +2,12 @@
 
 namespace Common\Models\Catalog\Tinkoff;
 
-use Common\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseCatalog;
 
 /**
  * Class TinkoffStock
  */
-class TinkoffStock extends BaseStock
+class TinkoffStock extends BaseCatalog
 {
     /**
      * @var string

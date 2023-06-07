@@ -2,14 +2,20 @@
 
 namespace Common\Models\Catalog;
 
-use Common\Models\BaseModel;
+use Common\Models\Base;
 
 /**
  * Class BaseStock
  */
-class BaseStock extends BaseModel
+class BaseCatalog extends Base
 {
     protected $connection = 'catalog';
+
+    public function __construct(array $attributes = [])
+    {
+        $this->table = 'fincatalog.'.$this->table;
+        parent::__construct($attributes);
+    }
 
     /**
      * @param $term

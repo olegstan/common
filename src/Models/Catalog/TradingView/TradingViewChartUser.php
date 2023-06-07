@@ -2,14 +2,14 @@
 
 namespace Common\Models\Catalog\TradingView;
 
-use Common\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseCatalog;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property $ticker_id
  * @property $user_id
  */
-class TradingViewChartUser extends BaseStock
+class TradingViewChartUser extends BaseCatalog
 {
     /**
      * @var string

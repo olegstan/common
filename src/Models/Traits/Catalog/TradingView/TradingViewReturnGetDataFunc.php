@@ -61,4 +61,12 @@ trait TradingViewReturnGetDataFunc
 //                return __('model.trading_view_ticker.type.default');
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->icon ? config('app.url') . '/images/icons/' . $this->icon . '.svg' : config('app.url') . '/images/icons/default.svg';
+    }
 }

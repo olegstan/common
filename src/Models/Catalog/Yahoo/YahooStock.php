@@ -6,7 +6,7 @@ use Common\Helpers\Curls\Yahoo\YahooCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\YahooDataJob;
 use Common\Jobs\YahooJob;
-use Common\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Interfaces\Catalog\Yahoo\DefinitionYahooConst;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
@@ -37,7 +37,7 @@ use Throwable;
  * @property $exchange
  * @property $tv_ticker_id
  */
-class YahooStock extends BaseStock implements DefinitionYahooConst, CommonsFuncCatalogInterface
+class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
     use YahooRelationshipsTrait;

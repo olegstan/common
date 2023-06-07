@@ -4,7 +4,7 @@ namespace Common\Models\Catalog\TradingView;
 
 use Common\Helpers\PythonScript\PatternScripts;
 use Common\Helpers\LoggerHelper;
-use Common\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseCatalog;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property $close
  * @property $volume
  */
-class TradingViewChartDay extends BaseStock
+class TradingViewChartDay extends BaseCatalog
 {
     /**
      * @var string

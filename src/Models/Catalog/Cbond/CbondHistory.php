@@ -3,6 +3,7 @@
 namespace Common\Models\Catalog\Cbond;
 
 use Common\Models\BaseModel;
+use Common\Models\Catalog\BaseCatalog;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -24,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property $waval
  * @property $faceunit
  */
-class CbondHistory extends BaseModel
+class CbondHistory extends BaseCatalog
 {
     /**
      * @var string

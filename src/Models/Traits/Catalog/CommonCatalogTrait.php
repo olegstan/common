@@ -2,7 +2,7 @@
 
 namespace Common\Models\Traits\Catalog;
 
-use Common\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
@@ -50,9 +50,9 @@ trait CommonCatalogTrait
      */
     public static function promptScopeSearch($original, $text, $translitText, $query, $prompt)
     {
-        $originalWords = BaseStock::fullTextWildcards($original);
-        $splitedWords = BaseStock::fullTextWildcards($text);
-        $splitedTranslitWords = BaseStock::fullTextWildcards($translitText);
+        $originalWords = BaseCatalog::fullTextWildcards($original);
+        $splitedWords = BaseCatalog::fullTextWildcards($text);
+        $splitedTranslitWords = BaseCatalog::fullTextWildcards($translitText);
 
         return $query->where(function ($query) use ($originalWords, $prompt) {
             if ($originalWords) {

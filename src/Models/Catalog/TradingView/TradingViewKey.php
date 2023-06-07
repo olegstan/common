@@ -3,6 +3,7 @@
 namespace Common\Models\Catalog\TradingView;
 
 use Common\Models\BaseModel;
+use Common\Models\Catalog\BaseCatalog;
 
 /**
  * @property int $id
@@ -10,7 +11,7 @@ use Common\Models\BaseModel;
  * @property string $en
  * @property string $ru
  */
-class TradingViewKey extends BaseModel
+class TradingViewKey extends BaseCatalog
 {
     /**
      * @var string

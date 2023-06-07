@@ -6,7 +6,7 @@ use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Jobs\MoscowExchangeDataJob;
 use Common\Jobs\MoscowExchangeJob;
 use Common\Helpers\LoggerHelper;
-use Common\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
@@ -83,7 +83,7 @@ use Throwable;
  *
  * @package Models\Catalog\MoscowExchange
  */
-class MoscowExchangeStock extends BaseStock implements \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst, CommonsFuncCatalogInterface
+class MoscowExchangeStock extends BaseCatalog implements \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst, CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
     use \Common\Models\Traits\Catalog\MoscowExchange\MoexRelationshipsTrait;

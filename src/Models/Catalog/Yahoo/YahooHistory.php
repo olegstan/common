@@ -3,6 +3,7 @@
 namespace Common\Models\Catalog\Yahoo;
 
 use Common\Models\BaseModel;
+use Common\Models\Catalog\BaseCatalog;
 
 /**
  * @property $symbol
@@ -14,7 +15,7 @@ use Common\Models\BaseModel;
  * @property $adj_close
  * @property $volume
  */
-class YahooHistory extends BaseModel
+class YahooHistory extends BaseCatalog
 {
     /**
      * @var string

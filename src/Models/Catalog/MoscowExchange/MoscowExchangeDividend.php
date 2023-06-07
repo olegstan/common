@@ -3,6 +3,7 @@
 namespace Common\Models\Catalog\MoscowExchange;
 
 use Common\Models\BaseModel;
+use Common\Models\Catalog\BaseCatalog;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
@@ -12,7 +13,7 @@ use Illuminate\Support\Carbon;
  * @property $value
  * @property $currencyid
  */
-class MoscowExchangeDividend extends BaseModel
+class MoscowExchangeDividend extends BaseCatalog
 {
     /**
      * @var string

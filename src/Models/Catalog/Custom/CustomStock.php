@@ -2,7 +2,7 @@
 
 namespace Common\Models\Catalog\Custom;
 
-use Common\Models\Catalog\BaseStock;
+use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
@@ -18,7 +18,7 @@ use Common\Models\Traits\Catalog\CommonCatalogTrait;
  * @property $rate_period_type_id
  * @property $rate
  */
-class CustomStock extends BaseStock implements \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst, CommonsFuncCatalogInterface
+class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst, CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
     use \Common\Models\Traits\Catalog\Custom\CustomRelationshipsTrait;
