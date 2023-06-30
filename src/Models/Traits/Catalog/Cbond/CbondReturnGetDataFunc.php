@@ -195,13 +195,12 @@ trait CbondReturnGetDataFunc
         return $this->faceunit;
     }
 
-
     /**
      * @return string
      */
     public function getSymbol(): string
     {
-        return $this->secid ?? '';
+        return $this->isin ?? '';
     }
 
     /**
