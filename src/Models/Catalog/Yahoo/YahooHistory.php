@@ -2,7 +2,6 @@
 
 namespace Common\Models\Catalog\Yahoo;
 
-use Common\Models\BaseModel;
 use Common\Models\Catalog\BaseCatalog;
 
 /**

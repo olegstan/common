@@ -2,7 +2,6 @@
 
 namespace Common\Models\Catalog\Cbond;
 
-use Common\Models\BaseModel;
 use Common\Models\Catalog\BaseCatalog;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 

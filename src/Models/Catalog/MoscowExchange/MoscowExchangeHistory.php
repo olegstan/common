@@ -2,7 +2,6 @@
 
 namespace Common\Models\Catalog\MoscowExchange;
 
-use Common\Models\BaseModel;
 use Common\Models\Catalog\BaseCatalog;
 
 /**

@@ -3,7 +3,7 @@
 namespace Common\Models;
 
 use Carbon\Carbon;
-use Exception;
+use Common\Models\Traits\BaseTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -16,6 +16,8 @@ use Sofa\Eloquence\Subquery;
  */
 class BaseModel extends Model
 {
+    use BaseTrait;
+
     protected $connection = 'mysql';
 
     public function __construct(array $attributes = [])
