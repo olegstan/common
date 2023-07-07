@@ -9,7 +9,7 @@ use Common\Models\Base;
  */
 class BaseCatalog extends Base
 {
-    protected string $connection = 'catalog';
+    protected $connection = 'catalog';
 
     public function __construct(array $attributes = [])
     {
