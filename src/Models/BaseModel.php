@@ -22,7 +22,7 @@ class BaseModel extends Model
 
     public function __construct(array $attributes = [])
     {
-        $this->table = env('DB_DATABASE') . '.' . $this->table;
+        $this->table = config('database.connections.mysql.database') . '.' . $this->table;
         parent::__construct($attributes);
     }
 }

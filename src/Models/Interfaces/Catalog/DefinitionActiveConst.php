@@ -7,17 +7,17 @@ interface DefinitionActiveConst
     /**
      * resources
      */
-    public const CB = 1;
-    public const YAHOO_QUOTES = 2;
-    public const MOSCOW_EXCHANGE_QUOTES = 3;
-    public const CUSTOM = 4;
-    public const CBONDS = 5;
+    const CB = 1;
+    const YAHOO_QUOTES = 2;
+    const MOSCOW_EXCHANGE_QUOTES = 3;
+    const CUSTOM = 4;
+    const CBONDS = 5;
 
     /**
      * periodic
      */
-    public const ONCE = 1;
-    public const PERIOD = 2;
+    const ONCE = 1;
+    const PERIOD = 2;
 
     /**
      * типы в jobs
@@ -116,7 +116,7 @@ interface DefinitionActiveConst
     //страховки
     const FUNDED_LIFE_INSURANCE = 3003;
     const INVESTMENT_LIFE_INSURANCE = 3204;
-    const AUTO_INSURANCE = 13001;
+    const CAR_INSURANCE = 13001;
     const PROPERTY_INSURANCE = 13002;
     const HEALTH_INSURANCE = 13003;
     const VMI_INSURANCE = 13004;
@@ -172,7 +172,7 @@ interface DefinitionActiveConst
     ];
 
     const INSURANCES_GROUP = [
-        self::AUTO_INSURANCE,
+        self::CAR_INSURANCE,
         self::PROPERTY_INSURANCE,
         self::HEALTH_INSURANCE,
         self::VMI_INSURANCE,
@@ -181,6 +181,7 @@ interface DefinitionActiveConst
         self::UNIT_LINKED_INSURANCE,
         self::LOSE_JOB_INSURANCE,
         self::RESPONSIBILITY_INSURANCE,
+        self::PET_INSURANCE,
         self::INVESTMENT_LIFE_INSURANCE,
         self::FUNDED_LIFE_INSURANCE
     ];
@@ -387,6 +388,7 @@ interface DefinitionActiveConst
         self::DIRECT_GROUP_TYPE,
         self::INSTRUMENT_CASH_FLOW_GROUP_TYPE
     ];
+
     const GROUP_TYPES_GROUP_ICON = [
         self::STOCK_GROUP_TYPE => 'investment.svg',
         self::OBLIGATION_GROUP_TYPE => 'bond.svg',
@@ -405,4 +407,5 @@ interface DefinitionActiveConst
     const GROUP_CLASS_TYPES = [
         self::CUSTOM_CLASS_TYPE
     ];
+
 }
