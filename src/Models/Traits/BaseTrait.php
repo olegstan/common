@@ -2,6 +2,7 @@
 
 namespace Common\Models\Traits;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
 
