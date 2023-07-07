@@ -376,6 +376,15 @@ interface DefinitionActiveConst
     const INSTRUMENT_CASH_FLOW_GROUP_TYPE = 1007;
     const CUSTOM_GROUP_TYPE = 2001;
 
+    public const CATALOG_CLASSES = [
+        'stock' => Stock::class,
+        'obligation' => Obligation::class,
+        'currency' => Currency::class,
+        'etf' => Etf::class,
+        'pif' => Pif::class,
+        'futures' => Futures::class,
+    ];
+
     /**
      * end group types
      */
