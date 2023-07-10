@@ -154,7 +154,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                         }
                     }
                 } catch (Exception $e) {
-//                    LoggerHelper::getLogger()->error($e);
+                    LoggerHelper::getLogger()->error($e);
                 }
             }
         }
