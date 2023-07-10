@@ -370,8 +370,8 @@ class MoscowExchangeStock extends BaseCatalog implements \Common\Models\Interfac
                         }
                     }
                 } catch (Throwable $e) {
-                    LoggerHelper::getLogger()->error($e);
-                    LoggerHelper::getLogger()->error('move forward');
+//                    LoggerHelper::getLogger()->error($e);
+//                    LoggerHelper::getLogger()->error('move forward');
                 }
             }
         }
