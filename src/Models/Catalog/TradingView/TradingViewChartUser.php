@@ -31,7 +31,7 @@ class TradingViewChartUser extends BaseCatalog
      */
     protected $casts = [
         'ticker_id' => 'integer',
-        'user_id' => 'integer',
+        'user_id' => 'string',
     ];
 
     /**
