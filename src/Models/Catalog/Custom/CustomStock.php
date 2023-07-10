@@ -135,7 +135,7 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
         $splitedWords = self::fullTextWildcards($text);
 
         $stocksQuery = self::selectRaw(
-            '`custom_stocks`.*,MATCH (`custom_stocks`.`name`, `custom_stocks`.`user_id`, `custom_stocks`.`type_id`) AGAINST (?) as relevance',
+            '`custom_stocks`.*,MATCH (`custom_stocks`.`name`, `custom_stocks`.`user_id`) AGAINST (?) as relevance',
             [implode(' ', $splitedWords)]
         )
             ->search($original, $text, $translitText);
