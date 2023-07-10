@@ -21,8 +21,6 @@ class Curl
         foreach ($requests as $key => $request) {
             $resultUrl = $request['url'] . ($request['params'] ? '?' . http_build_query($request['params']) : '');
 
-            LoggerHelper::getLogger('multi-curl')->info($resultUrl);
-
             $handles[$key] = curl_init($resultUrl);
             curl_setopt($handles[$key], CURLOPT_RETURNTRANSFER, true);
             curl_setopt($handles[$key], CURLOPT_FOLLOWLOCATION, true);
