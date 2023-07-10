@@ -12,6 +12,7 @@ use Common\Models\Traits\Catalog\CommonCatalogTrait;
  * @property $name
  * @property $symbol
  * @property $type_id
+ * @property $user_id
  * @property $currency_id
  * @property $facevalue
  * @property $matdate
@@ -44,6 +45,7 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
         'name',
         'symbol',
         'type_id',
+        'user_id',
         'currency_id',
         'facevalue',
         'matdate',
@@ -58,6 +60,7 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
         'name' => 'string',
         'symbol' => 'string',
         'type_id' => 'integer',
+        'user_id' => 'string',
         'currency_id' => 'integer',
         'facevalue' => 'integer',
         'matdate' => 'datetime',
@@ -132,7 +135,7 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
         $splitedWords = self::fullTextWildcards($text);
 
         $stocksQuery = self::selectRaw(
-            '`custom_stocks`.*,MATCH (`custom_stocks`.`name`, `custom_stocks`.`symbol`) AGAINST (?) as relevance',
+            '`custom_stocks`.*,MATCH (`custom_stocks`.`name`, `custom_stocks`.`user_id`, `custom_stocks`.`type_id`) AGAINST (?) as relevance',
             [implode(' ', $splitedWords)]
         )
             ->search($original, $text, $translitText);
@@ -155,6 +158,7 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
                     'id' => $item->id,
                     'name' => $item->name,
                     'type_id' => $item->getType(),
+                    'user_id' => $item->user_id,
                     'symbol' => $item->getSymbol(),
                     'currency_id' => $item->getCurrency(),
                     'ticker' => 'catalog.4',
