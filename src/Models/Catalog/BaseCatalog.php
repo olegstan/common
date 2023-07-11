@@ -14,7 +14,7 @@ class BaseCatalog extends BaseModel
 
     public function __construct(array $attributes = [])
     {
-        $this->table = 'fincatalog.'.$this->table;
+        $this->table = config('database.connections.catalog.database') . '.' . $this->table;
         parent::__construct($attributes);
     }
 
