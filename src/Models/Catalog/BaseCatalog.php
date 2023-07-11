@@ -15,7 +15,12 @@ class BaseCatalog extends BaseModel
     public function __construct(array $attributes = [])
     {
         $this->table = config('database.connections.catalog.database') . '.' . $this->table;
-        parent::__construct($attributes);
+
+        //так написано, чтобы сработал конструктор, но не родительский а нативный Laravel,
+        //иначе получается некорректное название таблицы, поскольку оно прибавляется два раза
+        //back.fincatalog.currencies, должно быть fincatalog.currencies
+        $reflectionMethod = new \ReflectionMethod(get_parent_class(get_parent_class(get_parent_class($this))), '__construct');
+        $reflectionMethod->invoke($this, $attributes);
     }
 
     /**
