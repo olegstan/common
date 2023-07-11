@@ -3,11 +3,12 @@
 namespace Common\Models\Catalog;
 
 use Common\Models\Base;
+use Common\Models\BaseModel;
 
 /**
  * Class BaseStock
  */
-class BaseCatalog extends Base
+class BaseCatalog extends BaseModel
 {
     protected $connection = 'catalog';
 

@@ -4,6 +4,7 @@ namespace Common\Models;
 
 use Carbon\Carbon;
 use Common\Models\Traits\BaseTrait;
+use Common\Models\Traits\DuplicateTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -16,7 +17,7 @@ use Sofa\Eloquence\Subquery;
  */
 class BaseModel extends Model
 {
-    use BaseTrait;
+    use BaseTrait, DuplicateTrait;
 
     protected $connection = 'mysql';
 
