@@ -121,7 +121,7 @@ interface DefinitionActiveConst
     //страховки
     const FUNDED_LIFE_INSURANCE = 3003;
     const INVESTMENT_LIFE_INSURANCE = 3204;
-    const CAR_INSURANCE = 13001;
+    const AUTO_INSURANCE = 13001;
     const PROPERTY_INSURANCE = 13002;
     const HEALTH_INSURANCE = 13003;
     const VMI_INSURANCE = 13004;
@@ -177,7 +177,7 @@ interface DefinitionActiveConst
     ];
 
     const INSURANCES_GROUP = [
-        self::CAR_INSURANCE,
+        self::AUTO_INSURANCE,
         self::PROPERTY_INSURANCE,
         self::HEALTH_INSURANCE,
         self::VMI_INSURANCE,
