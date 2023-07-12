@@ -93,8 +93,8 @@ trait CommonCatalogTrait
     {
         return $this->icons
             ?
-            'http://fincatalog/images/icons/' . $this->icons . '.svg'
+            config('microservices.catalog') . '/images/icons/' . $this->icons . '.svg'
             :
-            'http://fincatalog/images/icons/default.svg';
+            config('microservices.catalog') . '/images/icons/default.svg';
     }
 }
