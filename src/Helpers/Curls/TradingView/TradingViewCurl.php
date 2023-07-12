@@ -79,13 +79,15 @@ class TradingViewCurl
     public static function saveImage($result, int $key = 13)
     {
         try {
-            if (is_object(
-                    $result
-                ) && $result->totalCount === 1 && isset($result->data[0]->d[$key]) && !empty($result->data[0]->d[$key])) {
+            if (is_object($result) &&
+                $result->totalCount === 1 &&
+                isset($result->data[0]->d[$key]) &&
+                !empty($result->data[0]->d[$key])) {
+
                 //Получаем имя иконки из json
                 $nameImage = $result->data[0]->d[$key];
                 //определяем директорию, куда будет сохранена
-                $path = public_path() . '/images/icons/' . $nameImage . '.svg';
+                $path = base_path() . '/public/images/icons/' . $nameImage . '.svg';
                 //Составляем url по которой будем получать ссылку иконки
                 $urlImage = 'https://s3-symbol-logo.tradingview.com/' . $nameImage . '.svg';
 
