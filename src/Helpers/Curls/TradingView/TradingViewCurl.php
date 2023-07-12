@@ -2,6 +2,7 @@
 
 namespace Common\Helpers\Curls\TradingView;
 
+use Common\Helpers\PythonScript\PythonScriptTvCurl;
 use Common\Helpers\TradingViewWebsocket;
 use Common\Models\Catalog\TradingView\TradingViewKey;
 use Common\Models\Catalog\TradingView\TradingViewQuarter;
@@ -213,16 +214,7 @@ class TradingViewCurl
             ->where('description', $datas['description'])
             ->first();
 
-        if (!$ticker) {
-            $ticker = TradingViewTicker::create($datas);
-            $ticker->is_parse = true;
-            $ticker->save();
-        }
-
-        // логика ниже была реализована благодаря либре, в ней мы заранее создавали тикер с некоторым данными
-        // и дополняли их через сокет. Сейчас же либры нет, а значит надо создавать и сразу заполнять через сокет
-        // мейби либру вернут и вернемся к этой логике
-        ################################################################
+        if ($ticker) {
             //начальный параметр валюты
             $currency = null;
 
@@ -285,6 +277,7 @@ class TradingViewCurl
                     var_export($datas, true)
                 );
             }
+        }
     }
 
     /**
@@ -577,15 +570,8 @@ class TradingViewCurl
     public static function createTickers($ticker, string $exchange = 'all'): void
     {
         //скрипт питона который возвращает массив тикеров на TradingView
-        //TODO: В библиотеке убрали метод поиск тикеров, надо нам у себя изменить на поиск сразу в вебсокете
-//        $pythonTickers = PythonScriptTvCurl::searchSymbols($ticker, $exchange);
-        self::parseData('symbol', $ticker);
+        $pythonTickers = PythonScriptTvCurl::searchSymbols($ticker, $exchange);
 
-        // логика ниже была реализована благодаря либре, в ней мы заранее создавали тикер с некоторым данными
-        // и дополняли их через сокет. Сейчас же либры нет, а значит надо создавать и сразу заполнять через сокет
-        // мейби либру вернут и вернемся к этой логике
-        ################################################################
-        $pythonTickers = false;
         //убеждаемся что тикеры вообще есть
         if ($pythonTickers) {
             //перебираем все тикеры
