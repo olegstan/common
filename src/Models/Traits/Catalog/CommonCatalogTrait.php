@@ -13,11 +13,13 @@ trait CommonCatalogTrait
      */
     public function getCurrency()
     {
-        if (!empty($this->getCodeCurrency())) {
-            if (is_array(json_decode($this->getCodeCurrency()))) {
+        $codeCur = $this->getCodeCurrency();
+
+        if (!empty($codeCur)) {
+            if (is_array($codeCur = json_decode($codeCur))) {
                 $curIds = [];
 
-                foreach (json_decode($this->getCodeCurrency()) as $code) {
+                foreach ($codeCur as $code) {
                     if ($code === 'SUR') {
                         $code = 'RUB';
                     }
@@ -32,7 +34,7 @@ trait CommonCatalogTrait
                 return $curIds;
             }
 
-            $currency = Currency::getByCode($this->getCodeCurrency());
+            $currency = Currency::getByCode($codeCur);
 
             if ($currency) {
                 return $currency->id;
