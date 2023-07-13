@@ -10,6 +10,7 @@ use Common\Models\Traits\Catalog\Cbond\CbondRelationshipsTrait;
 use Common\Models\Traits\Catalog\Cbond\CbondReturnGetDataFunc;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Throwable;
+use Carbon\Carbon;
 
 /**
  * Class CbondStock
