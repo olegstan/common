@@ -337,6 +337,7 @@ class TradingViewCurl
                 $quarterAll = TradingViewQuarter::where('key_id', $tradingViewKey)
                     ->where('ticker_id', $tickerId->id)
                     ->where('year', (string)$lastQuarter->year)
+                    ->where('value', $datum)
                     ->where('quarter', $lastQuarter->quarter)
                     ->first();
 
@@ -357,6 +358,7 @@ class TradingViewCurl
             $quarterOne = TradingViewQuarter::where('key_id', $tradingViewKey)
                 ->where('ticker_id', $tickerId->id)
                 ->where('year', $date->format('Y'))
+                ->where('value', $data)
                 ->where('quarter', $date->quarter)
                 ->first();
 
