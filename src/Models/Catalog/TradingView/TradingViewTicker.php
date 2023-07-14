@@ -4,6 +4,9 @@ namespace Common\Models\Catalog\TradingView;
 
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Interfaces\Catalog\TradingView\DefinitionTradingViewConst;
+use Common\Models\Traits\Catalog\TradingView\TradingViewRelationshipsTrait;
+use Common\Models\Traits\Catalog\TradingView\TradingViewReturnGetDataFunc;
+use Common\Models\Traits\Catalog\TradingView\TradingViewScopeTrait;
 
 /**
 * Class TradingViewTicker
@@ -33,13 +36,13 @@ use Common\Models\Interfaces\Catalog\TradingView\DefinitionTradingViewConst;
 class TradingViewTicker extends BaseCatalog implements DefinitionTradingViewConst
 {
     //Связи с другими моделями
-    use \Common\Models\Traits\Catalog\TradingView\TradingViewRelationshipsTrait;
+    use TradingViewRelationshipsTrait;
 
     //Возвращаемые данные для трансформеров, текущей сущности и тп
-    use \Common\Models\Traits\Catalog\TradingView\TradingViewScopeTrait;
+    use TradingViewScopeTrait;
 
     //функции запросов
-    use \Common\Models\Traits\Catalog\TradingView\TradingViewReturnGetDataFunc;
+    use TradingViewReturnGetDataFunc;
 
     /**
      * @var string

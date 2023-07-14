@@ -8,6 +8,9 @@ use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Carbon\Carbon;
+use Common\Models\Traits\Catalog\Currency\CurrencyRelationshipsTrait;
+use Common\Models\Traits\Catalog\Currency\CurrencyReturnGetDataFunc;
+use Common\Models\Traits\Catalog\Currency\CurrencyScopeTrait;
 
 /**
  * @property $cb_id
@@ -19,13 +22,13 @@ use Carbon\Carbon;
 class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
-    use \Common\Models\Traits\Catalog\Currency\CurrencyRelationshipsTrait;
+    use CurrencyRelationshipsTrait;
 
     //Возвращаемые данные для трансформеров, текущей сущности и тп
-    use \Common\Models\Traits\Catalog\Currency\CurrencyScopeTrait;
+    use CurrencyScopeTrait;
 
     //функции запросов
-    use \Common\Models\Traits\Catalog\Currency\CurrencyReturnGetDataFunc;
+    use CurrencyReturnGetDataFunc;
 
     //общие трейты
     use CommonCatalogTrait;

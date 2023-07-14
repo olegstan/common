@@ -2,10 +2,18 @@
 
 namespace Common\Models\Catalog\Custom;
 
+use Carbon\Carbon;
+use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
+use Cache;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
+use Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
+use Common\Models\Traits\Catalog\Custom\CustomRelationshipsTrait;
+use Common\Models\Traits\Catalog\Custom\CustomReturnGetDataFunc;
+use Common\Models\Traits\Catalog\Custom\CustomScopeTrait;
+use Exception;
 
 /**
  * @property $id
@@ -19,16 +27,16 @@ use Common\Models\Traits\Catalog\CommonCatalogTrait;
  * @property $rate_period_type_id
  * @property $rate
  */
-class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst, CommonsFuncCatalogInterface
+class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
-    use \Common\Models\Traits\Catalog\Custom\CustomRelationshipsTrait;
+    use CustomRelationshipsTrait;
 
     //Возвращаемые данные для трансформеров, текущей сущности и тп
-    use \Common\Models\Traits\Catalog\Custom\CustomScopeTrait;
+    use CustomScopeTrait;
 
     //функции запросов
-    use \Common\Models\Traits\Catalog\Custom\CustomReturnGetDataFunc;
+    use CustomReturnGetDataFunc;
 
     //общие трейты
     use CommonCatalogTrait;
@@ -71,46 +79,43 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
 
     /**
      * @param $data
-     * @param $ticker
-     * @param string $lang
-     * @param int $limit
-     * @param bool $cache
+     * @param $cache
      * @return void
      */
-    public static function search($data, $ticker, string $lang = 'ru', int $limit = 50, bool $cache = true)
+    public static function search($data, $cache = true)
     {
-        //TODO:Тк теперь напрямую с парсерами не взаимодействуем, надо изменить логику
-//        $name = null;
-//        $currency = Currency::RUBBLE_ID;
-//
-//        if (!is_string($data)) {
-//            /**
-//             * @var AtonOperation|BcsOperation|TinkoffOperation $data
-//             */
-//            $name = $data->getName();
-//            $currency = StockActive::getCurrency($data->getCurrency());
-//        }
-//
-//        //тк негде искать, будет заглушкой
-//        $stock = CustomStock::where('symbol', $ticker)
-//            ->orWhere(function ($stock) use ($name) {
-//                if (isset($name)) {
-//                    $stock->where('name', $name);
-//                }
-//            })
-//            ->first();
-//
-//        if (!$stock)
-//        {
-//            $stock = CustomStock::create([
-//                'name' => $name ?? $ticker,
-//                'symbol' => $ticker,
-//                'type_id' => DefinitionActiveConst::STOCK,
-//                'currency_id' => $currency,
-//            ]);
-//        }
-//
-//        return $stock;
+        //в $data всегда должен быть объект модели, что бы мы могли искать не по 1 параметру, а сколько требуется
+        if ($data->getTicker()) {
+            $searchText = $data->getTicker();
+        }
+
+        try {
+            if ($cache && Cache::has('custom' . $searchText)) {
+                return Cache::get('custom' . $searchText);
+            }
+
+            $custom = CustomStock::where('symbol', $searchText ?? null)
+                ->where('name', $data->getName())
+                ->where('user_id', $data->user_id)
+                ->where('currency_id', $data->getCurrency())
+                ->first();
+
+            if (!$custom) {
+                $custom = CustomStock::create([
+                    'symbol' => $searchText ?? null,
+                    'name' => $data->getName(),
+                    'user_id' => $data->user_id,
+                    'currency_id' => $data->getCurrency()
+                ]);
+            }
+
+            Cache::put('custom' . $searchText, $custom, Carbon::now()->addDay());
+
+            return $custom;
+        } catch (Exception $e) {
+            LoggerHelper::getLogger('custom')->error($e);
+            return false;
+        }
     }
 
     /**
@@ -184,8 +189,7 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
      */
     public function createBindActive($userId, $currency_id, $accountId, $classes)
     {
-        if(in_array($this->type_id, \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::BOND_VALUES))
-        {
+        if (in_array($this->type_id, DefinitionCustomConst::BOND_VALUES)) {
             return $classes['obligation']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
@@ -200,8 +204,7 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
             ]);
         }
 
-        if(in_array($this->type_id, \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::PIF_VALUES))
-        {
+        if (in_array($this->type_id, DefinitionCustomConst::PIF_VALUES)) {
             return $classes['pif']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
@@ -212,7 +215,7 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
             ]);
         }
 
-        if(in_array($this->type_id, \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::FUTURES_VALUE)){
+        if (in_array($this->type_id, DefinitionCustomConst::FUTURES_VALUE)) {
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
@@ -224,7 +227,7 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
             ]);
         }
 
-        if(in_array($this->type_id, \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::ETF_VALUE)){
+        if (in_array($this->type_id, DefinitionCustomConst::ETF_VALUE)) {
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
@@ -235,7 +238,7 @@ class CustomStock extends BaseCatalog implements \Common\Models\Interfaces\Catal
             ]);
         }
 
-        if(in_array($this->type_id, \Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst::CURRENCY_VALUE)){
+        if (in_array($this->type_id, DefinitionCustomConst::CURRENCY_VALUE)) {
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,

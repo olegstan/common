@@ -9,7 +9,9 @@ use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
+use Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
+use Common\Models\Traits\Catalog\MoscowExchange\MoexRelationshipsTrait;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexReturnGetDataFunc;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexScopeTrait;
 use Carbon\Carbon;
@@ -83,10 +85,10 @@ use Throwable;
  *
  * @package Models\Catalog\MoscowExchange
  */
-class MoscowExchangeStock extends BaseCatalog implements \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst, CommonsFuncCatalogInterface
+class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, CommonsFuncCatalogInterface
 {
     //Связи с другими моделями
-    use \Common\Models\Traits\Catalog\MoscowExchange\MoexRelationshipsTrait;
+    use MoexRelationshipsTrait;
 
     //Возвращаемые данные для трансформеров, текущей сущности и тп
     use MoexReturnGetDataFunc;
@@ -250,7 +252,7 @@ class MoscowExchangeStock extends BaseCatalog implements \Common\Models\Interfac
      */
     public function createBindActive($userId, $currency_id, $accountId, $classes)
     {
-        if(in_array($this->type, \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::BOND_VALUES))
+        if(in_array($this->type, DefinitionMoexConst::BOND_VALUES))
         {
             return $classes['obligation']::create([
                 'user_id' => $userId,
@@ -266,7 +268,7 @@ class MoscowExchangeStock extends BaseCatalog implements \Common\Models\Interfac
             ]);
         }
 
-        if(in_array($this->type, \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::PIF_VALUES))
+        if(in_array($this->type, DefinitionMoexConst::PIF_VALUES))
         {
             return $classes['pif']::create([
                 'user_id' => $userId,
@@ -278,7 +280,7 @@ class MoscowExchangeStock extends BaseCatalog implements \Common\Models\Interfac
             ]);
         }
 
-        if(in_array($this->type, \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::FUTURES_VALUE)){
+        if(in_array($this->type, DefinitionMoexConst::FUTURES_VALUE)){
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
@@ -290,7 +292,7 @@ class MoscowExchangeStock extends BaseCatalog implements \Common\Models\Interfac
             ]);
         }
 
-        if(in_array($this->type, \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::ETF_VALUE)){
+        if(in_array($this->type, DefinitionMoexConst::ETF_VALUE)){
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
@@ -301,7 +303,7 @@ class MoscowExchangeStock extends BaseCatalog implements \Common\Models\Interfac
             ]);
         }
 
-        if(in_array($this->type, \Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst::CURRENCY_VALUE)){
+        if(in_array($this->type, DefinitionMoexConst::CURRENCY_VALUE)){
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
