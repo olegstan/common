@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Cache;
+use Common\Models\Catalog\Currency\CbCurrency;
+use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -94,18 +96,23 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                 return Cache::get('custom' . $searchText);
             }
 
+            $userId = config('app.env') . '-' . $data->user_id;
+            $currency = Currency::firstWhere('code', $data->getCurrency());
+
             $custom = CustomStock::where('symbol', $searchText ?? null)
                 ->where('name', $data->getName())
-                ->where('user_id', $data->user_id)
-                ->where('currency_id', $data->getCurrency())
+                ->where('user_id', $userId)
+                ->where('currency_id', $currency)
+                ->where('type_id', $data->getCustomStockType())
                 ->first();
 
             if (!$custom) {
                 $custom = CustomStock::create([
                     'symbol' => $searchText ?? null,
                     'name' => $data->getName(),
-                    'user_id' => $data->user_id,
-                    'currency_id' => $data->getCurrency()
+                    'user_id' => $userId,
+                    'currency_id' => $currency,
+                    'type_id' => $data->getCustomStockType()
                 ]);
             }
 
