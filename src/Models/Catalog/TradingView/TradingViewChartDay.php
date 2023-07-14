@@ -120,9 +120,10 @@ class TradingViewChartDay extends BaseCatalog
                         {
                             //конвертируем в нормальную дату, тк ключ конвертирован в unix
                             $date = Carbon::createFromTimestampUTC(substr($k, 0, -3))->format('Y-m-d H:i:s');
+                            $dateFormat = $date->format('Y-m-d');
 
                             //проверяем, есть ли уже за эту дату история
-                            $history = self::where('date_at', $date)
+                            $history = self::where('date_at', $dateFormat)
                                 ->where('ticker_id', $ticker->id)
                                 ->first();
 
