@@ -316,7 +316,7 @@ trait BaseTrait
                     return (string) $value;
                 case 'bool?':
                 case 'boolean?':
-                    if($value)
+                    if($value === false || $value)
                     {
                         return (bool) $value;
                     }
