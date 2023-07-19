@@ -309,11 +309,11 @@ trait BaseTrait
             // If the key is one of the encrypted castable types, we'll first decrypt
             // the value and update the cast type so we may leverage the following
             // logic for casting this value to any additionally specified types.
-            if ($this->isEncryptedCastable($key)) {
-                $value = $this->fromEncryptedString($value);
-
-                $castType = Str::after($castType, 'encrypted:');
-            }
+//            if ($this->isEncryptedCastable($key)) {
+//                $value = $this->fromEncryptedString($value);
+//
+//                $castType = Str::after($castType, 'encrypted:');
+//            }
 
             switch ($castType) {
                 case 'int':
