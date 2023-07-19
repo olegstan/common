@@ -2,9 +2,12 @@
 
 namespace Common\Models\Traits;
 
+use App\Helpers\LoggerHelper;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Collection as BaseCollection;
 use Illuminate\Support\Str;
+use Exception;
 
 trait BaseTrait
 {
@@ -293,25 +296,65 @@ trait BaseTrait
     protected function castAttribute($key, $value)
     {
         try{
+            $castType = $this->getCastType($key);
+
+            if (is_null($value) && in_array($castType, static::$primitiveCastTypes)) {
+                return $value;
+            }
+
             if (is_null($value)) {
                 return $value;
             }
 
-            switch ($this->getCastType($key)) {
+            // If the key is one of the encrypted castable types, we'll first decrypt
+            // the value and update the cast type so we may leverage the following
+            // logic for casting this value to any additionally specified types.
+            if ($this->isEncryptedCastable($key)) {
+                $value = $this->fromEncryptedString($value);
+
+                $castType = Str::after($castType, 'encrypted:');
+            }
+
+            switch ($castType) {
                 case 'int':
                 case 'integer':
                     return (int) $value;
+                case 'real':
+                case 'float':
+                case 'double':
+                    return $this->fromFloat($value);
+                case 'decimal':
+                    return $this->asDecimal($value, explode(':', $this->getCasts()[$key], 2)[1]);
+                case 'string':
+                    return (string) $value;
+                case 'bool':
+                case 'boolean':
+                    return (bool) $value;
+                case 'object':
+                    return $this->fromJson($value, true);
+                case 'array':
+                case 'json':
+                    return $this->fromJson($value);
+                case 'collection':
+                    return new BaseCollection($this->fromJson($value));
+                case 'date':
+                    return $this->asDate($value);
+                case 'datetime':
+                case 'custom_datetime':
+                    return $this->asDateTime($value);
+                case 'immutable_date':
+                    return $this->asDate($value)->toImmutable();
+                case 'immutable_custom_datetime':
+                case 'immutable_datetime':
+                    return $this->asDateTime($value)->toImmutable();
+                case 'timestamp':
+                    return $this->asTimestamp($value);
                 case 'integer?':
                     if(is_numeric($value))
                     {
                         return (int) $value;
                     }
                     return null;
-                case 'real':
-                case 'float':
-                case 'double':
-                    return (float) $value;
-                case 'string':
                 case 'string?':
                     return (string) $value;
                 case 'bool?':
@@ -322,35 +365,19 @@ trait BaseTrait
                     }
 
                     return null;
-                case 'bool':
-                case 'boolean':
-                    return (bool) $value;
-                case 'object':
-                    return $this->fromJson($value, true);
-                case 'array':
-                case 'json':
-                    return $this->fromJson($value);
-                case 'collection':
-                    return new Collection($this->fromJson($value));
-                case 'date':
-                    return $this->asDate($value);
-                case 'datetime':
-                    return $this->asDateTime($value);
-                case 'timestamp':
-                    return $this->asTimestamp($value);
-                default:
-                    return $value;
             }
-        }catch (Exception $e){
-            echo '<pre>';
-            var_dump($e->getMessage());
-            var_dump($this->id);
-            var_dump(get_class($this));
-            var_dump($key);
-            var_dump($value);
-            echo '</pre>';
 
-            return '';
+            if ($this->isEnumCastable($key)) {
+                return $this->getEnumCastableAttributeValue($key, $value);
+            }
+
+            if ($this->isClassCastable($key)) {
+                return $this->getClassCastableAttributeValue($key, $value);
+            }
+
+            return $value;
+        }catch (Exception $e){
+            LoggerHelper::getLogger('cast')->error($e);
         }
     }
 
