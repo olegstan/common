@@ -298,9 +298,9 @@ trait BaseTrait
         try{
             $castType = $this->getCastType($key);
 
-            if (is_null($value) && in_array($castType, static::$primitiveCastTypes)) {
-                return $value;
-            }
+//            if (is_null($value) && in_array($castType, static::$primitiveCastTypes)) {
+//                return $value;
+//            }
 
             if (is_null($value)) {
                 return $value;
@@ -367,13 +367,13 @@ trait BaseTrait
                     return null;
             }
 
-            if ($this->isEnumCastable($key)) {
-                return $this->getEnumCastableAttributeValue($key, $value);
-            }
-
-            if ($this->isClassCastable($key)) {
-                return $this->getClassCastableAttributeValue($key, $value);
-            }
+//            if ($this->isEnumCastable($key)) {
+//                return $this->getEnumCastableAttributeValue($key, $value);
+//            }
+//
+//            if ($this->isClassCastable($key)) {
+//                return $this->getClassCastableAttributeValue($key, $value);
+//            }
 
             return $value;
         }catch (Exception $e){
