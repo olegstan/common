@@ -2,7 +2,9 @@
 
 namespace Common\Models\Interfaces\Catalog;
 
+use App\Models\Actives\Invests\Quotes\Currency;
 use App\Models\Actives\Invests\Quotes\Pif;
+use App\Models\Actives\Invests\QuotesAndPay\Etf;
 use App\Models\Actives\Invests\QuotesAndPay\Futures;
 use App\Models\Actives\Invests\QuotesAndPay\Obligation;
 use App\Models\Actives\Invests\QuotesAndPay\Stock;
