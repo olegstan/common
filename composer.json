@@ -14,7 +14,8 @@
   ],
   "require": {
     "php": ">=7.4.0,<8",
-    "ext-json": "*"
+    "ext-json": "*",
+    "nesbot/carbon": "^2.0@dev"
   },
   "autoload": {
     "psr-4": {

@@ -3,8 +3,10 @@
 namespace Common\Models\Catalog\Cbond;
 
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Currency;
+use Common\Models\Interfaces\Catalog\CouponInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 
 /**
  * @property $cbond_stock_id
@@ -15,8 +17,9 @@ use Illuminate\Support\Carbon;
  * @property $value
  * @property $valueprc
  * @property $value_rub
+ * @property CbondStock $item
  */
-class CbondCoupon extends BaseCatalog
+class CbondCoupon extends BaseCatalog implements CouponInterface
 {
     /**
      * @var string
@@ -64,9 +67,28 @@ class CbondCoupon extends BaseCatalog
     /**
      * @return float|null
      */
-    public function getCouponValue(): ?float
+    public function getCouponValue(Currency $currency): ?float
     {
-        return $this->value;
+        $bondCode = json_decode($this->item->faceunit);
+
+        if(isset($bondCode[0]))
+        {
+            $couponCurrency = Currency::getByCode($bondCode[0]);
+
+            if($currency->id === $couponCurrency->id)
+            {
+                return $this->value;
+            }else{
+                //если валюты отличаются то конвертим
+                return $currency->convert(
+                    $this->value,
+                    $couponCurrency->id,
+                    $this->getCouponDate()
+                );
+            }
+        }
+
+        return 0;
     }
 
     /**
