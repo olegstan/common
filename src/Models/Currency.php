@@ -1,6 +1,7 @@
 <?php
 
 namespace Common\Models;
+use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Catalog\Currency\CbCurrency;
 use Common\Models\Catalog\Currency\CbHistoryCurrencyCourse;
@@ -99,6 +100,7 @@ class Currency extends BaseCatalog
             return $sum * ($convertCourse->value / $convertCourse->nominal) / ($course->value / $course->nominal);
         }catch (Exception $e)
         {
+            LoggerHelper::getLogger('convert')->error($e);
             return $sum;
         }
     }
@@ -152,9 +154,12 @@ class Currency extends BaseCatalog
      */
     public function getRubCourseByDate($currency, Carbon $date)
     {
+        //нельзя кешировать навсегда, так как мы пробуем получить курс из будущего, а в итоге
+        //возвращаем самый последний, если кэш будет бессрочным, то курс устареет и будет показывать
+        //неправильные данные
         $cacheString = 'cb_currency.' . $currency->cb_currency->id . ':date.' . $date->format('Y-m-d');
 
-        return Cache::rememberForever($cacheString, static function () use ($currency, $date)
+        return Cache::remember($cacheString, Carbon::now()->addDay(), static function () use ($currency, $date)
         {
             return CbHistoryCurrencyCourse::where('currency_id', $currency->cb_currency->id)
                 ->where('date', '<', $date->format('Y-m-d'))
