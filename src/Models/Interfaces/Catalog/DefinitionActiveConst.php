@@ -90,6 +90,8 @@ interface DefinitionActiveConst
     const CAR_CREDIT = 9006;
     const FLAT_CREDIT = 9007;
     const CREDIT = 9008;
+    const ALIMONY = 9009;
+    const LOAN = 9010;
 
     const MONEY_ACTIVE = 10001;
 
@@ -254,7 +256,9 @@ interface DefinitionActiveConst
     const CREDIT_OBLIGATION_GROUP = [
         self::CAR_CREDIT,
         self::FLAT_CREDIT,
-        self::CREDIT
+        self::CREDIT,
+        self::ALIMONY,
+        self::LOAN,
     ];
 
     const PROPERTY_GROUP = [
