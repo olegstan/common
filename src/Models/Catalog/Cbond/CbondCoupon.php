@@ -96,6 +96,6 @@ class CbondCoupon extends BaseCatalog implements CouponInterface
      */
     public function item(): HasOne
     {
-        return $this->hasOne(CbondStock::class, 'cbond_stock_id');
+        return $this->hasOne(CbondStock::class, 'id', 'cbond_stock_id');
     }
 }

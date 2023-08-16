@@ -62,7 +62,7 @@ class MoscowExchangeDividend extends BaseCatalog
      */
     public function item(): HasOne
     {
-        return $this->hasOne(MoscowExchangeStock::class, 'moex_stock_id');
+        return $this->hasOne(MoscowExchangeStock::class, 'id', 'moex_stock_id');
     }
 
 }

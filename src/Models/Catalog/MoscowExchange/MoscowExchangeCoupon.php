@@ -106,6 +106,6 @@ class MoscowExchangeCoupon extends BaseCatalog implements CouponInterface
      */
     public function item(): HasOne
     {
-        return $this->hasOne(MoscowExchangeStock::class, 'moex_stock_id');
+        return $this->hasOne(MoscowExchangeStock::class, 'id', 'moex_stock_id');
     }
 }
