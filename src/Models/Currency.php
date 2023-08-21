@@ -23,9 +23,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Currency extends BaseCatalog
 {
-    const RUBBLE_ID = 1;
-    const DOLLAR_ID = 11;
-    const EURO_ID = 12;
+    const RUB_ID = 1;
+    const USD_ID = 12;
+    const EUR_ID = 13;
 
     const RUB = 'RUB';
     const USD = 'USD';
