@@ -72,14 +72,14 @@ class MoscowExchangeCoupon extends BaseCatalog implements CouponInterface
         //в таблице купонов однозначно определить валюту нельзя, поэтому можно брать из поля value_rub
         //далле считаем по курсу
         //для текущей и прошедших дат значение рассчитывается по курсу на соответствующую дату, для будущих выплат значение рассчитывается по курсу на текущую дату
-        if($currency->id === Currency::RUBBLE_ID)
+        if($currency->id === Currency::RUB_ID)
         {
             return $this->value_rub;
         }else{
             //если не рубль, то конвертим
             $value = $currency->convert(
                 $this->value_rub,
-                Currency::RUBBLE_ID,
+                Currency::RUB_ID,
                 $this->getCouponDate()
             );
             $couponValue = $this->value;
