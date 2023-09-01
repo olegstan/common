@@ -18,12 +18,12 @@ trait CbondRelationshipsTrait
     }
 
     /**
-     * @return HasOne
+     * @return HasMany
      * @deprecated
      */
-    public function history(): HasOne
+    public function history(): HasMany
     {
-        return $this->hasOne(CbondHistory::class, 'cbond_stock_id', 'id');
+        return $this->hasMany(CbondHistory::class, 'cbond_stock_id', 'id');
     }
 
     /**

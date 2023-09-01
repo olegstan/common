@@ -33,6 +33,7 @@ class YahooHistory extends BaseCatalog
         'close',
         'adj_close',
         'volume',
+        'symbol_stock_id',
     ];
 
     /**
@@ -47,6 +48,7 @@ class YahooHistory extends BaseCatalog
         'close' => 'double',
         'adj_close' => 'double',
         'volume' => 'double',
+        'symbol_stock_id' => 'integer',
     ];
 
     public $timestamps = false;

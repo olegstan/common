@@ -51,6 +51,7 @@ class MoscowExchangeHistory extends BaseCatalog
         'marketprice3tradesvalue',
         'waval',
         'faceunit',
+        'moex_stock_id',
     ];
     /**
      * @var array
@@ -73,6 +74,7 @@ class MoscowExchangeHistory extends BaseCatalog
         'marketprice3tradesvalue' => 'float',
         'waval' => 'float',
         'faceunit' => 'string',
+        'moex_stock_id' => 'integer',
     ];
 
     public $timestamps = false;
