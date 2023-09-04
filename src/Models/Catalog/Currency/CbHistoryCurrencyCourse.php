@@ -3,10 +3,12 @@
 namespace Common\Models\Catalog\Currency;
 
 use Common\Helpers\Curls\Currency\CbCurl;
+use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Cache;
 
 /**
  * @property $currency_id
@@ -73,13 +75,21 @@ class CbHistoryCurrencyCourse extends BaseCatalog
      * @param CbCurrency $currency
      * @param Carbon $startDate
      * @param Carbon $endDate
-     * @return void
+     * @return bool
      */
-    public static function loadHistory(CbCurrency $currency, Carbon $startDate, Carbon $endDate): void
+    public static function loadHistory(CbCurrency $currency, Carbon $startDate, Carbon $endDate): bool
     {
+        $key = $startDate->format('Y-m-d') . ' / ' . $endDate->format('Y-m-d');
+
+        if (Cache::has($key)) {
+            return Cache::get($key);
+        }
+
         $dataRows = CbCurl::getCourses($currency->cb_id, $startDate, $endDate);
 
         if (count($dataRows)) {
+            Cache::add($key, true, Carbon::now()->addDay());
+
             foreach ($dataRows as $row) {
                 $date = Carbon::createFromFormat('d.m.Y', (string)$row->attributes()->Date[0]);
 
@@ -96,7 +106,14 @@ class CbHistoryCurrencyCourse extends BaseCatalog
                     ]);
                 }
             }
+
+            return true;
         }
+
+        Cache::add($key, false, Carbon::now()->addDay());
+        LoggerHelper::getLogger()->info('No any history for ' . $currency->char_code);
+
+        return false;
     }
 
     /**

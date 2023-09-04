@@ -438,10 +438,11 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate
-     * @return void
+     * @return true
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate): void
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate): bool
     {
         //тк заранее все спаршено, будет заглушкой
+        return true;
     }
 }

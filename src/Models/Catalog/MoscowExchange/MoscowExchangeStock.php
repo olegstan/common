@@ -15,6 +15,7 @@ use Common\Models\Traits\Catalog\MoscowExchange\MoexRelationshipsTrait;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexReturnGetDataFunc;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexScopeTrait;
 use Carbon\Carbon;
+use Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Throwable;
@@ -603,15 +604,25 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate
+     * @return bool
      */
     public static function loadHistory($stock, Carbon $startDate, Carbon $endDate)
     {
+        $key = $startDate->format('Y-m-d') . ' / ' . $endDate->format('Y-m-d');
+
+        if (Cache::has($key)) {
+            return Cache::get($key);
+        }
+
         /**
          * @var MoscowExchangeStock $stock
          */
         $data = MoscowExchangeCurl::getHistory($stock, $startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
 
         if ($data) {
+
+            Cache::add($key, true, Carbon::now()->addDay());
+
             foreach ($data as $datum) {
                 $history = MoscowExchangeHistory::where('tradedate', '=', $datum['tradedate'])
                     ->where('secid', $datum['secid'])
@@ -636,12 +647,18 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                             $datum['marketprice3'] = $stock->facevalue * $datum['marketprice3'] / 100;
                         }
                     }
+
                     MoscowExchangeHistory::create($datum);
                 }
             }
-        } else {
-            LoggerHelper::getLogger()->info('No any history for ' . $stock->secid);
+
+            return true;
         }
+
+        Cache::add($key, false, Carbon::now()->addDay());
+        LoggerHelper::getLogger()->info('No any history for ' . $stock->secid);
+
+        return false;
     }
 
     /**

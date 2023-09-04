@@ -13,6 +13,7 @@ use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\Yahoo\YahooRelationshipsTrait;
 use Common\Models\Traits\Catalog\Yahoo\YahooReturnGetDataFunc;
 use Carbon\Carbon;
+use Cache;
 use Exception;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Traits\Catalog\Yahoo\YahooScopeTrait;
@@ -285,16 +286,24 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
      * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate
-     * @return void
+     * @return bool
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate): void
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate): bool
     {
+        $key = $startDate->format('Y-m-d') . ' / ' . $endDate->format('Y-m-d');
+
+        if (Cache::has($key)) {
+            return Cache::get($key);
+        }
+
         /**
          * @var YahooStock $stock
          */
         $data = YahooCurl::getHistoricalData($stock->symbol, YahooCurl::INTERVAL_1_DAY, $startDate, $endDate);
 
         if ($data) {
+            Cache::add($key, true, Carbon::now()->addDay());
+
             foreach ($data as $datum) {
                 $history = YahooHistory::where('date', '=', $datum['date']->format('Y-m-d'))
                     ->where('symbol', $stock->symbol)
@@ -313,9 +322,14 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                     ]);
                 }
             }
-        } else {
-            LoggerHelper::getLogger()->info('No any history for ' . $stock->symbol);
+
+            return true;
         }
+
+        Cache::add($key, false, Carbon::now()->addDay());
+        LoggerHelper::getLogger()->info('No any history for ' . $stock->symbol);
+
+        return false;
     }
 }
 
