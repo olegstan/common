@@ -84,7 +84,6 @@ class TradingViewCurl
                 $result->totalCount === 1 &&
                 isset($result->data[0]->d[$key]) &&
                 !empty($result->data[0]->d[$key])) {
-
                 //Получаем имя иконки из json
                 $nameImage = $result->data[0]->d[$key];
                 //определяем директорию, куда будет сохранена
@@ -236,9 +235,17 @@ class TradingViewCurl
                     'currency' => $currency,
                     'tick_size' => $datas['variable_tick_size'] ?? null,
                     'sector' => $datas['sector'] ?? null,
-                    'ru_sector' => $datas['sector'] ? GoogleTranslate::trans($datas['sector'], 'ru', 'en') : null,
+                    'ru_sector' => isset($datas['sector']) ? GoogleTranslate::trans(
+                        $datas['sector'],
+                        'ru',
+                        'en'
+                    ) : null,
                     'industry' => $datas['industry'] ?? null,
-                    'ru_industry' => $datas['sector'] ? GoogleTranslate::trans($datas['industry'], 'ru', 'en') : null,
+                    'ru_industry' => isset($datas['sector']) ? GoogleTranslate::trans(
+                        $datas['industry'],
+                        'ru',
+                        'en'
+                    ) : null,
                     'timezone' => $datas['timezone'] ?? null,
                     'session' => isset($datas['subsessions']) ? json_encode($datas['subsessions']) : null,
                     'capitalization' => $datas['market_cap_basic'] ?? null,
@@ -559,7 +566,6 @@ class TradingViewCurl
             ]);
         } catch (Exception $e) {
             LoggerHelper::getLogger('tradingview-error-create-ticker')->error($e);
-
             return false;
         }
     }
@@ -587,6 +593,14 @@ class TradingViewCurl
                     //если такого тикера еще нет, записываем в БД
                     if (!$ticker) {
                         $ticker = self::createTicker($pythonTicker);
+
+                        if ($ticker) {
+                            TradingViewCurl::parseData('symbol', $ticker->symbol);
+                            $ticker->is_parse = true;
+                            $ticker->save();
+                        } else {
+                            LoggerHelper::getLogger('tradingview-create-tickers')->error('Error creating the ticker');
+                        }
                     }
 
                     //у futures могут быть контракты (в TV выглядит как вложенный список)
@@ -594,22 +608,38 @@ class TradingViewCurl
                         //таких может быть несколько, так что записываем как отдельные тикеры, ведь родительский тикер нельзя искать по графику
                         foreach ($pythonTicker->contracts as $contract) {
                             $childrenTicker = TradingViewTicker::where('symbol', $contract->symbol)
-                                ->where('description', $contract->description)
+                                ->where(function ($query) use ($contract) {
+                                    if (isset($contract->description)) {
+                                        $query->where('description', $contract->description);
+                                    }
+                                })
                                 ->first();
 
                             if (!$childrenTicker) {
                                 //в массиве контрактов могут быть минимум 2 ключа (symbol, description), так что остальные берем от родителя
-                                TradingViewTicker::create([
+                                $childrenTicker = TradingViewTicker::create([
                                     'symbol' => $contract->symbol,
-                                    'description' => $contract->description,
+                                    'description' => $contract->description ?? null,
                                     'type' => $ticker->type ?? null,
                                     'provider_id' => $ticker->provider_id,
                                     'exchange' => $ticker->exchange,
                                     'currency' => $ticker->currency_code,
                                     'country' => $ticker->country,
-                                    'typespecs' => isset($contract->typespecs) ? json_encode($contract->typespecs) : null,
+                                    'typespecs' => isset($contract->typespecs) ? json_encode(
+                                        $contract->typespecs
+                                    ) : null,
                                     'parent_id' => $ticker->id,
                                 ]);
+
+                                if ($childrenTicker) {
+                                    TradingViewCurl::parseData('symbol', $childrenTicker->symbol);
+                                    $childrenTicker->is_parse = true;
+                                    $childrenTicker->save();
+                                } else {
+                                    LoggerHelper::getLogger('tradingview-create-tickers')->error(
+                                        'Error creating the childrenTicker'
+                                    );
+                                }
                             }
                         }
                     }
