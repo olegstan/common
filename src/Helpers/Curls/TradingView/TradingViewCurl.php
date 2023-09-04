@@ -619,7 +619,7 @@ class TradingViewCurl
                                 //в массиве контрактов могут быть минимум 2 ключа (symbol, description), так что остальные берем от родителя
                                 $childrenTicker = TradingViewTicker::create([
                                     'symbol' => $contract->symbol,
-                                    'description' => $contract->description ?? null,
+                                    'description' => $contract->description ?? '',
                                     'type' => $ticker->type ?? null,
                                     'provider_id' => $ticker->provider_id,
                                     'exchange' => $ticker->exchange,
