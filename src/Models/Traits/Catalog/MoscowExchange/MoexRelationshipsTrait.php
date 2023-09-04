@@ -36,7 +36,6 @@ trait MoexRelationshipsTrait
     public function history(): HasMany
     {
         return $this->hasMany(MoscowExchangeHistory::class, 'moex_stock_id', 'id');
-
     }
 
     /**

@@ -25,6 +25,14 @@ trait CurrencyRelationshipsTrait
     }
 
     /**
+     * @return HasMany
+     */
+    public function history(): HasMany
+    {
+        return $this->hasMany(CbHistoryCurrencyCourse::class, 'currency_id', 'id');
+    }
+
+    /**
      * @return HasOne
      */
     public function tradingview(): HasOne

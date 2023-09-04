@@ -31,6 +31,14 @@ trait TradingViewRelationshipsTrait
     /**
      * @return HasMany
      */
+    public function history(): HasMany
+    {
+        return $this->chartDays();
+    }
+
+    /**
+     * @return HasMany
+     */
     public function chartDays(): HasMany
     {
         return $this->hasMany(TradingViewChartDay::class, 'ticker_id', 'id');
