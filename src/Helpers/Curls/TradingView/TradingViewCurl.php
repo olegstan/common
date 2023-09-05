@@ -85,7 +85,9 @@ class TradingViewCurl
                 isset($result->data[0]->d[$key]) &&
                 !empty($result->data[0]->d[$key])) {
                 //Получаем имя иконки из json
-                $nameImage = $result->data[0]->d[$key];
+                $exp = explode('/', $result->data[0]->d[$key]);
+                //бывают (country/RU) случаи, так что отделим и запишем конец
+                $nameImage = count($exp) > 1 ? last($exp) : $exp[0];
                 //определяем директорию, куда будет сохранена
                 $path = base_path() . '/public/images/icons/' . $nameImage . '.svg';
                 //Составляем url по которой будем получать ссылку иконки
