@@ -332,12 +332,15 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      * @param bool $async
      * @return void
      */
-    public static function createAndGet($original,$text,$translitText,$foundStocks = null,&$items,$condition = null,bool $async = true) {
-
-        if ($foundStocks && $foundStocks instanceof CbondStock::class) {
-            return $foundStocks;
-        }
-
+    public static function createAndGet(
+        $original,
+        $text,
+        $translitText,
+        $foundStocks = null,
+        &$items,
+        $condition = null,
+        bool $async = true
+    ) {
         $splitedWords = self::fullTextWildcards($text);
 
         $stocksQuery = self::selectRaw(
