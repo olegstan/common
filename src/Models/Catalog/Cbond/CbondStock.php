@@ -17,69 +17,69 @@ use Carbon\Carbon;
 /**
  * Class CbondStock
  *
-* @property $id
-* @property $secid
-* @property $shortname
-* @property $regnumber
-* @property $name
-* @property $isin
-* @property $is_traded
-* @property $emitent_id
-* @property $emitent_title
-* @property $emitent_inn
-* @property $emitent_okpo
-* @property $gosreg
-* @property $type
-* @property $group
-* @property $primary_boardid
-* @property $marketprice_boardid
-* @property $issuedate
-* @property $matdate
-* @property $initialfacevalue
-* @property $faceunit
-* @property $latname
-* @property $startdatemoex
-* @property $earlyrepayment
-* @property $listlevel
-* @property $daystoredemption
-* @property $issuesize
-* @property $facevalue
-* @property $isqualifiedinvestors
-* @property $couponfrequency
-* @property $coupondate
-* @property $couponpercent
-* @property $couponvalue
-* @property $typename
-* @property $groupname
-* @property $market_id
-* @property $market
-* @property $engine_id
-* @property $engine
-* @property $decimals
-* @property $lotsize
-* @property $icons
-* @property $expiration
-* @property $boardid
-* @property $prevsettleprice
-* @property $minstep
-* @property $lasttradedate
-* @property $sectype
-* @property $assetcode
-* @property $prevopenposition
-* @property $lotvolume
-* @property $initialmargin
-* @property $highlimit
-* @property $lowlimit
-* @property $stepprice
-* @property $lastsettleprice
-* @property $prevprice
-* @property $imtime
-* @property $buysellfee
-* @property $scalperfee
-* @property $negotiatedfee
-* @property $exercisefee
-* @property $tv_ticker_id
-* @property $url
+ * @property $id
+ * @property $secid
+ * @property $shortname
+ * @property $regnumber
+ * @property $name
+ * @property $isin
+ * @property $is_traded
+ * @property $emitent_id
+ * @property $emitent_title
+ * @property $emitent_inn
+ * @property $emitent_okpo
+ * @property $gosreg
+ * @property $type
+ * @property $group
+ * @property $primary_boardid
+ * @property $marketprice_boardid
+ * @property $issuedate
+ * @property $matdate
+ * @property $initialfacevalue
+ * @property $faceunit
+ * @property $latname
+ * @property $startdatemoex
+ * @property $earlyrepayment
+ * @property $listlevel
+ * @property $daystoredemption
+ * @property $issuesize
+ * @property $facevalue
+ * @property $isqualifiedinvestors
+ * @property $couponfrequency
+ * @property $coupondate
+ * @property $couponpercent
+ * @property $couponvalue
+ * @property $typename
+ * @property $groupname
+ * @property $market_id
+ * @property $market
+ * @property $engine_id
+ * @property $engine
+ * @property $decimals
+ * @property $lotsize
+ * @property $icons
+ * @property $expiration
+ * @property $boardid
+ * @property $prevsettleprice
+ * @property $minstep
+ * @property $lasttradedate
+ * @property $sectype
+ * @property $assetcode
+ * @property $prevopenposition
+ * @property $lotvolume
+ * @property $initialmargin
+ * @property $highlimit
+ * @property $lowlimit
+ * @property $stepprice
+ * @property $lastsettleprice
+ * @property $prevprice
+ * @property $imtime
+ * @property $buysellfee
+ * @property $scalperfee
+ * @property $negotiatedfee
+ * @property $exercisefee
+ * @property $tv_ticker_id
+ * @property $url
  *
  * @package Models\Catalog\Cbond
  */
@@ -252,8 +252,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      */
     public function createBindActive($userId, $currency_id, $accountId, $classes)
     {
-        if(in_array($this->type, DefinitionCbondConst::BOND_VALUES))
-        {
+        if (in_array($this->type, DefinitionCbondConst::BOND_VALUES)) {
             return $classes['obligation']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
@@ -268,8 +267,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             ]);
         }
 
-        if(in_array($this->type, DefinitionCbondConst::PIF_VALUES))
-        {
+        if (in_array($this->type, DefinitionCbondConst::PIF_VALUES)) {
             return $classes['pif']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
@@ -280,7 +278,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             ]);
         }
 
-        if(in_array($this->type, DefinitionCbondConst::FUTURES_VALUE)){
+        if (in_array($this->type, DefinitionCbondConst::FUTURES_VALUE)) {
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
@@ -292,7 +290,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             ]);
         }
 
-        if(in_array($this->type, DefinitionCbondConst::ETF_VALUE)){
+        if (in_array($this->type, DefinitionCbondConst::ETF_VALUE)) {
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
@@ -303,7 +301,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             ]);
         }
 
-        if(in_array($this->type, DefinitionCbondConst::CURRENCY_VALUE)){
+        if (in_array($this->type, DefinitionCbondConst::CURRENCY_VALUE)) {
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
@@ -334,48 +332,16 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      * @param bool $async
      * @return void
      */
-    public static function createAndGet($original, $text, $translitText, $foundStocks = null, &$items, $condition = null, bool $async = true)
-    {
-        $secIds = [];
+    public static function createAndGet($original,$text,$translitText,$foundStocks = null,&$items,$condition = null,bool $async = true) {
 
-        $queueIds = [];
-        if ($foundStocks) {
-            foreach ($foundStocks as $foundStock) {
-                $secIds[$foundStock['isin']] = $foundStock['isin'];
-            }
-
-            $stockQuery = self::whereIn('isin', $secIds)
-                ->get()
-                ->keyBy('isin')
-                ->toArray();
-
-            foreach ($foundStocks as $foundStock) {
-                try {
-                    if (!isset($stockQuery[$foundStock['isin']])) {
-                        /**
-                         * @var CbondStock $createdStock
-                         */
-                        $createdStock = self::create($foundStock);
-
-                        if ($createdStock) {
-                            $createdStock->saveData();
-
-                            $queueIds[] = $createdStock->id;
-                        }
-                    }
-                } catch (Throwable $e) {
-                    LoggerHelper::getLogger()->error($e);
-                    LoggerHelper::getLogger()->error('move forward');
-                }
-            }
+        if ($foundStocks && $foundStocks instanceof CbondStock::class) {
+            return $foundStocks;
         }
 
         $splitedWords = self::fullTextWildcards($text);
 
         $stocksQuery = self::selectRaw(
-            '
-                    `cbond_stocks`.*, 
-                    MATCH (`cbond_stocks`.`name`,`cbond_stocks`.`isin`,`cbond_stocks`.`latname`,`cbond_stocks`.`shortname`) AGAINST (?) as relevance',
+            '`cbond_stocks`.*, MATCH (`cbond_stocks`.`name`,`cbond_stocks`.`isin`,`cbond_stocks`.`latname`,`cbond_stocks`.`shortname`) AGAINST (?) as relevance',
             [implode(' ', $splitedWords)]
         )
             ->search($original, $text, $translitText);
@@ -419,19 +385,6 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
                 ];
             }
         }
-    }
-
-    /**
-     * @param $text
-     * @param string $lang
-     * @param int $limit
-     * @param bool $cache
-     * @return bool
-     */
-    public static function search($text, string $lang = 'ru', int $limit = 50, bool $cache = true): bool
-    {
-        //тк заранее все спаршено, будет заглушкой
-        return true;
     }
 
     /**
