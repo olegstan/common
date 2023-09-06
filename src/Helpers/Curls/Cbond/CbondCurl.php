@@ -33,7 +33,7 @@ class CbondCurl
 
             $response = json_decode(Curl::get($url, [], [], 'cbond', $coockies));
 
-            if (isset($response['result']) && $response['result'] === 'success') {
+            if (isset($response->result) && $response->result === 'success') {
                 $stock = CbondStock::where(function ($query) use ($searchText) {
                     $query->where('isin', $searchText)
                         ->orWhere('shortname', $searchText)
