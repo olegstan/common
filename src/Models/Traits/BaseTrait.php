@@ -39,8 +39,8 @@ trait BaseTrait
 
     /**
      * @param $field
-     * @param $count
-     * @return string|void
+     * @param int $count
+     * @return string
      */
     public static function getUniqueHash($field, $count = 32)
     {
@@ -48,7 +48,7 @@ trait BaseTrait
             $hash = Str::random($count);
             $item = static::where($field, $hash)->first();
             if ($item) {
-                self::getUniqueHash($field, $count);
+                return self::getUniqueHash($field, $count);
             } else {
                 return $hash;
             }
