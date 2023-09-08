@@ -27,7 +27,6 @@ class UserNotification extends BaseModel
     public const READED = 2001;
     public const CONFIRMED = 3001;
     public const REFUSED = 4001;
-
     public const INFO = 5001;
 
     /**
@@ -36,6 +35,8 @@ class UserNotification extends BaseModel
     public const TRANSFERED_STOCK = 1001;
     public const CLOSE_INSURANCES = 1002;
     public const TOKEN_IS_NOT_VALID = 1003;
+
+    public const CONTACT_BIRTHDAY = 2003;
 
     /**
      * @var string
