@@ -54,7 +54,12 @@ class UserNotification extends BaseModel
     ];
 
     /**
-     * @param array $attributes
+     * @param array $attributes = [
+     *     'user_id' => (int),
+     *     'content' => (string),
+     *     'action_id' => (int),
+     *     'status' => (int)
+     * ]
      * @return UserNotification|BaseModel|null
      */
     public static function createRelations(array $attributes)
