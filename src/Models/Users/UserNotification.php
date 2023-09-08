@@ -9,6 +9,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property $content
+ * @property $user_id
+ * @property $status
+ * @property $action_id
+ */
 class UserNotification extends BaseModel
 {
     use UserNotificationRelationsTrait;
@@ -43,8 +49,6 @@ class UserNotification extends BaseModel
         'content',
         'user_id',
         'status',
-        'post_id',
-        'post_type',
         'action_id',
     ];
 

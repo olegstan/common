@@ -7,6 +7,12 @@ use Common\Models\Traits\Users\UserNotificationRelation\UserNotificationRelation
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @property $notification_id
+ * @property $post_type
+ * @property $post_id
+ * @property $comment
+ */
 class UserNotificationRelation extends BaseModel
 {
     use UserNotificationRelationsTrait;
@@ -35,4 +41,9 @@ class UserNotificationRelation extends BaseModel
         'post_id' => 'integer',
         'comment' => 'string',
     ];
+
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
 }
