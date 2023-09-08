@@ -7,6 +7,10 @@ use Common\Helpers\LoggerHelper;
 
 class Curl
 {
+    const CURLOPT_CONNECTTIMEOUT = 20;
+
+    const CURLOPT_TIMEOUT = 15;
+
     /**
      * @param $requests
      * @param int $timeout
@@ -26,7 +30,7 @@ class Curl
             curl_setopt($handles[$key], CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($handles[$key], CURLOPT_TIMEOUT, $timeout);
             curl_setopt($handles[$key], CURLOPT_MAXREDIRS, 10);
-            curl_setopt($handles[$key], CURLOPT_CONNECTTIMEOUT, 5);
+            curl_setopt($handles[$key], CURLOPT_CONNECTTIMEOUT, static::CURLOPT_CONNECTTIMEOUT);
             if ($request['headers']) {
                 curl_setopt($handles[$key], CURLOPT_HTTPHEADER, $request['headers']);
             }
@@ -122,8 +126,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => 15,
-                CURLOPT_CONNECTTIMEOUT => 2,
+                CURLOPT_TIMEOUT => static::CURLOPT_TIMEOUT,
+                CURLOPT_CONNECTTIMEOUT => static::CURLOPT_CONNECTTIMEOUT,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
@@ -195,8 +199,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => 15,
-                CURLOPT_CONNECTTIMEOUT => 20,
+                CURLOPT_TIMEOUT => static::CURLOPT_TIMEOUT,
+                CURLOPT_CONNECTTIMEOUT => static::CURLOPT_CONNECTTIMEOUT,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
@@ -266,8 +270,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => 15,
-                CURLOPT_CONNECTTIMEOUT => 2,
+                CURLOPT_TIMEOUT => static::CURLOPT_TIMEOUT,
+                CURLOPT_CONNECTTIMEOUT => static::CURLOPT_CONNECTTIMEOUT,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
@@ -336,8 +340,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => 15,
-                CURLOPT_CONNECTTIMEOUT => 2,
+                CURLOPT_TIMEOUT => static::CURLOPT_TIMEOUT,
+                CURLOPT_CONNECTTIMEOUT => static::CURLOPT_CONNECTTIMEOUT,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]

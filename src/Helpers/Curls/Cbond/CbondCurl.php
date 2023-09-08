@@ -9,6 +9,10 @@ use Cache;
 
 class CbondCurl
 {
+    const CURLOPT_CONNECTTIMEOUT = 15;
+
+    const CURLOPT_TIMEOUT = 60;
+
     public const API_URL = 'http://46.8.220.5:8000/?text=';
 
     /**
