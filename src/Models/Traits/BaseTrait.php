@@ -145,26 +145,6 @@ trait BaseTrait
     }
 
     /**
-     * @param $query
-     * @param Carbon $data
-     * @param string $field
-     */
-    public function scopeWhereDay($query, Carbon $data, $field = 'created_at')
-    {
-        $data2 = clone $data;
-        $query->where($field, '>=', $data)->where($field, '<', $data2->addDay());
-    }
-
-    /**
-     * @param $query
-     * @param string $field
-     */
-    public function scopeWhereToday($query, $field = 'created_at')
-    {
-        $query->whereDay(Carbon::today(), $field);
-    }
-
-    /**
      * @param $field
      * @return int
      */
