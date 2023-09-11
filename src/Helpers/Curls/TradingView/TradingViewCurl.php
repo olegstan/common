@@ -300,18 +300,40 @@ class TradingViewCurl
                 ->where('description', $datas['description'])
                 ->first();
 
-            foreach ($datas as $key => $data) {
-                $tradingViewKey = TradingViewKey::where('key', $key)->value('id');
-                $date = Carbon::now();
+            //сразу найдем все ключи которые у нас записаны
+            $tradingViewKeys = TradingViewKey::get()->toArray();
 
-                if ($tradingViewKey && $tickerId) {
+            //из числового индекса конвертнем в тестовый ключ равный ключам найденных данных 
+            foreach ($tradingViewKeys as $key => $value) {
+                self::changeKeyArrays($key, $value['key'], $tradingViewKeys);
+            }
+
+            $dataKeys = [];
+
+            foreach ($tradingViewKeys as $key => $tradingViewKey) {
+                if (array_key_exists($key, $datas) &&
+                    (strpos($key, '_fq') ||
+                        strpos($key, '_fy') ||
+                        strpos($key, '_ttm'))) {
+                    $dataKeys[$key] = $datas[$key];
+                }
+            }
+
+            foreach ($dataKeys as $key => $data) {
+                if (empty($dataKeys)) {
+                    break;
+                }
+
+                if (isset($keyId) && $tickerId) {
+                    $date = Carbon::now();
+
                     //Кварталы
                     if (strpos($key, '_fq')) {
-                        self::quarter($data, $date, $tradingViewKey, $tickerId);
+                        self::quarter($data, $date, $tradingViewKeys[$key]['id'], $tickerId);
                     }
                     //Года
                     if (strpos($key, '_fy')) {
-                        self::year($data, $date, $tradingViewKey, $tickerId);
+                        self::year($data, $date, $tradingViewKeys[$key]['id'], $tickerId);
                     }
                     //ttm - вроде бы текущий момент
                     if (strpos($key, '_ttm')) {
@@ -346,7 +368,6 @@ class TradingViewCurl
                 $quarterAll = TradingViewQuarter::where('key_id', $tradingViewKey)
                     ->where('ticker_id', $tickerId->id)
                     ->where('year', (string)$lastQuarter->year)
-                    ->where('value', $datum)
                     ->where('quarter', $lastQuarter->quarter)
                     ->first();
 
@@ -367,7 +388,6 @@ class TradingViewCurl
             $quarterOne = TradingViewQuarter::where('key_id', $tradingViewKey)
                 ->where('ticker_id', $tickerId->id)
                 ->where('year', $date->format('Y'))
-                ->where('value', $data)
                 ->where('quarter', $date->quarter)
                 ->first();
 
@@ -707,5 +727,23 @@ class TradingViewCurl
         }
 
         return $ticker;
+    }
+
+    /**
+     * @param $key
+     * @param $new_key
+     * @param $arr
+     * @return bool
+     */
+    public static function changeKeyArrays($key, $new_key, &$arr)
+    {
+        if (!array_key_exists($new_key, $arr)) {
+            $arr[$new_key] = $arr[$key];
+            unset($arr[$key]);
+
+            return true;
+        }
+
+        return false;
     }
 }
