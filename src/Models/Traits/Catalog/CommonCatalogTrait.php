@@ -50,30 +50,45 @@ trait CommonCatalogTrait
      * @param $prompt
      * @return mixed
      */
-    public static function promptScopeSearch($original, $text, $translitText, $query, $prompt)
+    public static function promptScopeSearch($original, $text, $translitText, $query, $prompt, $likePrompt)
     {
         $originalWords = BaseCatalog::fullTextWildcards($original);
         $splitedWords = BaseCatalog::fullTextWildcards($text);
         $splitedTranslitWords = BaseCatalog::fullTextWildcards($translitText);
 
-        return $query->where(function ($query) use ($originalWords, $prompt) {
+        return $query->where(function ($query) use ($originalWords, $prompt, $likePrompt) {
             if ($originalWords) {
                 foreach ($originalWords as $word) {
-                    $query->whereRaw($prompt, $word);
+                    $query->whereRaw($prompt, $word)
+                        ->orWhere(function ($queryRaw) use ($likePrompt, $word) {
+                            foreach ($likePrompt as $item) {
+                                $queryRaw->orWhereRaw($item, str_replace('*', '%', $word));
+                            }
+                        });
                 }
             }
         })
-            ->orWhere(function ($query) use ($splitedWords, $prompt) {
+            ->orWhere(function ($query) use ($splitedWords, $prompt, $likePrompt) {
                 if ($splitedWords) {
                     foreach ($splitedWords as $word) {
-                        $query->whereRaw($prompt, $word);
+                        $query->whereRaw($prompt, $word)
+                            ->orWhere(function ($queryRaw) use ($likePrompt, $word) {
+                                foreach ($likePrompt as $item) {
+                                    $queryRaw->orWhereRaw($item, str_replace('*', '%', $word));
+                                }
+                            });
                     }
                 }
             })
-            ->orWhere(function ($query) use ($splitedTranslitWords, $prompt) {
+            ->orWhere(function ($query) use ($splitedTranslitWords, $prompt, $likePrompt) {
                 if ($splitedTranslitWords) {
                     foreach ($splitedTranslitWords as $word) {
-                        $query->whereRaw($prompt, $word);
+                        $query->whereRaw($prompt, $word)
+                            ->orWhere(function ($queryRaw) use ($likePrompt, $word) {
+                                foreach ($likePrompt as $item) {
+                                    $queryRaw->orWhereRaw($item, str_replace('*', '%', $word));
+                                }
+                            });
                     }
                 }
             });

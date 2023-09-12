@@ -15,6 +15,7 @@ trait CbondScopeTrait
     public function scopeSearch($query, $original, $text, $translitText)
     {
         $prompt = 'MATCH (`cbond_stocks`.`name`,`cbond_stocks`.`isin`,`cbond_stocks`.`latname`,`cbond_stocks`.`shortname`) AGAINST (? IN BOOLEAN MODE)';
-        self::promptScopeSearch($original, $text, $translitText, $query, $prompt);
+        $likePrompt = ['cbond_stocks.name LIKE ?','cbond_stocks.isin LIKE ?','cbond_stocks.latname LIKE ?','cbond_stocks.shortname LIKE ?',];
+        self::promptScopeSearch($original, $text, $translitText, $query, $prompt, $likePrompt);
     }
 }

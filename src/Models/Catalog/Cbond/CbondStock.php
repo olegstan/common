@@ -349,7 +349,6 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
         )
             ->search($original, $text, $translitText);
 
-
         if ($condition) {
             $condition($stocksQuery);
         }
@@ -381,10 +380,6 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
                     'decimals' => $item->decimals,
                     'lotsize' => $item->getLotSize(),
                     'symbol' => $item->getSymbol(),
-//                    'country' => $item->tradingview ? $item->tradingview->country : '',
-//                    'industry' => $item->tradingview ? $item->tradingview->industry : '',
-//                    'sector' => $item->tradingview ? $item->tradingview->sector : '',
-//                    'capitalization' => $item->tradingview ? $item->tradingview->capitalization : '',
                 ];
             }
         }

@@ -13,6 +13,7 @@ trait YahooScopeTrait
     public function scopeSearch($query, $original, $text, $translitText)
     {
         $prompt = 'MATCH (`yahoo_stocks`.`symbol`, `yahoo_stocks`.`name`) AGAINST (? IN BOOLEAN MODE)';
-        self::promptScopeSearch($original, $text, $translitText, $query, $prompt);
+        $likePrompt = ['yahoo_stocks.symbol LIKE ?','yahoo_stocks.name LIKE ?'];
+        self::promptScopeSearch($original, $text, $translitText, $query, $prompt, $likePrompt);
     }
 }

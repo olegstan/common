@@ -14,6 +14,7 @@ trait CurrencyScopeTrait
     public function scopeSearch($query, $original, $text, $translitText)
     {
         $prompt = 'MATCH (char_code, name) AGAINST (? IN BOOLEAN MODE)';
-        self::promptScopeSearch($original, $text, $translitText, $query, $prompt);
+        $likePrompt = ['name LIKE ?','char_code LIKE ?'];
+        self::promptScopeSearch($original, $text, $translitText, $query, $prompt, $likePrompt);
     }
 }
