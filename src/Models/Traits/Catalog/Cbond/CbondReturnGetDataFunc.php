@@ -184,7 +184,8 @@ trait CbondReturnGetDataFunc
      */
     public function getName(): string
     {
-        return $this->getType() . ' ' . $this->name . ' ' . $this->isin;
+        $name = $this->name ?? $this->shortname;
+        return $this->getType() . ' ' . $name . ' ' . $this->isin;
     }
 
     /**

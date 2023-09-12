@@ -361,13 +361,14 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
         if ($stocks) {
             foreach ($stocks as $item) {
                 $typeId = $item->getType();
+                $name = $item->name ?? $item->shortname;
 
                 /**
                  * @var CbondStock $item
                  */
                 $items[] = [
                     'id' => $item->id,
-                    'name' => $item->name . ' ' . $item->isin,
+                    'name' => $name . ' ' . $item->isin,
                     'type_id' => $typeId,
                     'type_text' => $item->getTypeText(),
                     'currency_id' => $item->getCurrency(),
