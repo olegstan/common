@@ -2,14 +2,17 @@
 
 namespace Common\Helpers\Curls;
 
-
 use Common\Helpers\LoggerHelper;
 
 class Curl
 {
-    const CURLOPT_CONNECTTIMEOUT = 20;
+    //таймайут соединения для поиска с сайта
+    protected const CURLOPT_CONNECTTIMEOUT = 20;
+    protected const CURLOPT_TIMEOUT = 15;
 
-    const CURLOPT_TIMEOUT = 15;
+    //таймаут соединения для консольных команд
+    protected const COMMAND_CURLOPT_CONNECTTIMEOUT = 300;
+    protected const COMMAND_CURLOPT_TIMEOUT = 300;
 
     /**
      * @param $requests
@@ -19,6 +22,12 @@ class Curl
      */
     public static function multiGet($requests, int $timeout = 10, int $max_retries = 3): array
     {
+        $connect = static::COMMAND_CURLOPT_CONNECTTIMEOUT;
+
+        if (class_exists('App\Helpers\SearchActiveController\SearchActive', false)) {
+            $connect = static::CURLOPT_CONNECTTIMEOUT;
+        }
+
         // инициализируем мульти-ручку и массив дескрипторов
         $multi_handle = curl_multi_init();
         $handles = array();
@@ -30,7 +39,8 @@ class Curl
             curl_setopt($handles[$key], CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($handles[$key], CURLOPT_TIMEOUT, $timeout);
             curl_setopt($handles[$key], CURLOPT_MAXREDIRS, 10);
-            curl_setopt($handles[$key], CURLOPT_CONNECTTIMEOUT, static::CURLOPT_CONNECTTIMEOUT);
+            curl_setopt($handles[$key], CURLOPT_CONNECTTIMEOUT, $connect);
+
             if ($request['headers']) {
                 curl_setopt($handles[$key], CURLOPT_HTTPHEADER, $request['headers']);
             }
@@ -113,6 +123,14 @@ class Curl
      */
     public static function get($url, $params = [], $headers = [], $channel, string &$cookies = '', bool $log = true)
     {
+        $connect = static::COMMAND_CURLOPT_CONNECTTIMEOUT;
+        $timeout = static::COMMAND_CURLOPT_TIMEOUT;
+
+        if (class_exists('App\Helpers\SearchActiveController\SearchActive', false)) {
+            $connect = static::CURLOPT_CONNECTTIMEOUT;
+            $timeout = static::CURLOPT_TIMEOUT;
+        }
+
         $options = [];
         $url .= ($params ? '?' . http_build_query($params) : '');
 
@@ -126,8 +144,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => static::CURLOPT_TIMEOUT,
-                CURLOPT_CONNECTTIMEOUT => static::CURLOPT_CONNECTTIMEOUT,
+                CURLOPT_TIMEOUT => $timeout,
+                CURLOPT_CONNECTTIMEOUT => $connect,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
@@ -184,8 +202,15 @@ class Curl
      */
     public static function post($url, $params, $headers = [], $channel, string &$cookies = '', bool $log = true)
     {
-        $options = [];
+        $connect = static::COMMAND_CURLOPT_CONNECTTIMEOUT;
+        $timeout = static::COMMAND_CURLOPT_TIMEOUT;
 
+        if (class_exists('App\Helpers\SearchActiveController\SearchActive', false)) {
+            $connect = static::CURLOPT_CONNECTTIMEOUT;
+            $timeout = static::CURLOPT_TIMEOUT;
+        }
+
+        $options = [];
         $options[CURLOPT_POST] = true;
         $options[CURLOPT_POSTFIELDS] = $params;
 
@@ -199,8 +224,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => static::CURLOPT_TIMEOUT,
-                CURLOPT_CONNECTTIMEOUT => static::CURLOPT_CONNECTTIMEOUT,
+                CURLOPT_TIMEOUT => $timeout,
+                CURLOPT_CONNECTTIMEOUT => $connect,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
@@ -255,8 +280,15 @@ class Curl
      */
     public static function put($url, $params, $headers = [], $channel, string &$cookies = '', bool $log = true)
     {
-        $options = [];
+        $connect = static::COMMAND_CURLOPT_CONNECTTIMEOUT;
+        $timeout = static::COMMAND_CURLOPT_TIMEOUT;
 
+        if (class_exists('App\Helpers\SearchActiveController\SearchActive', false)) {
+            $connect = static::CURLOPT_CONNECTTIMEOUT;
+            $timeout = static::CURLOPT_TIMEOUT;
+        }
+
+        $options = [];
         $options[CURLOPT_CUSTOMREQUEST] = 'PUT';
         $options[CURLOPT_POSTFIELDS] = $params;
 
@@ -270,8 +302,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => static::CURLOPT_TIMEOUT,
-                CURLOPT_CONNECTTIMEOUT => static::CURLOPT_CONNECTTIMEOUT,
+                CURLOPT_TIMEOUT => $timeout,
+                CURLOPT_CONNECTTIMEOUT => $connect,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
@@ -326,8 +358,15 @@ class Curl
      */
     public static function delete($url, $params, $headers = [], $channel, string &$cookies = '', bool $log = true)
     {
-        $options = [];
+        $connect = static::COMMAND_CURLOPT_CONNECTTIMEOUT;
+        $timeout = static::COMMAND_CURLOPT_TIMEOUT;
 
+        if (class_exists('App\Helpers\SearchActiveController\SearchActive', false)) {
+            $connect = static::CURLOPT_CONNECTTIMEOUT;
+            $timeout = static::CURLOPT_TIMEOUT;
+        }
+
+        $options = [];
         $options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
 
         if (!empty($cookies)) {
@@ -340,8 +379,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => static::CURLOPT_TIMEOUT,
-                CURLOPT_CONNECTTIMEOUT => static::CURLOPT_CONNECTTIMEOUT,
+                CURLOPT_TIMEOUT => $timeout,
+                CURLOPT_CONNECTTIMEOUT => $connect,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
