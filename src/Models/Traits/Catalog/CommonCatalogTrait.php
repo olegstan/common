@@ -48,6 +48,7 @@ trait CommonCatalogTrait
      * @param $translitText
      * @param $query
      * @param $prompt
+     * @param $likePrompt
      * @return mixed
      */
     public static function promptScopeSearch($original, $text, $translitText, $query, $prompt, $likePrompt)
@@ -60,9 +61,11 @@ trait CommonCatalogTrait
             if ($originalWords) {
                 foreach ($originalWords as $word) {
                     $query->whereRaw($prompt, $word)
-                        ->orWhere(function ($queryRaw) use ($likePrompt, $word) {
-                            foreach ($likePrompt as $item) {
-                                $queryRaw->orWhereRaw($item, str_replace('*', '%', $word));
+                        ->orWhere(function ($queryRaw) use ($likePrompt, $word, $originalWords) {
+                            if (count($originalWords) === 1) {
+                                foreach ($likePrompt as $item) {
+                                    $queryRaw->orWhereRaw($item, str_replace('*', '%', $word));
+                                }
                             }
                         });
                 }
@@ -72,9 +75,11 @@ trait CommonCatalogTrait
                 if ($splitedWords) {
                     foreach ($splitedWords as $word) {
                         $query->whereRaw($prompt, $word)
-                            ->orWhere(function ($queryRaw) use ($likePrompt, $word) {
-                                foreach ($likePrompt as $item) {
-                                    $queryRaw->orWhereRaw($item, str_replace('*', '%', $word));
+                            ->orWhere(function ($queryRaw) use ($likePrompt, $word, $splitedWords) {
+                                if (count($splitedWords) === 1) {
+                                    foreach ($likePrompt as $item) {
+                                        $queryRaw->orWhereRaw($item, str_replace('*', '%', $word));
+                                    }
                                 }
                             });
                     }
@@ -84,9 +89,11 @@ trait CommonCatalogTrait
                 if ($splitedTranslitWords) {
                     foreach ($splitedTranslitWords as $word) {
                         $query->whereRaw($prompt, $word)
-                            ->orWhere(function ($queryRaw) use ($likePrompt, $word) {
-                                foreach ($likePrompt as $item) {
-                                    $queryRaw->orWhereRaw($item, str_replace('*', '%', $word));
+                            ->orWhere(function ($queryRaw) use ($likePrompt, $word, $splitedTranslitWords) {
+                                if (count($splitedTranslitWords) === 1) {
+                                    foreach ($likePrompt as $item) {
+                                        $queryRaw->orWhereRaw($item, str_replace('*', '%', $word));
+                                    }
                                 }
                             });
                     }

@@ -77,29 +77,29 @@ class CbHistoryCurrencyCourse extends BaseCatalog
      * @param Carbon $endDate
      * @return bool
      */
-    public static function loadHistory(CbCurrency $currency, Carbon $startDate, Carbon $endDate): bool
+    public static function loadHistory(CbCurrency $stock, Carbon $startDate, Carbon $endDate): bool
     {
-        $key = $startDate->format('Y-m-d') . ' / ' . $endDate->format('Y-m-d');
+        [$bool, $result] = self::cacheHistory($stock, $startDate, $endDate);
 
-        if (Cache::has($key)) {
-            return Cache::get($key);
+        if ($bool) {
+            return $result;
         }
 
-        $dataRows = CbCurl::getCourses($currency->cb_id, $startDate, $endDate);
+        $dataRows = CbCurl::getCourses($stock->cb_id, $startDate, $endDate);
 
         if (count($dataRows)) {
-            Cache::add($key, true, Carbon::now()->addDay());
+            Cache::add($result, true, Carbon::now()->addDay());
 
             foreach ($dataRows as $row) {
                 $date = Carbon::createFromFormat('d.m.Y', (string)$row->attributes()->Date[0]);
 
-                $cbCurrencyHistory = self::where('currency_id', $currency->id)
+                $cbCurrencyHistory = self::where('currency_id', $stock->id)
                     ->where('date', $date->format('Y-m-d'))
                     ->first();
 
                 if (!$cbCurrencyHistory) {
                     self::create([
-                        'currency_id' => $currency->id,
+                        'currency_id' => $stock->id,
                         'value' => (float)str_replace(',', '.', $row->Value),
                         'nominal' => (float)str_replace(',', '.', $row->Nominal),
                         'date' => $date->format('Y-m-d'),
@@ -110,8 +110,8 @@ class CbHistoryCurrencyCourse extends BaseCatalog
             return true;
         }
 
-        Cache::add($key, false, Carbon::now()->addDay());
-        LoggerHelper::getLogger()->info('No any history for ' . $currency->char_code);
+        Cache::add($result, false, Carbon::now()->addDay());
+        LoggerHelper::getLogger()->info('No any history for ' . $stock->char_code);
 
         return false;
     }

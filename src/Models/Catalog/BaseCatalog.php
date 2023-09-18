@@ -4,6 +4,7 @@ namespace Common\Models\Catalog;
 
 use Common\Models\Base;
 use Common\Models\BaseModel;
+use Cache;
 
 /**
  * Class BaseStock
@@ -21,6 +22,23 @@ class BaseCatalog extends BaseModel
         //back.fincatalog.currencies, должно быть fincatalog.currencies
         $reflectionMethod = new \ReflectionMethod(get_parent_class(get_parent_class(get_parent_class($this))), '__construct');
         $reflectionMethod->invoke($this, $attributes);
+    }
+
+    /**
+     * @param $stock
+     * @param $startDate
+     * @param $endDate
+     * @return array
+     */
+    public static function cacheHistory($stock, $startDate, $endDate): array
+    {
+        $key = $stock->getMorphClass() . '.' . $stock->id . '.' . $startDate->format('Y-m-d') . '/' . $endDate->format('Y-m-d');
+
+        if (Cache::has($key)) {
+            return [true, Cache::get($key)];
+        }
+
+        return [false, $key];
     }
 
     /**
