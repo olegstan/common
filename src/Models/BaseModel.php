@@ -26,4 +26,19 @@ class BaseModel extends Model
         $this->table = config('database.connections.mysql.database') . '.' . $this->table;
         parent::__construct($attributes);
     }
+
+    /**
+     * @return string
+     */
+    public function getTableWithoutPrefix(): string
+    {
+        $table = $this->getTable();
+        $explodes = explode('.', $table);
+
+        if (count($explodes) === 2) {
+            return end($explodes);
+        }
+
+        return $table;
+    }
 }
