@@ -19,14 +19,14 @@ class CbondCurl
      * @param bool $cache
      * @return false|mixed
      */
-    public static function search($searchText, string $lang = 'ru', int $limit = 50, bool $cache = false)
+    public static function search($searchText, string $lang = 'ru', int $limit = 50, bool $cache = true)
     {
         try {
             if (Cache::has('cbond' . $searchText)) {
                 return Cache::get('cbond' . $searchText);
             }
 
-            $url = self::API_URL . $searchText . '&no_cache=' . $cache;
+            $url = self::API_URL . $searchText . '&cache=' . $cache;
             $coockies = '';
 
             $response = json_decode(Curl::get($url, [], [], 'cbond', $coockies));
