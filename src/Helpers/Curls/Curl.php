@@ -7,8 +7,8 @@ use Common\Helpers\LoggerHelper;
 class Curl
 {
     //таймайут соединения для поиска с сайта
-    protected const CURLOPT_CONNECTTIMEOUT = 20;
-    protected const CURLOPT_TIMEOUT = 15;
+    protected const CURLOPT_CONNECTTIMEOUT = 30;
+    protected const CURLOPT_TIMEOUT = 30;
 
     //таймаут соединения для консольных команд
     protected const COMMAND_CURLOPT_CONNECTTIMEOUT = 300;
