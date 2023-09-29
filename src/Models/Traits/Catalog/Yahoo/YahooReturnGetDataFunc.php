@@ -17,7 +17,7 @@ trait YahooReturnGetDataFunc
     /**
      * @return int
      */
-    public function getType()
+    public function getType(): int
     {
         if (in_array($this->type_disp, self::ETF_VALUE)) {
             return DefinitionActiveConst::ETF;

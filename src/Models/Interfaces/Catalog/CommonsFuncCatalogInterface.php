@@ -4,6 +4,8 @@ namespace Common\Models\Interfaces\Catalog;
 
 interface CommonsFuncCatalogInterface
 {
+    public function getType(): int;
+
     public function getTypeText();
 
     public function getLotSize();

@@ -41,6 +41,8 @@ interface DefinitionMoexConst
     ];
 
     public const PIF_VALUES = [
+        'public_ppif',
+        'private_ppif',
         'exchange_ppif',
     ];
 }

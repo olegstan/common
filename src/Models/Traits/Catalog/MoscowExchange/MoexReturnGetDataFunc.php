@@ -32,8 +32,13 @@ trait MoexReturnGetDataFunc
     /**
      * @return int
      */
-    public function getType()
+    public function getType(): int
     {
+        if(in_array($this->type, self::PIF_VALUES))
+        {
+            return DefinitionActiveConst::PIF;
+        }
+
         if(in_array($this->type, self::BOND_VALUES))
         {
             return DefinitionActiveConst::OBLIGATION;
