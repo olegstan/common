@@ -3,6 +3,7 @@
 namespace Common\Helpers\Curls;
 
 use Common\Helpers\LoggerHelper;
+use App;
 
 class Curl
 {
@@ -15,6 +16,22 @@ class Curl
     protected const COMMAND_CURLOPT_TIMEOUT = 300;
 
     /**
+     * @return int
+     */
+    public static function getTimeout()
+    {
+        return static::CURLOPT_TIMEOUT;
+    }
+
+    /**
+     * @return int
+     */
+    public static function getConnectionTimeout()
+    {
+        return static::CURLOPT_CONNECTTIMEOUT;
+    }
+    
+    /**
      * @param $requests
      * @param int $timeout
      * @param int $max_retries
@@ -22,12 +39,6 @@ class Curl
      */
     public static function multiGet($requests, int $timeout = 10, int $max_retries = 3): array
     {
-        $connect = static::COMMAND_CURLOPT_CONNECTTIMEOUT;
-
-        if (class_exists('App\Helpers\SearchActiveController\SearchActive', false)) {
-            $connect = static::CURLOPT_CONNECTTIMEOUT;
-        }
-
         // инициализируем мульти-ручку и массив дескрипторов
         $multi_handle = curl_multi_init();
         $handles = array();
@@ -39,7 +50,7 @@ class Curl
             curl_setopt($handles[$key], CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($handles[$key], CURLOPT_TIMEOUT, $timeout);
             curl_setopt($handles[$key], CURLOPT_MAXREDIRS, 10);
-            curl_setopt($handles[$key], CURLOPT_CONNECTTIMEOUT, $connect);
+            curl_setopt($handles[$key], CURLOPT_CONNECTTIMEOUT, static::getConnectionTimeout());
 
             if ($request['headers']) {
                 curl_setopt($handles[$key], CURLOPT_HTTPHEADER, $request['headers']);
@@ -123,14 +134,6 @@ class Curl
      */
     public static function get($url, $params = [], $headers = [], $channel, string &$cookies = '', bool $log = true)
     {
-        $connect = static::COMMAND_CURLOPT_CONNECTTIMEOUT;
-        $timeout = static::COMMAND_CURLOPT_TIMEOUT;
-
-        if (class_exists('App\Helpers\SearchActiveController\SearchActive', false)) {
-            $connect = static::CURLOPT_CONNECTTIMEOUT;
-            $timeout = static::CURLOPT_TIMEOUT;
-        }
-
         $options = [];
         $url .= ($params ? '?' . http_build_query($params) : '');
 
@@ -144,8 +147,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => $timeout,
-                CURLOPT_CONNECTTIMEOUT => $connect,
+                CURLOPT_TIMEOUT => static::getTimeout(),
+                CURLOPT_CONNECTTIMEOUT => static::getConnectionTimeout(),
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
@@ -161,20 +164,7 @@ class Curl
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $headers = array_filter(explode("\r\n", substr($response, 0, $header_size)));
 
-        $response_headers = [];
-        foreach ($headers as $header) {
-            if (strpos($header, ":")) {
-                $key = mb_substr($header, 0, strpos($header, ":"));
-                $value = mb_substr($header, strpos($header, ":") + 1, mb_strlen($header) - strpos($header, ":"));
-                $response_headers[$key] = $value;
-
-                if ($key === 'set-cookie') {
-                    $cookies = $value;
-                }
-            } else {
-                continue;
-            }
-        }
+        $response_headers = static::readResponseHeaders($headers, $cookies);
 
         $response = substr($response, $header_size);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -202,14 +192,6 @@ class Curl
      */
     public static function post($url, $params, $headers = [], $channel, string &$cookies = '', bool $log = true)
     {
-        $connect = static::COMMAND_CURLOPT_CONNECTTIMEOUT;
-        $timeout = static::COMMAND_CURLOPT_TIMEOUT;
-
-        if (class_exists('App\Helpers\SearchActiveController\SearchActive', false)) {
-            $connect = static::CURLOPT_CONNECTTIMEOUT;
-            $timeout = static::CURLOPT_TIMEOUT;
-        }
-
         $options = [];
         $options[CURLOPT_POST] = true;
         $options[CURLOPT_POSTFIELDS] = $params;
@@ -224,8 +206,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => $timeout,
-                CURLOPT_CONNECTTIMEOUT => $connect,
+                CURLOPT_TIMEOUT => static::getTimeout(),
+                CURLOPT_CONNECTTIMEOUT => static::getConnectionTimeout(),
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
@@ -239,20 +221,7 @@ class Curl
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $headers = array_filter(explode("\r\n", substr($response, 0, $header_size)));
 
-        $response_headers = [];
-        foreach ($headers as $header) {
-            if (strpos($header, ":")) {
-                $key = mb_substr($header, 0, strpos($header, ":"));
-                $value = mb_substr($header, strpos($header, ":") + 1, mb_strlen($header) - strpos($header, ":"));
-                $response_headers[$key] = $value;
-
-                if ($key === 'set-cookie') {
-                    $cookies = $value;
-                }
-            } else {
-                continue;
-            }
-        }
+        $response_headers = static::readResponseHeaders($headers, $cookies);
 
         $response = substr($response, $header_size);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -280,14 +249,6 @@ class Curl
      */
     public static function put($url, $params, $headers = [], $channel, string &$cookies = '', bool $log = true)
     {
-        $connect = static::COMMAND_CURLOPT_CONNECTTIMEOUT;
-        $timeout = static::COMMAND_CURLOPT_TIMEOUT;
-
-        if (class_exists('App\Helpers\SearchActiveController\SearchActive', false)) {
-            $connect = static::CURLOPT_CONNECTTIMEOUT;
-            $timeout = static::CURLOPT_TIMEOUT;
-        }
-
         $options = [];
         $options[CURLOPT_CUSTOMREQUEST] = 'PUT';
         $options[CURLOPT_POSTFIELDS] = $params;
@@ -302,8 +263,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => $timeout,
-                CURLOPT_CONNECTTIMEOUT => $connect,
+                CURLOPT_TIMEOUT => static::getTimeout(),
+                CURLOPT_CONNECTTIMEOUT => static::getConnectionTimeout(),
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
@@ -316,20 +277,7 @@ class Curl
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $headers = array_filter(explode("\r\n", substr($response, 0, $header_size)));
 
-        $response_headers = [];
-        foreach ($headers as $header) {
-            if (strpos($header, ":")) {
-                $key = mb_substr($header, 0, strpos($header, ":"));
-                $value = mb_substr($header, strpos($header, ":") + 1, mb_strlen($header) - strpos($header, ":"));
-                $response_headers[$key] = $value;
-
-                if ($key === 'set-cookie') {
-                    $cookies = $value;
-                }
-            } else {
-                continue;
-            }
-        }
+        $response_headers = static::readResponseHeaders($headers, $cookies);
 
         $response = substr($response, $header_size);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -358,14 +306,6 @@ class Curl
      */
     public static function delete($url, $params, $headers = [], $channel, string &$cookies = '', bool $log = true)
     {
-        $connect = static::COMMAND_CURLOPT_CONNECTTIMEOUT;
-        $timeout = static::COMMAND_CURLOPT_TIMEOUT;
-
-        if (class_exists('App\Helpers\SearchActiveController\SearchActive', false)) {
-            $connect = static::CURLOPT_CONNECTTIMEOUT;
-            $timeout = static::CURLOPT_TIMEOUT;
-        }
-
         $options = [];
         $options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
 
@@ -379,8 +319,8 @@ class Curl
             $options + [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
-                CURLOPT_TIMEOUT => $timeout,
-                CURLOPT_CONNECTTIMEOUT => $connect,
+                CURLOPT_TIMEOUT => static::getTimeout(),
+                CURLOPT_CONNECTTIMEOUT => static::getConnectionTimeout(),
                 CURLOPT_HTTPHEADER => $headers,
                 CURLINFO_HEADER_OUT => true,
             ]
@@ -393,20 +333,7 @@ class Curl
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $headers = array_filter(explode("\r\n", substr($response, 0, $header_size)));
 
-        $response_headers = [];
-        foreach ($headers as $header) {
-            if (strpos($header, ":")) {
-                $key = mb_substr($header, 0, strpos($header, ":"));
-                $value = mb_substr($header, strpos($header, ":") + 1, mb_strlen($header) - strpos($header, ":"));
-                $response_headers[$key] = $value;
-
-                if ($key === 'set-cookie') {
-                    $cookies = $value;
-                }
-            } else {
-                continue;
-            }
-        }
+        $response_headers = static::readResponseHeaders($headers, $cookies);
 
         $response = substr($response, $header_size);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -422,5 +349,30 @@ class Curl
         curl_close($curl);
 
         return $response;
+    }
+
+    /**
+     * @param $headers
+     * @param $cookies
+     * @return array
+     */
+    public static function readResponseHeaders($headers, &$cookies)
+    {
+        $response_headers = [];
+        foreach ($headers as $header) {
+            if (strpos($header, ":")) {
+                $key = mb_substr($header, 0, strpos($header, ":"));
+                $value = mb_substr($header, strpos($header, ":") + 1, mb_strlen($header) - strpos($header, ":"));
+                $response_headers[$key] = $value;
+
+                if ($key === 'set-cookie') {
+                    $cookies = $value;
+                }
+            } else {
+                continue;
+            }
+        }
+
+        return $response_headers;
     }
 }
