@@ -349,7 +349,6 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         $queueIds = [];
         if ($foundStocks) {
             foreach ($foundStocks as $foundStock) {
-                $searchTime[$foundStock['secid']] = $foundStock['search_time'];
                 $secIds[$foundStock['secid']] = $foundStock['secid'];
             }
 
@@ -461,11 +460,6 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         if ($stocks) {
             foreach ($stocks as $item) {
                 $typeId = $item->getType();
-                $time = 0;
-
-                if (array_key_exists($item->secid, $searchTime)) {
-                    $time = $searchTime[$item->secid];
-                }
 
                 /**
                  * @var MoscowExchangeStock $item
@@ -489,7 +483,6 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                     'industry' => $item->tradingview ? $item->tradingview->industry : '',
                     'sector' => $item->tradingview ? $item->tradingview->sector : '',
                     'capitalization' => $item->tradingview ? $item->tradingview->capitalization : '',
-                    'search_times' => $time,
                 ];
             }
         }

@@ -184,15 +184,8 @@ class MoscowExchangeCurl
 
                 $data = [];
 
-                if (isset($arrayResponse['securities']['columns'], $arrayResponse['securities']['data']) && is_array(
-                        $arrayResponse['securities']['data']
-                    )) {
-
-                    $arrayResponse['securities']['columns'][] = 'search_time';
-                    foreach ($arrayResponse['securities']['data'] as $key => $datum) {
-                        $arrayResponse['securities']['data'][$key][] = $arrayResponse['search_time'];
-                    }
-
+                if (isset($arrayResponse['securities']['columns'], $arrayResponse['securities']['data'])
+                    && is_array($arrayResponse['securities']['data'])) {
                     foreach ($arrayResponse['securities']['data'] as $datum) {
                         $data[] = array_combine($arrayResponse['securities']['columns'], $datum);
                     }
@@ -546,9 +539,8 @@ class MoscowExchangeCurl
             $arrayResponse = self::toArray(json_decode($response));
 
             $items = [];
-            if (isset($arrayResponse['marketdata']['columns'], $arrayResponse['marketdata']['data']) && is_array(
-                    $arrayResponse['marketdata']['data']
-                )) {
+            if (isset($arrayResponse['marketdata']['columns'], $arrayResponse['marketdata']['data']) &&
+                is_array($arrayResponse['marketdata']['data'])) {
                 foreach ($arrayResponse['marketdata']['data'] as $datum) {
                     $items[] = array_change_key_case(
                         array_combine($arrayResponse['marketdata']['columns'], $datum),
@@ -591,7 +583,8 @@ class MoscowExchangeCurl
                 'lang' => $lang,
                 'iss.meta' => 'off',
                 'iss.only' => 'securities'
-            ], [],
+            ],
+                [],
                 'moscow-exchange',
                 self::$cookies,
                 false
@@ -599,9 +592,8 @@ class MoscowExchangeCurl
 
             $arrayResponse = self::toArray(json_decode($response));
             $items = [];
-            if (isset($arrayResponse['securities']['columns'], $arrayResponse['securities']['data']) && is_array(
-                    $arrayResponse['securities']['data']
-                )) {
+            if (isset($arrayResponse['securities']['columns'], $arrayResponse['securities']['data']) &&
+                is_array($arrayResponse['securities']['data'])) {
                 foreach ($arrayResponse['securities']['data'] as $datum) {
                     $items[] = array_change_key_case(
                         array_combine($arrayResponse['securities']['columns'], $datum),

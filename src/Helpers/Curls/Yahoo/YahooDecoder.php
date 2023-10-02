@@ -115,7 +115,6 @@ class YahooDecoder
         {
             if(isset($quote['symbol'], $quote['shortname'], $quote['exchange'], $quote['quoteType'], $quote['typeDisp']))
             {
-                $quote['search_time'] = $decoded['search_time'];
                 $array[] = $quote;
             }
         }

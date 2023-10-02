@@ -363,12 +363,6 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
                 $typeId = $item->getType();
                 $name = $item->name ?? $item->shortname;
 
-                //В поиске активов с фронта, зхдесь будет передано время запроса
-                $time = 0;
-                if (isset($foundStocks) && !is_array($foundStocks)) {
-                    $time = $foundStocks;
-                }
-
                 /**
                  * @var CbondStock $item
                  */
@@ -387,7 +381,6 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
                     'decimals' => $item->decimals,
                     'lotsize' => $item->getLotSize(),
                     'symbol' => $item->getSymbol(),
-                    'search_time' => $time,
                 ];
             }
         }

@@ -102,7 +102,6 @@ class Curl
                     curl_multi_remove_handle($multi_handle, $completed_handle['handle']);
                     curl_close($completed_handle['handle']);
 
-
                     $handles[$completed_key] = curl_init($resultUrl);
                     curl_setopt($handles[$completed_key], CURLOPT_RETURNTRANSFER, true);
                     if ($requests[$completed_key]['headers']) {
@@ -120,9 +119,6 @@ class Curl
                     //затем удаляем, что бы не нарушать очередность
                     unset($urls[array_key_first($urls)]);
 
-                    $responses[$completed_key] = object_to_array(json_decode($responses[$completed_key]));
-                    $responses[$completed_key]['search_time'] = curl_getinfo($handles[$completed_key], CURLINFO_TOTAL_TIME);
-                    $responses[$completed_key] = json_encode($responses[$completed_key]);
                     curl_multi_remove_handle($multi_handle, $completed_handle['handle']);
                     curl_close($completed_handle['handle']);
                     $completed++;
