@@ -47,16 +47,16 @@ class Curl
         // инициализируем мульти-ручку и массив дескрипторов
         $multi_handle = curl_multi_init();
         $handles = array();
+        $urls = [];
         foreach ($requests as $key => $request) {
             $resultUrl = $request['url'] . ($request['params'] ? '?' . http_build_query($request['params']) : '');
-
+            $urls[] = $resultUrl;
             $handles[$key] = curl_init($resultUrl);
             curl_setopt($handles[$key], CURLOPT_RETURNTRANSFER, true);
             curl_setopt($handles[$key], CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($handles[$key], CURLOPT_TIMEOUT, $timeout);
             curl_setopt($handles[$key], CURLOPT_MAXREDIRS, 10);
             curl_setopt($handles[$key], CURLOPT_CONNECTTIMEOUT, static::getConnectionTimeout());
-
             if ($request['headers']) {
                 curl_setopt($handles[$key], CURLOPT_HTTPHEADER, $request['headers']);
             }
@@ -115,7 +115,10 @@ class Curl
                     curl_multi_add_handle($multi_handle, $handles[$completed_key]);
                     $retry_count[$completed_key]++;
                 } else {
-                    self::$searchTimes[$resultUrl] = curl_getinfo($handles[$completed_key], CURLINFO_TOTAL_TIME);
+                    //в записанные урыли по очереди записываем время их выполнения
+                    self::$searchTimes[$urls[array_key_first($urls)]] = curl_getinfo($handles[$completed_key], CURLINFO_TOTAL_TIME);
+                    //затем удаляем, что бы не нарушать очередность
+                    unset($urls[array_key_first($urls)]);
 
                     $responses[$completed_key] = object_to_array(json_decode($responses[$completed_key]));
                     $responses[$completed_key]['search_time'] = curl_getinfo($handles[$completed_key], CURLINFO_TOTAL_TIME);
