@@ -142,7 +142,6 @@ class YahooDecoder
         $exch = $json['exchange'];
         $type = $json['quoteType'];
         $typeDisp = $json['typeDisp'];
-        $searchTime = $json['search_time'];
 
         return [
             'symbol' => $symbol,
@@ -150,7 +149,6 @@ class YahooDecoder
             'exch' => $exch,
             'type' => $type,
             'type_disp' => $typeDisp,
-            'search_time' => $searchTime
         ];
     }
 

@@ -344,7 +344,6 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         $async = true
     ) {
         $secIds = [];
-        $searchTime = [];
 
         $queueIds = [];
         if ($foundStocks) {
