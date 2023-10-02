@@ -126,6 +126,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
         if ($foundStocks) {
             foreach ($foundStocks as $foundStock) {
+                $searchTime[$foundStock['symbol']] = $foundStock['search_time'];
                 $symbolIds[$foundStock['symbol']] = $foundStock['symbol'];
             }
 
@@ -200,6 +201,11 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
              */
             foreach ($stocks as $item) {
                 $typeId = $item->getType();
+                $time = 0;
+
+                if (array_key_exists($item->symbol, $searchTime)) {
+                    $time = $searchTime[$item->symbol];
+                }
 
                 $items[] = [
                     'id' => $item->id,
@@ -220,6 +226,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                     'industry' => $item->tradingview ? $item->tradingview->industry : '',
                     'sector' => $item->tradingview ? $item->tradingview->sector : '',
                     'capitalization' => $item->tradingview ? $item->tradingview->capitalization : '',
+                    'search_times' => $time,
                 ];
             }
         }

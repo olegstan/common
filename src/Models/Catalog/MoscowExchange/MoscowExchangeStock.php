@@ -253,8 +253,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      */
     public function createBindActive($userId, $currency_id, $accountId, $classes)
     {
-        if(in_array($this->type, DefinitionMoexConst::BOND_VALUES))
-        {
+        if (in_array($this->type, DefinitionMoexConst::BOND_VALUES)) {
             return $classes['obligation']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
@@ -269,8 +268,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             ]);
         }
 
-        if(in_array($this->type, DefinitionMoexConst::PIF_VALUES))
-        {
+        if (in_array($this->type, DefinitionMoexConst::PIF_VALUES)) {
             return $classes['pif']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
@@ -281,7 +279,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             ]);
         }
 
-        if(in_array($this->type, DefinitionMoexConst::FUTURES_VALUE)){
+        if (in_array($this->type, DefinitionMoexConst::FUTURES_VALUE)) {
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
@@ -293,7 +291,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             ]);
         }
 
-        if(in_array($this->type, DefinitionMoexConst::ETF_VALUE)){
+        if (in_array($this->type, DefinitionMoexConst::ETF_VALUE)) {
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
@@ -304,7 +302,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             ]);
         }
 
-        if(in_array($this->type, DefinitionMoexConst::CURRENCY_VALUE)){
+        if (in_array($this->type, DefinitionMoexConst::CURRENCY_VALUE)) {
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
@@ -346,10 +344,12 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         $async = true
     ) {
         $secIds = [];
+        $searchTime = [];
 
         $queueIds = [];
         if ($foundStocks) {
             foreach ($foundStocks as $foundStock) {
+                $searchTime[$foundStock['secid']] = $foundStock['search_time'];
                 $secIds[$foundStock['secid']] = $foundStock['secid'];
             }
 
@@ -461,6 +461,11 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         if ($stocks) {
             foreach ($stocks as $item) {
                 $typeId = $item->getType();
+                $time = 0;
+
+                if (array_key_exists($item->secid, $searchTime)) {
+                    $time = $searchTime[$item->secid];
+                }
 
                 /**
                  * @var MoscowExchangeStock $item
@@ -484,6 +489,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                     'industry' => $item->tradingview ? $item->tradingview->industry : '',
                     'sector' => $item->tradingview ? $item->tradingview->sector : '',
                     'capitalization' => $item->tradingview ? $item->tradingview->capitalization : '',
+                    'search_times' => $time,
                 ];
             }
         }
@@ -620,7 +626,6 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         $data = MoscowExchangeCurl::getHistory($stock, $startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
 
         if ($data) {
-
             Cache::add($result, true, Carbon::now()->addDay());
 
             foreach ($data as $datum) {

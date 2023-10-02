@@ -19,11 +19,11 @@ class CbondCurl extends Curl
     /**
      *
      */
-    protected const CURLOPT_CONNECTTIMEOUT = 30;
+    protected const CURLOPT_CONNECTTIMEOUT = 10;
     /**
      *
      */
-    protected const CURLOPT_TIMEOUT = 30;
+    protected const CURLOPT_TIMEOUT = 10;
     /**
      *
      */
@@ -40,9 +40,9 @@ class CbondCurl extends Curl
     {
         if (App::runningInConsole()) {
             return static::COMMAND_CURLOPT_TIMEOUT;
-        }else{
-            return static::CURLOPT_TIMEOUT;
         }
+
+        return static::CURLOPT_TIMEOUT;
     }
 
     /**
@@ -52,9 +52,9 @@ class CbondCurl extends Curl
     {
         if (App::runningInConsole()) {
             return static::COMMAND_CURLOPT_CONNECTTIMEOUT;
-        }else{
-            return static::CURLOPT_CONNECTTIMEOUT;
         }
+
+        return static::CURLOPT_CONNECTTIMEOUT;
     }
 
     /**
@@ -74,15 +74,20 @@ class CbondCurl extends Curl
             $url = self::API_URL;
             $coockies = '';
 
+            $start = microtime(true);
             $response = json_decode(self::get($url, [
                 'text' => $searchText,
                 'cache' => $cache,
             ], [], 'cbond', $coockies));
 
+            $time = number_format((microtime(true) - $start), 2);
+
             if (isset($response->result) && $response->result === 'success')
             {
                 Cache::add('cbond' . $searchText, 1, Carbon::now()->addDay());
             }
+
+            return $time;
         } catch (Exception $e) {
             LoggerHelper::getLogger('cbond-stock')->error($e);
             return false;

@@ -187,6 +187,12 @@ class MoscowExchangeCurl
                 if (isset($arrayResponse['securities']['columns'], $arrayResponse['securities']['data']) && is_array(
                         $arrayResponse['securities']['data']
                     )) {
+
+                    $arrayResponse['securities']['columns'][] = 'search_time';
+                    foreach ($arrayResponse['securities']['data'] as $key => $datum) {
+                        $arrayResponse['securities']['data'][$key][] = $arrayResponse['search_time'];
+                    }
+
                     foreach ($arrayResponse['securities']['data'] as $datum) {
                         $data[] = array_combine($arrayResponse['securities']['columns'], $datum);
                     }
@@ -274,7 +280,7 @@ class MoscowExchangeCurl
         try {
             //example https://iss.moex.com/iss/securities/RU000A100ZP9.json?limit=1
             //example https://iss.moex.com/iss/securities/RU000A105WJ8.json?limit=1
-            
+
             $response = Curl::get(self::API_URL . 'securities/' . $code . '.json', [
                 'lang' => $lang,
                 'limit' => $limit,
@@ -313,7 +319,7 @@ class MoscowExchangeCurl
     {
         try {
             //example https://iss.moex.com/iss/securities/FXGD.json?limit=1
-            
+
             $response = Curl::get(self::API_URL . 'securities/' . $code . '.json', [
                 'lang' => $lang,
                 'iss.meta' => 'off',
@@ -356,7 +362,7 @@ class MoscowExchangeCurl
     {
         try {
             //example https://iss.moex.com/iss/securities/FXGD.json?limit=1
-            
+
             $response = Curl::get(self::API_URL . 'securities/' . $code . '.json', [
                 'lang' => $lang,
                 'limit' => $limit,
@@ -404,7 +410,7 @@ class MoscowExchangeCurl
     {
         try {
             //example https://iss.moex.com/iss/engines/stock/markets/shares/boards/tqbr/securities/SBER.json
-            
+
             $response = Curl::get(
                 self::API_URL . 'engines/' . $stock->engine . '/markets/' . $stock->market . '/boards/' . $stock->primary_boardid . '/securities/' . $stock->secid . '.json',
                 [

@@ -111,11 +111,11 @@ class YahooDecoder
 
         $array = [];
 
-
         foreach ($decoded['quotes'] as $quote)
         {
             if(isset($quote['symbol'], $quote['shortname'], $quote['exchange'], $quote['quoteType'], $quote['typeDisp']))
             {
+                $quote['search_time'] = $decoded['search_time'];
                 $array[] = $quote;
             }
         }
@@ -143,16 +143,18 @@ class YahooDecoder
         $exch = $json['exchange'];
         $type = $json['quoteType'];
         $typeDisp = $json['typeDisp'];
+        $searchTime = $json['search_time'];
 
         return [
             'symbol' => $symbol,
             'name' => $name,
             'exch' => $exch,
             'type' => $type,
-            'type_disp' => $typeDisp
+            'type_disp' => $typeDisp,
+            'search_time' => $searchTime
         ];
     }
-    
+
     /**
      * @param $data
      * @return array
