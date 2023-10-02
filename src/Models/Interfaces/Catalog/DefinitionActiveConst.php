@@ -144,6 +144,14 @@ interface DefinitionActiveConst
     public const TINKOFF_INS = 1012;
     public const CUSTOM_INS = 2001;
 
+    public const GROUP_QUERY_CATALOG = [
+        DefinitionActiveConst::STOCK,
+        DefinitionActiveConst::ETF,
+        DefinitionActiveConst::OBLIGATION,
+        DefinitionActiveConst::FUTURES,
+        DefinitionActiveConst::PIF,
+    ];
+
     public const INSURANCE_COMPANY_GROUP = [
         self::ALPHA_INS,
         self::INGOS_INS,
