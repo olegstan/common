@@ -16,6 +16,11 @@ class Curl
     protected const COMMAND_CURLOPT_TIMEOUT = 300;
 
     /**
+     * @var array
+     */
+    public static array $searchTimes = [];
+
+    /**
      * @return int
      */
     public static function getTimeout()
@@ -110,6 +115,8 @@ class Curl
                     curl_multi_add_handle($multi_handle, $handles[$completed_key]);
                     $retry_count[$completed_key]++;
                 } else {
+                    self::$searchTimes[$resultUrl] = curl_getinfo($handles[$completed_key], CURLINFO_TOTAL_TIME);
+
                     $responses[$completed_key] = object_to_array(json_decode($responses[$completed_key]));
                     $responses[$completed_key]['search_time'] = curl_getinfo($handles[$completed_key], CURLINFO_TOTAL_TIME);
                     $responses[$completed_key] = json_encode($responses[$completed_key]);
