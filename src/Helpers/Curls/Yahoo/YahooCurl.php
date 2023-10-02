@@ -89,7 +89,7 @@ class YahooCurl
             }
 
             $newArr = [];
-            foreach ($allData as $val)
+            foreach ($allData as $key => $val)
             {
                 if(isset($val['symbol']))
                 {
