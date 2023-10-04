@@ -57,7 +57,7 @@ trait CustomReturnGetDataFunc
     /**
      * @return int
      */
-    public function getCodeCurrency(): int
+    public function getCodeCurrency()
     {
         return $this->currency_id;
     }
