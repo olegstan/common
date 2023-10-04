@@ -71,7 +71,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         'symbol' => 'string',
         'type_id' => 'integer',
         'user_id' => 'string',
-        'currency_id' => 'integer',
+        'currency_id' => 'string',
         'facevalue' => 'integer',
         'matdate' => 'datetime',
         'rate_period_type_id' => 'integer',
@@ -97,12 +97,11 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
             }
 
             $userId = config('app.env') . '-' . $data->user_id;
-            $currency = Currency::firstWhere('code', $data->getCurrency());
 
             $custom = CustomStock::where('symbol', $searchText ?? null)
                 ->where('name', $data->getName())
                 ->where('user_id', $userId)
-                ->where('currency_id', $currency)
+                ->where('currency_id', $data->getCurrency())
                 ->where('type_id', $data->getCustomStockType())
                 ->first();
 
@@ -111,7 +110,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                     'symbol' => $searchText ?? null,
                     'name' => $data->getName(),
                     'user_id' => $userId,
-                    'currency_id' => $currency,
+                    'currency_id' => $data->getCurrency(),
                     'type_id' => $data->getCustomStockType()
                 ]);
             }
