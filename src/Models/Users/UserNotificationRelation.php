@@ -63,11 +63,10 @@ class UserNotificationRelation extends BaseModel
                 'is_confirmed' => true
             ]))
             {
-                return $callbackResponse;
             }
         }
 
-        return false;
+        return $callbackResponse;
     }
 
     /**
@@ -91,12 +90,9 @@ class UserNotificationRelation extends BaseModel
                     'is_confirmed' => true
                 ]);
             }
-
-            if($result)
-            {
-                return $callbackResponse;
-            }
         }
+
+        return $callbackResponse;
     }
 
 
