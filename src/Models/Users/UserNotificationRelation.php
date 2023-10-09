@@ -45,11 +45,16 @@ class UserNotificationRelation extends BaseModel
         'is_confirmed' => 'bool',
     ];
 
+    /**
+     * @param $callback
+     * @param $id
+     * @return false
+     */
     public static function confirm($callback, $id)
     {
-        $result = $callback();
+        $callbackResult = $callback();
 
-        if($result)
+        if($callbackResult)
         {
             $item = UserNotificationRelation::where('id', $id)
                 ->first();
@@ -58,10 +63,43 @@ class UserNotificationRelation extends BaseModel
                 'is_confirmed' => true
             ]))
             {
-                return true;
+                return $callbackResult;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $callback
+     * @param $ids
+     * @return mixed
+     */
+    public static function confirmMany($callback, $ids)
+    {
+        $callbackResult = $callback();
+
+        if($callbackResult)
+        {
+            $result = true;
+            $items = UserNotificationRelation::whereIn('id', $ids)
+                ->get();
+
+            foreach ($items as $item)
+            {
+                $item->update([
+                    'is_confirmed' => true
+                ]);
+            }
+
+            if($result)
+            {
+                return $callbackResult;
             }
         }
     }
+
+
 
     /**
      * @var bool
