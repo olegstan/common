@@ -52,7 +52,7 @@ class UserNotificationRelation extends BaseModel
      */
     public static function confirm($callback, $id)
     {
-        $callbackResult = $callback();
+        [$callbackResponse, $callbackResult] = $callback();
 
         if($callbackResult)
         {
@@ -63,7 +63,7 @@ class UserNotificationRelation extends BaseModel
                 'is_confirmed' => true
             ]))
             {
-                return $callbackResult;
+                return $callbackResponse;
             }
         }
 
@@ -77,7 +77,7 @@ class UserNotificationRelation extends BaseModel
      */
     public static function confirmMany($callback, $ids)
     {
-        $callbackResult = $callback();
+        [$callbackResponse, $callbackResult] = $callback();
 
         if($callbackResult)
         {
@@ -94,7 +94,7 @@ class UserNotificationRelation extends BaseModel
 
             if($result)
             {
-                return $callbackResult;
+                return $callbackResponse;
             }
         }
     }
