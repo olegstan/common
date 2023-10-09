@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property $post_type
  * @property $post_id
  * @property $comment
+ * @property $is_confirmed
  */
 class UserNotificationRelation extends BaseModel
 {
@@ -30,6 +31,7 @@ class UserNotificationRelation extends BaseModel
         'post_type',
         'post_id',
         'comment',
+        'is_confirmed',
     ];
 
     /**
@@ -40,7 +42,26 @@ class UserNotificationRelation extends BaseModel
         'post_type' => 'string',
         'post_id' => 'integer',
         'comment' => 'string',
+        'is_confirmed' => 'bool',
     ];
+
+    public static function confirm($callback, $id)
+    {
+        $result = $callback();
+
+        if($result)
+        {
+            $item = UserNotificationRelation::where('id', $id)
+                ->first();
+
+            if($item && $item->update([
+                'is_confirmed' => true
+            ]))
+            {
+                return true;
+            }
+        }
+    }
 
     /**
      * @var bool
