@@ -78,7 +78,7 @@ class UserNotificationRelation extends BaseModel
     {
         [$callbackResponse, $callbackResult] = $callback();
 
-        if($callbackResult)
+        if($callbackResult && is_array($ids) && $ids)
         {
             $result = true;
             $items = UserNotificationRelation::whereIn('id', $ids)
