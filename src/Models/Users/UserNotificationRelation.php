@@ -32,6 +32,7 @@ class UserNotificationRelation extends BaseModel
         'post_id',
         'comment',
         'is_confirmed',
+        'local_relation',
     ];
 
     /**
@@ -43,6 +44,7 @@ class UserNotificationRelation extends BaseModel
         'post_id' => 'integer',
         'comment' => 'string',
         'is_confirmed' => 'bool',
+        'local_relation' => 'string',
     ];
 
     /**

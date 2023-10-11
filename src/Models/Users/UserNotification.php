@@ -91,6 +91,7 @@ class UserNotification extends BaseModel
                     'notification_id' => $notification->id,
                     'post_id' => $relation['post_id'],
                     'post_type' => $relation['post_type'],
+                    'local_relation' => $relation['local_relation'] ?? null,
                 ]);
             }
         }
