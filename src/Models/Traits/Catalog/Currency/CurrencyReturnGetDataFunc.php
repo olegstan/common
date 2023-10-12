@@ -23,6 +23,14 @@ trait CurrencyReturnGetDataFunc
     }
 
     /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->char_code;
+    }
+
+    /**
      * @return string
      */
     public function getCouponFrequency(): string
