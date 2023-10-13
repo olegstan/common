@@ -252,13 +252,18 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      */
     public function createBindActive($userId, $currency_id, $accountId, $classes)
     {
+
+        //в облигации четко определена валюта, поэтому создавать по валюте из параметров не будем
         if (in_array($this->type, DefinitionCbondConst::BOND_VALUES)) {
+            $currCodeJson = $this->getCodeCurrency();
+            $currArray = json_decode($currCodeJson);
+            $currId = $currArray[0] ?? $currency_id;
+
             return $classes['obligation']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
                 'buy_sum' => $this->facevalue,
-                'buy_currency_id' => $currency_id,
-                'buy_account_id' => $accountId,
+                'buy_currency_id' => $currId,
                 'sell_at' => $this->matdate ? Carbon::createFromFormat('Y-m-d', $this->matdate)->startOfDay() : null,
                 'rate_period_type_id' => $this->getCouponFrequency(),
                 'rate' => $this->couponpercent,
