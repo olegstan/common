@@ -2,7 +2,9 @@
 
 namespace Common\Models\Users;
 
+use App\Models\Actives\ActiveGroup;
 use Common\Models\BaseModel;
+use Common\Models\Interfaces\CommonRemoveActiveInterface;
 use Common\Models\Traits\Users\UserNotification\UserNotificationRelationsTrait;
 use Common\Models\Traits\Users\UserNotification\UserNotificationScopeTrait;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property $status
  * @property $action_id
  */
-class UserNotification extends BaseModel
+class UserNotification extends BaseModel implements CommonRemoveActiveInterface
 {
     use UserNotificationRelationsTrait;
     use UserNotificationScopeTrait;
@@ -35,6 +37,7 @@ class UserNotification extends BaseModel
     public const TRANSFERED_STOCK = 1001;
     public const CLOSE_INSURANCES = 1002;
     public const TOKEN_IS_NOT_VALID = 1003;
+    public const NEGATIVE_TRADES = 1004;
 
     public const CONTACT_BIRTHDAY = 2003;
 
@@ -97,5 +100,19 @@ class UserNotification extends BaseModel
         }
 
         return $notification;
+    }
+
+    /**
+     * @param $user
+     * @param $collections
+     * @return void
+     */
+    public function selfRemoveData($user, $collections): void
+    {
+        $selfData = UserNotification::whereUserId($user->id)->cursor();
+
+        foreach ($selfData as $data) {
+            $collections->put($this->getTableWithoutPrefix() . '.' . $data->id, json_encode($data));
+        }
     }
 }

@@ -52,6 +52,11 @@ class UserNotificationRelation extends BaseModel
     ];
 
     /**
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * @param $callback
      * @param $id
      * @return false
@@ -102,9 +107,17 @@ class UserNotificationRelation extends BaseModel
     }
 
 
-
     /**
-     * @var bool
+     * @param $user
+     * @param $collections
+     * @return void
      */
-    public $timestamps = false;
+    public function selfRemoveData($user, $collections): void
+    {
+        $selfData = UserNotification::whereUserId($user->id)->cursor();
+
+        foreach ($selfData as $data) {
+            $collections->put($this->getTableWithoutPrefix() . '.' . $data->id, json_encode($data));
+        }
+    }
 }
