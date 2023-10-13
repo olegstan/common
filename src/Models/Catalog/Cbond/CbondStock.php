@@ -245,19 +245,18 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
 
     /**
      * @param $userId
-     * @param $currency_id
+     * @param $currencyId
      * @param $accountId
      * @param $classes
      * @return mixed
      */
-    public function createBindActive($userId, $currency_id, $accountId, $classes)
+    public function createBindActive($userId, $currencyId, $accountId, $classes)
     {
 
         //в облигации четко определена валюта, поэтому создавать по валюте из параметров не будем
         if (in_array($this->type, DefinitionCbondConst::BOND_VALUES)) {
-            $currCodeJson = $this->getCodeCurrency();
-            $currArray = json_decode($currCodeJson);
-            $currId = $currArray[0] ?? $currency_id;
+            $currId = $this->getCurrency();
+            $currId = $currId ?? $currencyId;
 
             return $classes['obligation']::create([
                 'user_id' => $userId,
@@ -276,7 +275,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             return $classes['pif']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -287,7 +286,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'sell_at' => $this->expiration ? Carbon::createFromFormat('Y-m-d', $this->expiration) : null,
                 'item_type' => $this->getMorphClass(),
@@ -299,7 +298,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -310,7 +309,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -320,7 +319,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
         return $classes['stock']::create([
             'user_id' => $userId,
             'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-            'buy_currency_id' => $currency_id,
+            'buy_currency_id' => $currencyId,
             'buy_account_id' => $accountId,
             'item_type' => $this->getMorphClass(),
             'item_id' => $this->id,
