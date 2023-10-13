@@ -81,22 +81,23 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
 
     /**
      * @param $data
-     * @param $cache
-     * @return void
+     * @param bool $cache
+     * @return false|void
      */
-    public static function search($data, $cache = true)
+    public static function search($data, bool $cache = true)
     {
         //в $data всегда должен быть объект модели, что бы мы могли искать не по 1 параметру, а сколько требуется
-        if ($data->getTicker()) {
-            $searchText = $data->getTicker();
+        if (!$data->getTicker()) {
+            return false;
         }
 
-        try {
-            if ($cache && Cache::has('custom' . $searchText)) {
-                return Cache::get('custom' . $searchText);
-            }
+        $userId = config('app.env') . '-' . $data->user_id;
+        $searchText = $data->getTicker();
 
-            $userId = config('app.env') . '-' . $data->user_id;
+        try {
+            if (isset($searchText) && $cache && Cache::has('custom-' . $userId . '-' . $searchText)) {
+                return Cache::get('custom-' . $userId . '-' . $searchText);
+            }
 
             $custom = CustomStock::where('symbol', $searchText ?? null)
                 ->where('name', $data->getName())
@@ -115,7 +116,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                 ]);
             }
 
-            Cache::put('custom' . $searchText, $custom, Carbon::now()->addDay());
+            Cache::put('custom-' . $userId . '-' . $searchText, $custom, Carbon::now()->addDay());
 
             return $custom;
         } catch (Exception $e) {
