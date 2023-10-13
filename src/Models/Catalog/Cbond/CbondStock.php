@@ -256,7 +256,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
         //в облигации четко определена валюта, поэтому создавать по валюте из параметров не будем
         if (in_array($this->type, DefinitionCbondConst::BOND_VALUES)) {
             $currId = $this->getCurrency();
-            $currId = $currId ?? $currencyId;
+            $currId = $currId[0] ?? $currencyId;
 
             return $classes['obligation']::create([
                 'user_id' => $userId,
