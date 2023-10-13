@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property $post_id
  * @property $comment
  * @property $is_confirmed
+ * @property $local_operation_type
+ * @property $local_operation_id
  */
 class UserNotificationRelation extends BaseModel
 {
@@ -32,7 +34,8 @@ class UserNotificationRelation extends BaseModel
         'post_id',
         'comment',
         'is_confirmed',
-        'local_relation',
+        'local_operation_type',
+        'local_operation_id',
     ];
 
     /**
@@ -44,7 +47,8 @@ class UserNotificationRelation extends BaseModel
         'post_id' => 'integer',
         'comment' => 'string',
         'is_confirmed' => 'bool',
-        'local_relation' => 'string',
+        'local_operation_type' => 'string',
+        'local_operation_id' => 'integer',
     ];
 
     /**
