@@ -52,6 +52,7 @@ class CbondCouponTransformer extends BaseTransformer
             'value' => $model->value,
             'valueprc' => $model->valueprc,
             'value_rub' => $model->value_rub,
+            'morph' => $model->getMorphClass(),
         ];
 
         return $this->withRelations($data, $model);
