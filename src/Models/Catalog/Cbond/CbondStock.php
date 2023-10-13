@@ -2,8 +2,10 @@
 
 namespace Common\Models\Catalog\Cbond;
 
+use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Catalog\MoscowExchange\MoscowExchangeCoupon;
 use Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -394,11 +396,22 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate
-     * @return true
+     * @return bool
+     * polymorhic method
      */
     public static function loadHistory($stock, Carbon $startDate, Carbon $endDate): bool
     {
         //тк заранее все спаршено, будет заглушкой
         return true;
+    }
+
+    /**
+     * @param $stock
+     * @return void
+     * polymorhic method
+     */
+    public static function loadCoupons($stock)
+    {
+
     }
 }
