@@ -65,15 +65,13 @@ class UserNotificationRelation extends BaseModel
     {
         [$callbackResponse, $callbackResult] = $callback();
 
-        if($callbackResult)
-        {
+        if ($callbackResult) {
             $item = UserNotificationRelation::where('id', $id)
                 ->first();
 
-            if($item && $item->update([
-                'is_confirmed' => true
-            ]))
-            {
+            if ($item && $item->update([
+                    'is_confirmed' => true
+                ])) {
             }
         }
 
@@ -89,14 +87,12 @@ class UserNotificationRelation extends BaseModel
     {
         [$callbackResponse, $callbackResult] = $callback();
 
-        if($callbackResult && is_array($ids) && $ids)
-        {
+        if ($callbackResult && is_array($ids) && $ids) {
             $result = true;
             $items = UserNotificationRelation::whereIn('id', $ids)
                 ->get();
 
-            foreach ($items as $item)
-            {
+            foreach ($items as $item) {
                 $item->update([
                     'is_confirmed' => true
                 ]);
@@ -106,7 +102,6 @@ class UserNotificationRelation extends BaseModel
         return $callbackResponse;
     }
 
-
     /**
      * @param $user
      * @param $collections
@@ -114,7 +109,8 @@ class UserNotificationRelation extends BaseModel
      */
     public function selfRemoveData($user, $collections): void
     {
-        $selfData = UserNotification::whereUserId($user->id)->cursor();
+        $notifications = UserNotification::whereUserId($user->id)->pluck('id');
+        $selfData = UserNotificationRelation::whereIn('notification_id', $notifications)->cursor();
 
         foreach ($selfData as $data) {
             $collections->put($this->getTableWithoutPrefix() . '.' . $data->id, json_encode($data));
