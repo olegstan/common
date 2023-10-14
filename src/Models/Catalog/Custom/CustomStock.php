@@ -194,7 +194,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
      * @param $classes
      * @return mixed
      */
-    public function createBindActive($userId, $currency_id, $accountId, $classes)
+    public function createBindActive($userId, $currencyId, $accountId, $classes)
     {
         if (in_array($this->type_id, DefinitionCustomConst::BOND_VALUES)) {
             return $classes['obligation']::create([
@@ -264,5 +264,36 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
             'item_type' => $this->getMorphClass(),
             'item_id' => $this->id,
         ]);
+    }
+
+    /**
+     * @param $stock
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return bool
+     * polymorhic method
+     */
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate)
+    {
+        //тк заранее все спаршено, будет заглушкой
+    }
+
+    /**
+     * @param $stock
+     * @return void
+     * polymorhic method
+     */
+    public static function loadCoupons($stock): void
+    {
+
+    }
+    /**
+     * @param $stock
+     * @return void
+     * polymorhic method
+     */
+    public static function loadDividends($stock): void
+    {
+
     }
 }

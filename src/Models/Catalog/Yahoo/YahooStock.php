@@ -227,11 +227,12 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
     /**
      * @param $userId
+     * @param $currencyId
      * @param $accountId
      * @param $classes
      * @return mixed
      */
-    public function createBindActive($userId, $accountId, $classes)
+    public function createBindActive($userId, $currencyId, $accountId, $classes)
     {
         if (in_array($this->type, DefinitionYahooConst::FUTURES_VALUE)) {
             $active = $classes['futures']::create([
@@ -330,6 +331,25 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
         LoggerHelper::getLogger()->info('No any history for ' . $stock->symbol);
 
         return false;
+    }
+
+    /**
+     * @param $stock
+     * @return void
+     * polymorhic method
+     */
+    public static function loadCoupons($stock): void
+    {
+
+    }
+    /**
+     * @param $stock
+     * @return void
+     * polymorhic method
+     */
+    public static function loadDividends($stock): void
+    {
+
     }
 }
 

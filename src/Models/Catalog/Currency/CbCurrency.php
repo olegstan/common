@@ -60,10 +60,12 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
 
     /**
      * @param $userId
+     * @param $currencyId
+     * @param $accountId
      * @param $classes
      * @return mixed
      */
-    public function createBindActive($userId, $classes)
+    public function createBindActive($userId, $currencyId, $accountId, $classes)
     {
         $active = $classes['cur']::create([
             'user_id' => $userId,
@@ -123,8 +125,28 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
      * @param Carbon $endDate
      * @return void
      */
-    public static function loadHistory($currency, Carbon $startDate, Carbon $endDate)
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate)
     {
-        CbHistoryCurrencyCourse::loadHistory($currency, $startDate, $endDate);
+        CbHistoryCurrencyCourse::loadHistory($stock, $startDate, $endDate);
+    }
+
+    /**
+     * @param $stock
+     * @return void
+     * polymorhic method
+     */
+    public static function loadCoupons($stock): void
+    {
+
+    }
+
+    /**
+     * @param $stock
+     * @return void
+     * polymorhic method
+     */
+    public static function loadDividends($stock): void
+    {
+
     }
 }

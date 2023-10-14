@@ -254,7 +254,6 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      */
     public function createBindActive($userId, $currencyId, $accountId, $classes)
     {
-
         //в облигации четко определена валюта, поэтому создавать по валюте из параметров не будем
         if (in_array($this->type, DefinitionCbondConst::BOND_VALUES)) {
             $currId = $this->getCurrency();
@@ -399,10 +398,9 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      * @return bool
      * polymorhic method
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate): bool
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate)
     {
         //тк заранее все спаршено, будет заглушкой
-        return true;
     }
 
     /**
@@ -410,7 +408,16 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      * @return void
      * polymorhic method
      */
-    public static function loadCoupons($stock)
+    public static function loadCoupons($stock): void
+    {
+
+    }
+    /**
+     * @param $stock
+     * @return void
+     * polymorhic method
+     */
+    public static function loadDividends($stock): void
     {
 
     }

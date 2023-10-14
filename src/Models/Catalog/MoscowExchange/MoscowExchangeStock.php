@@ -251,14 +251,14 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      * @param $classes
      * @return mixed
      */
-    public function createBindActive($userId, $currency_id, $accountId, $classes)
+    public function createBindActive($userId, $currencyId, $accountId, $classes)
     {
         if (in_array($this->type, DefinitionMoexConst::BOND_VALUES)) {
             return $classes['obligation']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
                 'buy_sum' => $this->facevalue,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'sell_at' => $this->matdate ? Carbon::createFromFormat('Y-m-d', $this->matdate)->startOfDay() : null,
                 'rate_period_type_id' => $this->getCouponFrequency(),
@@ -272,7 +272,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             return $classes['pif']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -283,7 +283,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'sell_at' => $this->expiration ? Carbon::createFromFormat('Y-m-d', $this->expiration) : null,
                 'item_type' => $this->getMorphClass(),
@@ -295,7 +295,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -306,7 +306,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -316,7 +316,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         return $classes['stock']::create([
             'user_id' => $userId,
             'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-            'buy_currency_id' => $currency_id,
+            'buy_currency_id' => $currencyId,
             'buy_account_id' => $accountId,
             'item_type' => $this->getMorphClass(),
             'item_id' => $this->id,
