@@ -64,6 +64,14 @@ class MoscowExchangeCoupon extends BaseCatalog implements CouponInterface
     }
 
     /**
+     * @return float|null
+     */
+    public function getValue(): ?float
+    {
+        return $this->value;
+    }
+
+    /**
      * @return float
      */
     public function getCouponValue(Currency $currency): ?float

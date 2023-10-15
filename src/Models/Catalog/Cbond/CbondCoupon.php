@@ -67,6 +67,16 @@ class CbondCoupon extends BaseCatalog implements CouponInterface
     /**
      * @return float|null
      */
+    public function getValue(): ?float
+    {
+        $percent = $this->valueprc;
+        $couponfrequency = $this->item->couponfrequency;
+        return $this->item->facevalue * $percent / $couponfrequency / 100;
+    }
+
+    /**
+     * @return float|null
+     */
     public function getCouponValue(Currency $currency): ?float
     {
         $bondCode = json_decode($this->item->faceunit);
