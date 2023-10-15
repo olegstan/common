@@ -201,7 +201,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
                 'buy_sum' => $this->facevalue,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'sell_at' => null,
                 'rate_period_type_id' => $this->getCouponFrequency(),
@@ -215,7 +215,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
             return $classes['pif']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -226,7 +226,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'sell_at' => null,
                 'item_type' => $this->getMorphClass(),
@@ -238,7 +238,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -249,7 +249,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -259,7 +259,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         return $classes['stock']::create([
             'user_id' => $userId,
             'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-            'buy_currency_id' => $currency_id,
+            'buy_currency_id' => $currencyId,
             'buy_account_id' => $accountId,
             'item_type' => $this->getMorphClass(),
             'item_id' => $this->id,
