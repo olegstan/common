@@ -49,7 +49,7 @@ class CbondCouponTransformer extends BaseTransformer
             'startdate' => $model->startdate,
             'initialfacevalue' => $model->initialfacevalue,
             'currency_id' => $currencyId,
-            'value' => $model->value,
+            'value' => $model->getValue(),
             'valueprc' => $model->valueprc,
             'value_rub' => $model->value_rub,
             'morph' => $model->getMorphClass(),
