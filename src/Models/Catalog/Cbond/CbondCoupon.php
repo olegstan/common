@@ -71,17 +71,21 @@ class CbondCoupon extends BaseCatalog implements CouponInterface
     {
         $bondCode = json_decode($this->item->faceunit);
 
+        $percent = $this->valueprc;
+        $couponfrequency = $this->item->couponfrequency;
+        $value = $this->item->facevalue * $percent / $couponfrequency / 100;
+
         if(isset($bondCode[0]))
         {
             $couponCurrency = Currency::getByCode($bondCode[0]);
 
             if($currency->id === $couponCurrency->id)
             {
-                return $this->value;
+                return $value;
             }else{
                 //если валюты отличаются то конвертим
                 return $currency->convert(
-                    $this->value,
+                    $value,
                     $couponCurrency->id,
                     $this->getCouponDate()
                 );
