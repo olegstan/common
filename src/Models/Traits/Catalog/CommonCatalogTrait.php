@@ -21,29 +21,24 @@ trait CommonCatalogTrait
 
         if (!is_array(json_decode($codeCur))) {
             $currency = Currency::getByCode($codeCur);
-            return $currency ? $currency->id : false;
+            return $currency->id ?? false;
         }
 
         //Массивы валют у Мосбиржи. Что бы не ломать логику, будем возвращать рубль (если есть) или первую найденную валюту
         //Первую найденную, тк к примеру в SearchActive для контроллера мы должны будем один актив продублировать на количество валют
         $codeCur = json_decode($codeCur);
-        switch ($codeCur) {
-            case in_array('SUR', $codeCur):
-                $currency = Currency::getByCode('SUR');
-                return $currency ? $currency->id : false;
 
-            case in_array('RUB', $codeCur):
-                $currency = Currency::getByCode('RUB');
-                return $currency ? $currency->id : false;
+        if (in_array('SUR', $codeCur) || in_array('RUB', $codeCur)) {
+            $currency = Currency::getByCode('RUB');
+            return $currency->id ?? false;
+        }
 
-            default:
-                foreach ($codeCur as $code) {
-                    $currency = Currency::getByCode($code);
+        foreach ($codeCur as $code) {
+            $currency = Currency::getByCode($code);
 
-                    if ($currency) {
-                        return $currency->id;
-                    }
-                }
+            if ($currency) {
+                return $currency->id;
+            }
         }
 
         return false;
