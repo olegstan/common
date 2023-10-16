@@ -9,37 +9,44 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 trait CommonCatalogTrait
 {
     /**
-     * @return array|void
+     * @return false
      */
     public function getCurrency()
     {
         $codeCur = $this->getCodeCurrency();
 
-        if (!empty($codeCur)) {
-            if (is_array($codeCur = json_decode($codeCur))) {
-                $curIds = [];
+        if (empty($codeCur)) {
+            return false;
+        }
 
+        if (!is_array(json_decode($codeCur))) {
+            $currency = Currency::getByCode($codeCur);
+            return $currency ? $currency->id : false;
+        }
+
+        //Массивы валют у Мосбиржи. Что бы не ломать логику, будем возвращать рубль (если есть) или первую найденную валюту
+        //Первую найденную, тк к примеру в SearchActive для контроллера мы должны будем один актив продублировать на количество валют
+        $codeCur = json_decode($codeCur);
+        switch ($codeCur) {
+            case in_array('SUR', $codeCur):
+                $currency = Currency::getByCode('SUR');
+                return $currency ? $currency->id : false;
+
+            case in_array('RUB', $codeCur):
+                $currency = Currency::getByCode('RUB');
+                return $currency ? $currency->id : false;
+
+            default:
                 foreach ($codeCur as $code) {
-                    if ($code === 'SUR') {
-                        $code = 'RUB';
-                    }
-
                     $currency = Currency::getByCode($code);
 
                     if ($currency) {
-                        $curIds[] = $currency->id;
+                        return $currency->id;
                     }
                 }
-
-                return $curIds;
-            }
-
-            $currency = Currency::getByCode($codeCur);
-
-            if ($currency) {
-                return $currency->id;
-            }
         }
+
+        return false;
     }
 
     /**
