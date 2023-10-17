@@ -20,6 +20,14 @@ trait UserNotificationRelationsTrait
     }
 
     /**
+     * @return MorphTo
+     */
+    public function local_operation(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    /**
      * @return HasOne
      */
     public function notification()
