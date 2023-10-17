@@ -38,6 +38,7 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
     public const CLOSE_INSURANCES = 1002;
     public const TOKEN_IS_NOT_VALID = 1003;
     public const NEGATIVE_TRADES = 1004;
+    public const NOT_FOUND_STOCK = 1005;
 
     public const CONTACT_BIRTHDAY = 2003;
 
