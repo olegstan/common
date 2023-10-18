@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 trait CommonCatalogTrait
 {
     /**
-     * @return false
+     * @return int|false
      */
     public function getCurrency()
     {
