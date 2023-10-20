@@ -30,7 +30,7 @@ class CbondCouponTransformer extends BaseTransformer
         {
             $json = json_decode($parent->faceunit);
 
-            if(count($json))
+            if(is_array($json) && count($json))
             {
                 if($currency = Currency::getByCode($json[0]))
                 {
