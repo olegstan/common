@@ -295,6 +295,13 @@ interface DefinitionActiveConst
         self::DEBT,
     ];
 
+    public const COUPON_GROUP = [
+        self::OBLIGATION,
+        self::STRUCTURE_PRODUCT,
+        self::EXCHANGE_NOTE,
+        self::OBLIGATION_NOTE,
+    ];
+
     public const PACKAGE_GROUP = [
         self::STOCK,
         self::OBLIGATION,
