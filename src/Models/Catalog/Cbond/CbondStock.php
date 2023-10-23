@@ -473,4 +473,24 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
         //тк заранее все спаршено, будет заглушкой
         return true;
     }
+
+    /**
+     * @param $stock
+     * @return void
+     */
+    public static function loadCoupons($stock): void
+    {
+        //тк заранее все спаршено, будет заглушкой
+        return;
+    }
+
+    /**
+     * @param $stock
+     * @return void
+     */
+    public static function loadDividends($stock): void
+    {
+        //тк заранее все спаршено, будет заглушкой
+        return;
+    }
 }
