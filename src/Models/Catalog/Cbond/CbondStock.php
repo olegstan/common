@@ -12,7 +12,6 @@ use Common\Models\Traits\Catalog\Cbond\CbondRelationshipsTrait;
 use Common\Models\Traits\Catalog\Cbond\CbondReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Cbond\CbondScopeTrait;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
-use RuntimeException;
 use Throwable;
 use File;
 use Carbon\Carbon;
@@ -327,71 +326,76 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
 
     /**
      * @param bool $log
-     * @return array
+     * @return array|false
      */
-    public static function diffDataWithMoex(bool $log = false): array
+    public static function diffDataWithMoex(bool $log = false)
     {
-        $return = [];
-        $logData = [];
+        try {
+            $return = [];
+            $logData = [];
 
-        $moexStocks = MoscowExchangeStock::whereMarket('bonds')->get();
+            $moexStocks = MoscowExchangeStock::whereMarket('bonds')->get();
 
-        foreach ($moexStocks as $moexStock) {
-            $cbondStock = CbondStock::whereSecid($moexStock->isin)->first();
+            foreach ($moexStocks as $moexStock) {
+                $cbondStock = CbondStock::whereSecid($moexStock->isin)->first();
 
-            if (!$cbondStock) {
-                continue;
-            }
-
-            $keys = [
-                'shortname',
-                'regnumber',
-                'name',
-                'is_traded',
-                'type',
-                'group',
-                'issuedate',
-                'matdate',
-                'initialfacevalue',
-                'startdatemoex',
-                'issuesize',
-                'facevalue',
-                'couponfrequency',
-                'couponpercent',
-                'typename',
-                'groupname',
-                'lotsize',
-            ];
-
-            foreach ($keys as $key) {
-                if ($cbondStock->$key === $moexStock->$key) {
+                if (!$cbondStock) {
                     continue;
                 }
 
-                $logData[$moexStock->isin]['cbond'] = $cbondStock;
-                $logData[$moexStock->isin]['moex'] = $moexStock;
-                $return[] = $cbondStock->url;
+                $keys = [
+                    'shortname',
+                    'regnumber',
+                    'name',
+                    'is_traded',
+                    'type',
+                    'group',
+                    'issuedate',
+                    'matdate',
+                    'initialfacevalue',
+                    'startdatemoex',
+                    'issuesize',
+                    'facevalue',
+                    'couponfrequency',
+                    'couponpercent',
+                    'typename',
+                    'groupname',
+                    'lotsize',
+                ];
+
+                foreach ($keys as $key) {
+                    if ($cbondStock->$key === $moexStock->$key) {
+                        continue;
+                    }
+
+                    $logData[$moexStock->isin]['cbond'] = $cbondStock;
+                    $logData[$moexStock->isin]['moex'] = $moexStock;
+                    $return[] = $cbondStock->url;
+                    break;
+                }
+
                 break;
             }
 
-            break;
-        }
+            if ($log) {
+                $path = resource_path() . DIRECTORY_SEPARATOR .
+                    'CbondDiffData' . DIRECTORY_SEPARATOR .
+                    Carbon::now()->format('Y-m-d');
 
-        if ($log) {
-            $path = resource_path() . DIRECTORY_SEPARATOR .
-                'CbondDiffData' . DIRECTORY_SEPARATOR .
-                Carbon::now()->format('Y-m-d');
+                $fileName = $path . DIRECTORY_SEPARATOR . Carbon::now()->format('H-i-s') . '.json';
 
-            $fileName = $path . DIRECTORY_SEPARATOR . Carbon::now()->format('H-i-s') . '.json';
+                if (!file_exists($path) && !mkdir($path, 0777, true) && !is_dir($path)) {
+                    throw new RuntimeException(sprintf('Directory "%s" was not created', $path));
+                }
 
-            if (!file_exists($path) && !mkdir($path, 0777, true) && !is_dir($path)) {
-                throw new RuntimeException(sprintf('Directory "%s" was not created', $path));
+                File::put($fileName, json_encode($logData));
             }
 
-            File::put($fileName, json_encode($logData));
+            return $return;
+        } catch (Exception $e) {
+            LoggerHelper::getLogger('cbond-diff-moex')->error($e->getMessage);
+            return false;
         }
-
-        return $return;
     }
 
     /**
@@ -468,25 +472,5 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
     {
         //тк заранее все спаршено, будет заглушкой
         return true;
-    }
-
-    /**
-     * @param $stock
-     * @return void
-     */
-    public static function loadCoupons($stock): void
-    {
-        //тк заранее все спаршено, будет заглушкой
-        return;
-    }
-
-    /**
-     * @param $stock
-     * @return void
-     */
-    public static function loadDividends($stock): void
-    {
-        //тк заранее все спаршено, будет заглушкой
-        return;
     }
 }
