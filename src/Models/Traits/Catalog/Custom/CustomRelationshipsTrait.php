@@ -4,6 +4,7 @@ namespace Common\Models\Traits\Catalog\Custom;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use App\Models\Actives\Active;
 
 trait CustomRelationshipsTrait
 {
@@ -32,5 +33,13 @@ trait CustomRelationshipsTrait
     {
         //fake для совместимости запросов
         return $this->hasOne(self::class, 'id')->where('id', '<', 0);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function actives()
+    {
+        return $this->morphMany(Active::class, 'item');
     }
 }
