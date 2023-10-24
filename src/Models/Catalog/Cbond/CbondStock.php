@@ -6,6 +6,7 @@ use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeCoupon;
+use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -256,14 +257,13 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
     public function createBindActive($userId, $currencyId, $accountId, $classes)
     {
         if (in_array($this->type, DefinitionCbondConst::BOND_VALUES)) {
-            $currId = $this->getCurrency();
-            $currId = $currId ?? $currencyId;
-            
+            $bondCurrencyId = $this->getCurrency();
+
             return $classes['obligation']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
                 'buy_sum' => $this->facevalue,
-                'buy_currency_id' => $currencyId,
+                'buy_currency_id' => $bondCurrencyId,
                 'buy_account_id' => $accountId,
                 'sell_at' => $this->matdate ? Carbon::createFromFormat('Y-m-d', $this->matdate)->startOfDay() : null,
                 'rate_period_type_id' => $this->getCouponFrequency(),
