@@ -2,9 +2,10 @@
 
 namespace Common\Models\Catalog\Cbond;
 
+use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
-use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
+use Common\Models\Catalog\MoscowExchange\MoscowExchangeCoupon;
 use Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -247,19 +248,22 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
 
     /**
      * @param $userId
-     * @param $currency_id
+     * @param $currencyId
      * @param $accountId
      * @param $classes
      * @return mixed
      */
-    public function createBindActive($userId, $currency_id, $accountId, $classes)
+    public function createBindActive($userId, $currencyId, $accountId, $classes)
     {
         if (in_array($this->type, DefinitionCbondConst::BOND_VALUES)) {
+            $currId = $this->getCurrency();
+            $currId = $currId ?? $currencyId;
+            
             return $classes['obligation']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
                 'buy_sum' => $this->facevalue,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'sell_at' => $this->matdate ? Carbon::createFromFormat('Y-m-d', $this->matdate)->startOfDay() : null,
                 'rate_period_type_id' => $this->getCouponFrequency(),
@@ -273,7 +277,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             return $classes['pif']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -284,7 +288,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             return $classes['futures']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'sell_at' => $this->expiration ? Carbon::createFromFormat('Y-m-d', $this->expiration) : null,
                 'item_type' => $this->getMorphClass(),
@@ -296,7 +300,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             return $classes['etf']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -307,7 +311,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             return $classes['currency']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::INSTRUMENT_CASH_FLOW_GROUP_TYPE,
-                'buy_currency_id' => $currency_id,
+                'buy_currency_id' => $currencyId,
                 'buy_account_id' => $accountId,
                 'item_type' => $this->getMorphClass(),
                 'item_id' => $this->id,
@@ -317,7 +321,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
         return $classes['stock']::create([
             'user_id' => $userId,
             'group_type_id' => DefinitionActiveConst::STOCK_GROUP_TYPE,
-            'buy_currency_id' => $currency_id,
+            'buy_currency_id' => $currencyId,
             'buy_account_id' => $accountId,
             'item_type' => $this->getMorphClass(),
             'item_id' => $this->id,
@@ -468,7 +472,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      * @param Carbon $endDate
      * @return true
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate): bool
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate)
     {
         //тк заранее все спаршено, будет заглушкой
         return true;

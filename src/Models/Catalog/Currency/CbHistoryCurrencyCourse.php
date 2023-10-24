@@ -77,7 +77,7 @@ class CbHistoryCurrencyCourse extends BaseCatalog
      * @param Carbon $endDate
      * @return bool
      */
-    public static function loadHistory(CbCurrency $stock, Carbon $startDate, Carbon $endDate): bool
+    public static function loadHistory(CbCurrency $stock, Carbon $startDate, Carbon $endDate)
     {
         [$bool, $result] = self::cacheHistory($stock, $startDate, $endDate);
 
