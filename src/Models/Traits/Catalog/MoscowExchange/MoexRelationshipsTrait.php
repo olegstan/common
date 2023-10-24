@@ -9,6 +9,7 @@ use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use App\Models\Actives\Active;
 
 trait MoexRelationshipsTrait
 {
@@ -45,5 +46,13 @@ trait MoexRelationshipsTrait
     {
         return $this->hasMany(MoscowExchangeDividend::class, 'moex_stock_id')
             ->orderBy('registryclosedate', 'ASC');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function actives()
+    {
+        return $this->morphMany(Active::class, 'item');
     }
 }
