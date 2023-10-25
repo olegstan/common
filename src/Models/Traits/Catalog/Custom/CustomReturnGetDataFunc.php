@@ -89,4 +89,28 @@ trait CustomReturnGetDataFunc
 //                return __('model.yahoo_stock.type_text.default');
         }
     }
+
+    /**
+     * @return mixed
+     */
+    public function getStockName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCouponPercent()
+    {
+        return null;
+    }
+
+    /**
+     * @return null
+     */
+    public function getMaturityDate()
+    {
+        return null;
+    }
 }

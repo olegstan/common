@@ -87,4 +87,28 @@ trait YahooReturnGetDataFunc
     {
         return 1;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getStockName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCouponPercent()
+    {
+        return null;
+    }
+
+    /**
+     * @return null
+     */
+    public function getMaturityDate()
+    {
+        return null;
+    }
 }

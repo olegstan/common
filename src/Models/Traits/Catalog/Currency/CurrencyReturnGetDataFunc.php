@@ -77,4 +77,28 @@ trait CurrencyReturnGetDataFunc
     {
         return DefinitionActiveConst::CURRENCY;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getStockName()
+    {
+        return $this->char_code;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCouponPercent()
+    {
+        return null;
+    }
+
+    /**
+     * @return null
+     */
+    public function getMaturityDate()
+    {
+        return null;
+    }
 }

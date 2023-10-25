@@ -23,6 +23,9 @@ interface CommonsFuncCatalogInterface
     public function getDateField();
 
     public function getCouponFrequency();
+    public function getStockName();
+    public function getMaturityDate();
+    public function getCouponPercent();
 
     public function createBindActive($userId, $currencyId, $accountId, $classes);
 

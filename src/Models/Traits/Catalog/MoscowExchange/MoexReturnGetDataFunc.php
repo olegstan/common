@@ -216,4 +216,28 @@ trait MoexReturnGetDataFunc
                 return 'Акции';
         }
     }
+
+    /**
+     * @return mixed
+     */
+    public function getStockName()
+    {
+        return $this->name ?? $this->shortname;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCouponPercent()
+    {
+        return $this->couponpercent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMaturityDate()
+    {
+        return $this->matdate;
+    }
 }
