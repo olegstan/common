@@ -199,6 +199,40 @@ class Currency extends BaseCatalog
     }
 
     /**
+     * @param $currencyId
+     * @return mixed
+     */
+    public static function getCodeById($currencyId)
+    {
+        return Cache::rememberForever('currency.code.' . $currencyId, static function () use ($currencyId) {
+            $curr = Currency::where('id', $currencyId)
+                ->first();
+
+            if($curr)
+            {
+                return $curr->code;
+            }
+        });
+    }
+
+    /**
+     * @param $currencyId
+     * @return mixed
+     */
+    public static function getSignById($currencyId)
+    {
+        return Cache::rememberForever('currency.sign.' . $currencyId, static function () use ($currencyId) {
+            $curr = Currency::where('id', $currencyId)
+                ->first();
+
+            if($curr)
+            {
+                return $curr->sign;
+            }
+        });
+    }
+
+    /**
      * @return HasOne
      */
     public function cb_currency(): HasOne
