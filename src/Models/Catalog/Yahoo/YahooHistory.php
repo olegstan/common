@@ -3,6 +3,8 @@
 namespace Common\Models\Catalog\Yahoo;
 
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
+use Cache;
 
 /**
  * @property $symbol
@@ -14,7 +16,7 @@ use Common\Models\Catalog\BaseCatalog;
  * @property $adj_close
  * @property $volume
  */
-class YahooHistory extends BaseCatalog
+class YahooHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInterface
 {
     /**
      * @var string
@@ -69,5 +71,17 @@ class YahooHistory extends BaseCatalog
     public function getValue()
     {
         return $this->close;
+    }
+
+    /**
+     * @param $key
+     * @return array
+     */
+    public function setPrice($key)
+    {
+        $price = $this->close;
+        $date = $this->date;
+        Cache::forever($key, $price);
+        return [$key, $price, $date];
     }
 }

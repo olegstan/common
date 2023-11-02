@@ -4,7 +4,10 @@ namespace Common\Models\Catalog\Cbond;
 
 use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Currency as Cur;
+use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Cache;
 
 /**
  * @property $cbond_stock_id
@@ -25,7 +28,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property $waval
  * @property $faceunit
  */
-class CbondHistory extends BaseCatalog
+class CbondHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInterface
 {
     /**
      * @var string
@@ -103,5 +106,45 @@ class CbondHistory extends BaseCatalog
     public function scopeByItem($query, CbondStock $item)
     {
         $query->where('isin', $item->isin);
+    }
+
+    /**
+     * @param $key
+     * @return array
+     */
+    public function setPrice($key)
+    {
+        $cbondCurrencyCode = $this->faceunit;
+
+        if ($cbondCurrencyCode === Cur::RUB) {
+            $price = $this->close;
+            $date = $this->tradedate;
+
+            Cache::forever($key, $price);
+            return [$key, $price, $date];
+        }
+
+        /**
+         * @var Cur $convertCurrency
+         */
+        $convertCurrency = Cache::rememberForever('currency.' . Cur::RUB_ID, function () {
+            return Cur::where('id', Cur::RUB_ID)
+                ->with('cb_currency')
+                ->first();
+        });
+
+        if ($convertCurrency) {
+            $price = $this->close;
+            $date = $this->tradedate;
+
+            $convertedPrice = $convertCurrency->convert(
+                $price,
+                Cur::getByCode($cbondCurrencyCode)->id,
+                Carbon::now()
+            );
+
+            Cache::forever($key, $convertedPrice);
+            return [$key, $convertedPrice, $date];
+        }
     }
 }

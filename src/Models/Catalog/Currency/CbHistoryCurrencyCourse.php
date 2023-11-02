@@ -7,6 +7,7 @@ use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Carbon\Carbon;
+use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Cache;
 
@@ -16,7 +17,7 @@ use Cache;
  * @property $nominal
  * @property $date
  */
-class CbHistoryCurrencyCourse extends BaseCatalog
+class CbHistoryCurrencyCourse extends BaseCatalog implements CommonsFuncCatalogHistoryInterface
 {
     /**
      * @var string
@@ -124,5 +125,10 @@ class CbHistoryCurrencyCourse extends BaseCatalog
     public function scopeByItem($query, CbCurrency $item)
     {
         $query->where('currency_id', $item->id);
+    }
+
+    public function setPrice($key)
+    {
+
     }
 }

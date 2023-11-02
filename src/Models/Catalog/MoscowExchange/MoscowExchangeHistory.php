@@ -4,6 +4,8 @@ namespace Common\Models\Catalog\MoscowExchange;
 
 use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Currency as Cur;
+use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
 
 /**
  * @property Carbon $tradedate
@@ -24,7 +26,7 @@ use Common\Models\Catalog\BaseCatalog;
  * @property $waval
  * @property $faceunit
  */
-class MoscowExchangeHistory extends BaseCatalog
+class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInterface
 {
     /**
      * @var string
@@ -96,5 +98,41 @@ class MoscowExchangeHistory extends BaseCatalog
     public function scopeByItem($query, MoscowExchangeStock $item)
     {
         $query->where('secid', $item->secid);
+    }
+
+    /**
+     * @param $key
+     * @return array
+     */
+    public function setPrice($key)
+    {
+        if ($this->faceunit === Cur::RUB) {
+            $price = $this->close;
+            $date = $this->tradedate;
+            Cache::forever($key, $price);
+            return [$key, $price, $date];
+        }
+
+        /**
+         * @var Cur $convertCurrency
+         */
+        $convertCurrency = Cache::rememberForever('currency.' . Cur::RUB_ID, function () {
+            return Cur::where('id', Cur::RUB_ID)
+                ->with('cb_currency')
+                ->first();
+        });
+
+        if ($convertCurrency) {
+            $price = $this->close;
+            $date = $this->tradedate;
+            $convertedPrice = $convertCurrency->convert(
+                $price,
+                Cur::getByCode($this->faceunit)->id,
+                Carbon::now()
+            );
+
+            Cache::forever($key, $convertedPrice);
+            return [$key, $convertedPrice, $date];
+        }
     }
 }
