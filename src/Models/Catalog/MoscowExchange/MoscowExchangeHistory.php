@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency as Cur;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
+use Cache;
 
 /**
  * @property Carbon $tradedate
