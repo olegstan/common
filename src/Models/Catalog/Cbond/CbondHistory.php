@@ -2,12 +2,13 @@
 
 namespace Common\Models\Catalog\Cbond;
 
+use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property $cbond_stock_id
- * @property $tradedate
+ * @property Carbon $tradedate
  * @property $numtrades
  * @property $value
  * @property $open

@@ -2,10 +2,11 @@
 
 namespace Common\Models\Catalog\MoscowExchange;
 
+use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
 
 /**
- * @property $tradedate
+ * @property Carbon $tradedate
  * @property $secid
  * @property $numtrades
  * @property $value
