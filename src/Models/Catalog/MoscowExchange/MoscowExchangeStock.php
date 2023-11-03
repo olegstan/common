@@ -494,6 +494,10 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
     {
         $descriptionData = MoscowExchangeCurl::getDescription($this->secid);
 
+        if (!$descriptionData) {
+            $descriptionData = MoscowExchangeCurl::getDescription($this->isin);
+        }
+
         if ($descriptionData) {
             if (isset($descriptionData['faceunit']) && !empty($descriptionData['faceunit'])) {
                 $descriptionData['faceunit'] = json_encode([$descriptionData['faceunit']]);
@@ -521,7 +525,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                 'decimals' => $boardData['decimals'],
             ];
 
-            if (isset($boardData['currencyid']) && !empty($boardData['currencyid'])) {
+            if (!isset($descriptionData['faceunit']) && isset($boardData['currencyid']) && !empty($boardData['currencyid'])) {
                 $saveBoard['faceunit'] = json_encode([$boardData['currencyid']]);
             }
 
@@ -530,7 +534,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
         $cureencyData = MoscowExchangeCurl::getCurrency($this->secid);
 
-        if ($cureencyData && (!$this->faceunit || empty($this->faceunit))) {
+        if ($cureencyData && !isset($descriptionData['faceunit'])) {
             $this->fill(['faceunit' => json_encode($cureencyData)]);
         }
 
