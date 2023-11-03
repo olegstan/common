@@ -113,7 +113,7 @@ class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHis
             $date = $this->tradedate;
             Cache::forever($priceKey, $price);
             Cache::forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
-            return [$priceKey, $price, $date, null];
+            return [$priceKey, $price, $date, null, 'moex'];
         }
 
         /**
@@ -136,7 +136,7 @@ class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHis
 
             Cache::forever($priceKey, $convertedPrice);
             Cache::forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
-            return [$priceKey, $convertedPrice, $date, $price];
+            return [$priceKey, $convertedPrice, $date, $price, 'moex'];
         }
     }
 }
