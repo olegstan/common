@@ -530,7 +530,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
         $cureencyData = MoscowExchangeCurl::getCurrency($this->secid);
 
-        if ($cureencyData) {
+        if ($cureencyData && (!$this->faceunit || empty($this->faceunit))) {
             $this->fill(['faceunit' => json_encode($cureencyData)]);
         }
 
