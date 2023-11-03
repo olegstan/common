@@ -503,7 +503,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                 $descriptionData['faceunit'] = json_encode([$descriptionData['faceunit']]);
             }
 
-            if (isset($descriptionData['currencyid']) && !empty($descriptionData['currencyid'])) {
+            if (!isset($descriptionData['faceunit']) && isset($descriptionData['currencyid']) && !empty($descriptionData['currencyid'])) {
                 $descriptionData['faceunit'] = json_encode([$descriptionData['currencyid']]);
             }
 
