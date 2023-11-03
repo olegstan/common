@@ -2,6 +2,7 @@
 
 namespace Common\Models\Catalog\Yahoo;
 
+use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
 use Cache;
@@ -77,11 +78,12 @@ class YahooHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
      * @param $key
      * @return array
      */
-    public function setPrice($key)
+    public function setPrice($priceKey, $dateKey)
     {
         $price = $this->close;
         $date = $this->date;
-        Cache::forever($key, $price);
-        return [$key, $price, $date];
+        Cache::forever($priceKey, $price);
+        Cache::forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
+        return [$priceKey, $price, $date];
     }
 }

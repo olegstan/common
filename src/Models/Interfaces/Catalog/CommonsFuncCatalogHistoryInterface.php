@@ -6,5 +6,5 @@ use Carbon\Carbon;
 
 interface CommonsFuncCatalogHistoryInterface
 {
-    public function setPrice($key);
+    public function setPrice($priceKey, $dateKey);
 }

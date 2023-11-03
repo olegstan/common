@@ -102,16 +102,18 @@ class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHis
     }
 
     /**
-     * @param $key
+     * @param $priceKey
+     * @param $dateKey
      * @return array
      */
-    public function setPrice($key)
+    public function setPrice($priceKey, $dateKey)
     {
         if ($this->faceunit === Cur::RUB) {
             $price = $this->close;
             $date = $this->tradedate;
-            Cache::forever($key, $price);
-            return [$key, $price, $date];
+            Cache::forever($priceKey, $price);
+            Cache::forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
+            return [$priceKey, $price, $date];
         }
 
         /**
@@ -132,8 +134,9 @@ class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHis
                 Carbon::now()
             );
 
-            Cache::forever($key, $convertedPrice);
-            return [$key, $convertedPrice, $date];
+            Cache::forever($priceKey, $convertedPrice);
+            Cache::forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
+            return [$priceKey, $convertedPrice, $date];
         }
     }
 }

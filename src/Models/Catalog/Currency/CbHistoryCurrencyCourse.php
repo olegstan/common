@@ -127,7 +127,11 @@ class CbHistoryCurrencyCourse extends BaseCatalog implements CommonsFuncCatalogH
         $query->where('currency_id', $item->id);
     }
 
-    public function setPrice($key)
+    /**
+     * @param $priceKey
+     * @param $dateKey
+     */
+    public function setPrice($priceKey, $dateKey)
     {
 
     }
