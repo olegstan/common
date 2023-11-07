@@ -67,16 +67,12 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
      */
     public function createBindActive($userId, $currencyId, $accountId, $classes)
     {
-        $active = $classes['cur']::create([
+        return $classes['cur']::create([
             'user_id' => $userId,
             'buy_currency_id' => Currency::getByCode(Currency::RUB)->id,
+            'item_id' => $this->id,
+            'item_type' => $this->getMorphClass(),
         ]);
-
-        if ($active) {
-            $this->active($active)->save($active);
-        }
-
-        return $active;
     }
 
     /**

@@ -278,8 +278,6 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
             ]);
         }
 
-        $this->active($active)->save($active);
-
         return $active;
     }
 
