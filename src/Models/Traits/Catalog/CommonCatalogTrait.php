@@ -109,7 +109,7 @@ trait CommonCatalogTrait
      */
     public function active(): MorphOne
     {
-        return $this->morphOne(Active::class, 'item');
+        return $this->morphOne(config('common.active'), 'item');
     }
 
     /**
