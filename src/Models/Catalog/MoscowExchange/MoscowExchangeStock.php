@@ -254,11 +254,13 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
     public function createBindActive($userId, $currencyId, $accountId, $classes)
     {
         if (in_array($this->type, DefinitionMoexConst::BOND_VALUES)) {
+            $bondCurrencyId = $this->getCurrency();
+
             return $classes['obligation']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
                 'buy_sum' => $this->facevalue,
-                'buy_currency_id' => $currencyId,
+                'buy_currency_id' => $bondCurrencyId,
                 'buy_account_id' => $accountId,
                 'sell_at' => $this->matdate ? Carbon::createFromFormat('Y-m-d', $this->matdate)->startOfDay() : null,
                 'rate_period_type_id' => $this->getCouponFrequency(),
