@@ -35,6 +35,7 @@ interface DefinitionActiveConst
     public const ATON_CRM_PARSE = 11;
     public const BCS_FILE_PARSE = 12;
     public const ACTIVE_SET_PRICE = 13;
+    public const CATALOG_COURSE = 14;
 
     /**
      * start types
