@@ -2,12 +2,10 @@
 
 namespace Common\Models\Catalog\Custom;
 
+use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
-use Cache;
-use Common\Models\Catalog\Currency\CbCurrency;
-use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;

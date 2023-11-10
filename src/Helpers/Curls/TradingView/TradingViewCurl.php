@@ -2,16 +2,16 @@
 
 namespace Common\Helpers\Curls\TradingView;
 
+use Carbon\Carbon;
+use Common\Helpers\LoggerHelper;
 use Common\Helpers\PythonScript\PythonScriptTvCurl;
 use Common\Helpers\TradingViewWebsocket;
 use Common\Models\Catalog\TradingView\TradingViewKey;
 use Common\Models\Catalog\TradingView\TradingViewQuarter;
 use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Common\Models\Catalog\TradingView\TradingViewYear;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Common\Helpers\LoggerHelper;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class TradingViewCurl

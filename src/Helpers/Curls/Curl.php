@@ -2,8 +2,8 @@
 
 namespace Common\Helpers\Curls;
 
-use Common\Helpers\LoggerHelper;
 use App;
+use Common\Helpers\LoggerHelper;
 
 class Curl
 {

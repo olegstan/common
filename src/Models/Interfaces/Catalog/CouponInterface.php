@@ -2,8 +2,8 @@
 
 namespace Common\Models\Interfaces\Catalog;
 
-use Common\Models\Currency;
 use Carbon\Carbon;
+use Common\Models\Currency;
 
 interface CouponInterface
 {

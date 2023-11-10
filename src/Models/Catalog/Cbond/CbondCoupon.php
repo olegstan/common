@@ -2,11 +2,11 @@
 
 namespace Common\Models\Catalog\Cbond;
 
+use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CouponInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Carbon\Carbon;
 
 /**
  * @property $cbond_stock_id

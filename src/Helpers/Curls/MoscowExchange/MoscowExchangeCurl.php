@@ -2,13 +2,13 @@
 
 namespace Common\Helpers\Curls\MoscowExchange;
 
-use Common\Helpers\Curls\Curl;
-use Common\Helpers\Translit;
-use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Cache;
 use Carbon\Carbon;
-use Exception;
+use Common\Helpers\Curls\Curl;
 use Common\Helpers\LoggerHelper;
+use Common\Helpers\Translit;
+use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
+use Exception;
 
 /**
  * Class MoscowExchangeCurl

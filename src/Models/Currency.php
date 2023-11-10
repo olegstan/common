@@ -1,12 +1,12 @@
 <?php
 
 namespace Common\Models;
+use Cache;
+use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Catalog\Currency\CbCurrency;
 use Common\Models\Catalog\Currency\CbHistoryCurrencyCourse;
-use Cache;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 

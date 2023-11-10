@@ -1,10 +1,10 @@
 <?php
 namespace Common\Models\Traits\Catalog\Custom;
 
+use App\Models\Actives\Active;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use App\Models\Actives\Active;
 
 trait CustomRelationshipsTrait
 {

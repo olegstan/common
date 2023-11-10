@@ -2,21 +2,21 @@
 
 namespace Common\Models\Catalog\Yahoo;
 
+use Cache;
+use Carbon\Carbon;
 use Common\Helpers\Curls\Yahoo\YahooCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\YahooDataJob;
 use Common\Jobs\YahooJob;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Interfaces\Catalog\Yahoo\DefinitionYahooConst;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\Yahoo\YahooRelationshipsTrait;
 use Common\Models\Traits\Catalog\Yahoo\YahooReturnGetDataFunc;
-use Carbon\Carbon;
-use Cache;
-use Exception;
-use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Traits\Catalog\Yahoo\YahooScopeTrait;
+use Exception;
 use Illuminate\Support\Facades\Queue;
 use Throwable;
 

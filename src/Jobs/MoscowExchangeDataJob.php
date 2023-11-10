@@ -2,10 +2,10 @@
 
 namespace Common\Jobs;
 
+use Carbon\Carbon;
 use Common\Helpers\Curls\TradingView\TradingViewCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Queue\Jobs\RedisJob;
 use Illuminate\Queue\SerializesModels;

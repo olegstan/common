@@ -1,12 +1,12 @@
 <?php
 namespace Common\Models\Traits\Catalog\Cbond;
 
+use App\Models\Actives\Active;
 use Common\Models\Catalog\Cbond\CbondCoupon;
 use Common\Models\Catalog\Cbond\CbondHistory;
 use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\Actives\Active;
 
 trait CbondRelationshipsTrait
 {

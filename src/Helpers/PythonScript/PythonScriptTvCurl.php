@@ -3,8 +3,8 @@
 namespace Common\Helpers\PythonScript;
 
 use Common\Helpers\Curls\TradingView\TradingViewCurl;
-use Exception;
 use Common\Helpers\LoggerHelper;
+use Exception;
 
 class PythonScriptTvCurl
 {

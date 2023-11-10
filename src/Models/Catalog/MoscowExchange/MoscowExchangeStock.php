@@ -2,10 +2,12 @@
 
 namespace Common\Models\Catalog\MoscowExchange;
 
+use Cache;
+use Carbon\Carbon;
 use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
+use Common\Helpers\LoggerHelper;
 use Common\Jobs\MoscowExchangeDataJob;
 use Common\Jobs\MoscowExchangeJob;
-use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -14,8 +16,6 @@ use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexRelationshipsTrait;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexReturnGetDataFunc;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexScopeTrait;
-use Carbon\Carbon;
-use Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Throwable;

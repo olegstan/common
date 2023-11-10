@@ -2,9 +2,9 @@
 
 namespace Common\Models\Catalog\MoscowExchange;
 
+use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Carbon\Carbon;
 
 /**
  * @property $moex_stock_id

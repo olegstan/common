@@ -2,10 +2,10 @@
 
 namespace Common\Models\Catalog\Yahoo;
 
+use Cache;
 use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
-use Cache;
 
 /**
  * @property $symbol

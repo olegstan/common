@@ -3,11 +3,11 @@
 namespace Common\Helpers\Curls\Yahoo;
 
 use Cache;
-use Common\Helpers\Curls\Curl;
-use Common\Helpers\Translit;
 use Carbon\Carbon;
-use Exception;
+use Common\Helpers\Curls\Curl;
 use Common\Helpers\LoggerHelper;
+use Common\Helpers\Translit;
+use Exception;
 
 /**
  * Class YahooCurl

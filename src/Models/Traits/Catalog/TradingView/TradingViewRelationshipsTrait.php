@@ -3,8 +3,8 @@ namespace Common\Models\Traits\Catalog\TradingView;
 
 use Common\Models\Catalog\TradingView\TradingViewChartDay;
 use Common\Models\Catalog\TradingView\TradingViewQuarter;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Common\Models\Catalog\TradingView\TradingViewYear;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait TradingViewRelationshipsTrait
 {

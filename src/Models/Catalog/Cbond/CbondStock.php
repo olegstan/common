@@ -2,11 +2,9 @@
 
 namespace Common\Models\Catalog\Cbond;
 
-use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
+use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
-use Common\Models\Catalog\MoscowExchange\MoscowExchangeCoupon;
-use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -14,9 +12,7 @@ use Common\Models\Traits\Catalog\Cbond\CbondRelationshipsTrait;
 use Common\Models\Traits\Catalog\Cbond\CbondReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Cbond\CbondScopeTrait;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
-use Throwable;
 use File;
-use Carbon\Carbon;
 
 /**
  * Class CbondStock

@@ -2,11 +2,11 @@
 
 namespace Common\Helpers\Curls\Currency;
 
-use Common\Helpers\Curls\Curl;
 use Carbon\Carbon;
+use Common\Helpers\Curls\Curl;
+use Common\Helpers\LoggerHelper;
 use Exception;
 use SimpleXMLElement;
-use Common\Helpers\LoggerHelper;
 
 class CbCurl
 {

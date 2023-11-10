@@ -1,13 +1,12 @@
 <?php
 namespace Common\Models\Traits\Catalog\Yahoo;
 
-use Common\Models\Catalog\MoscowExchange\MoscowExchangeHistory;
+use App\Models\Actives\Active;
 use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Common\Models\Catalog\Yahoo\YahooHistory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use App\Models\Actives\Active;
 
 trait YahooRelationshipsTrait
 {

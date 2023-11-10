@@ -2,9 +2,9 @@
 
 namespace Common\Models\Catalog;
 
+use Cache;
 use Common\Models\Base;
 use Common\Models\BaseModel;
-use Cache;
 
 /**
  * Class BaseStock

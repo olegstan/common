@@ -4,10 +4,10 @@ namespace Common\Models\Traits;
 
 use App\Helpers\LoggerHelper;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Collection as BaseCollection;
 use Illuminate\Support\Str;
-use Exception;
 
 trait BaseTrait
 {

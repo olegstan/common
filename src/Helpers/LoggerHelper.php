@@ -3,10 +3,10 @@ namespace Common\Helpers;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
-use Illuminate\Support\Facades\Request;
 
 class LoggerHelper
 {

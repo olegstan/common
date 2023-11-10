@@ -2,14 +2,14 @@
 
 namespace Common\Models\Catalog\Currency;
 
+use Cache;
+use Carbon\Carbon;
 use Common\Helpers\Curls\Currency\CbCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
-use Carbon\Carbon;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Cache;
 
 /**
  * @property $currency_id
