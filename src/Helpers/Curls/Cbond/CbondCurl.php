@@ -19,19 +19,19 @@ class CbondCurl extends Curl
     /**
      *
      */
-    public const CURLOPT_CONNECTTIMEOUT = 10;
+    public static $connectTimeout = 10;
     /**
      *
      */
-    public const CURLOPT_TIMEOUT = 10;
+    public static $timeout = 10;
     /**
      *
      */
-    public const COMMAND_CURLOPT_CONNECTTIMEOUT = 30;
+    public static $commandConnectTimeout = 30;
     /**
      *
      */
-    public const COMMAND_CURLOPT_TIMEOUT = 30;
+    public static $commandTimeout = 30;
 
     /**
      * @return int
@@ -39,10 +39,10 @@ class CbondCurl extends Curl
     public static function getTimeout()
     {
         if (App::runningInConsole()) {
-            return static::COMMAND_CURLOPT_TIMEOUT;
+            return static::$commandTimeout;
         }
 
-        return static::CURLOPT_TIMEOUT;
+        return static::$timeout;
     }
 
     /**
@@ -51,10 +51,10 @@ class CbondCurl extends Curl
     public static function getConnectionTimeout()
     {
         if (App::runningInConsole()) {
-            return static::COMMAND_CURLOPT_CONNECTTIMEOUT;
+            return static::$commandConnectTimeout;
         }
 
-        return static::CURLOPT_CONNECTTIMEOUT;
+        return static::$connectTimeout;
     }
 
     /**

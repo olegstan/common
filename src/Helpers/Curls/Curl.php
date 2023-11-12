@@ -7,13 +7,24 @@ use Common\Helpers\LoggerHelper;
 
 class Curl
 {
-    //таймайут соединения для поиска с сайта
-    protected const CURLOPT_CONNECTTIMEOUT = 30;
-    protected const CURLOPT_TIMEOUT = 30;
+    /**
+     * таймайут соединения для поиска с сайта
+     */
+    public static $connectTimeout = 30;
+    /**
+     *
+     */
+    public static $timeout = 30;
 
-    //таймаут соединения для консольных команд
-    protected const COMMAND_CURLOPT_CONNECTTIMEOUT = 300;
-    protected const COMMAND_CURLOPT_TIMEOUT = 300;
+    /**
+     * таймаут соединения для консольных команд
+     *
+     */
+    public static $commandConnectTimeout = 300;
+    /**
+     *
+     */
+    public static $commandTimeout = 300;
 
     /**
      * @var array
@@ -25,7 +36,7 @@ class Curl
      */
     public static function getTimeout()
     {
-        return static::CURLOPT_TIMEOUT;
+        return static::$timeout;
     }
 
     /**
@@ -33,7 +44,7 @@ class Curl
      */
     public static function getConnectionTimeout()
     {
-        return static::CURLOPT_CONNECTTIMEOUT;
+        return static::$connectTimeout;
     }
 
     /**
