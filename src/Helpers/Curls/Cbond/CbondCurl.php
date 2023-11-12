@@ -19,19 +19,19 @@ class CbondCurl extends Curl
     /**
      *
      */
-    protected const CURLOPT_CONNECTTIMEOUT = 10;
+    public const CURLOPT_CONNECTTIMEOUT = 10;
     /**
      *
      */
-    protected const CURLOPT_TIMEOUT = 10;
+    public const CURLOPT_TIMEOUT = 10;
     /**
      *
      */
-    protected const COMMAND_CURLOPT_CONNECTTIMEOUT = 30;
+    public const COMMAND_CURLOPT_CONNECTTIMEOUT = 30;
     /**
      *
      */
-    protected const COMMAND_CURLOPT_TIMEOUT = 30;
+    public const COMMAND_CURLOPT_TIMEOUT = 30;
 
     /**
      * @return int
