@@ -628,7 +628,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
             foreach ($data as $datum) {
                 $history = MoscowExchangeHistory::where('tradedate', '=', $datum['tradedate'])
-                    ->where('secid', $datum['secid'])
+                    ->where('moex_stock_id', $stock->id)
                     ->first();
 
                 if (!$history &&
@@ -651,6 +651,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                         }
                     }
 
+                    $datum['moex_stock_id'] = $stock->id;
                     MoscowExchangeHistory::create($datum);
                 }
             }

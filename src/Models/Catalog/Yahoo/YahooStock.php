@@ -305,7 +305,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
             foreach ($data as $datum) {
                 $history = YahooHistory::where('date', '=', $datum['date']->format('Y-m-d'))
-                    ->where('symbol', $stock->symbol)
+                    ->where('yahoo_stock_id', $stock->id)
                     ->first();
 
                 if (!$history) {
@@ -318,6 +318,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                         'close' => $datum['close'],
                         'adj_close' => $datum['adj_close'],
                         'volume' => $datum['volume'],
+                        'yahoo_stock_id' => $stock->id,
                     ]);
                 }
             }
