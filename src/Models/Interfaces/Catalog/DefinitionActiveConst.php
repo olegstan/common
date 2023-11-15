@@ -36,6 +36,7 @@ interface DefinitionActiveConst
     public const BCS_FILE_PARSE = 12;
     public const ACTIVE_SET_PRICE = 13;
     public const CATALOG_COURSE = 14;
+    public const IRR = 15;
 
     /**
      * start types
