@@ -16,6 +16,7 @@ use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexRelationshipsTrait;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexReturnGetDataFunc;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexScopeTrait;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Throwable;
@@ -83,6 +84,8 @@ use Throwable;
  * @property $buysellfee
  * @property $scalperfee
  * @property $negotiatedfee
+ * @property Collection|MoscowExchangeCoupon[] $coupons
+ * @property Collection|MoscowExchangeDividend[] $dividends
  *
  * @package Models\Catalog\MoscowExchange
  */

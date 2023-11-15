@@ -13,6 +13,7 @@ use Common\Models\Traits\Catalog\Cbond\CbondReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Cbond\CbondScopeTrait;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use File;
+use Illuminate\Support\Collection;
 
 /**
  * Class CbondStock
@@ -80,6 +81,7 @@ use File;
  * @property $exercisefee
  * @property $tv_ticker_id
  * @property $url
+ * @property Collection|CbondCoupon[] $coupons
  *
  * @package Models\Catalog\Cbond
  */
