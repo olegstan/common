@@ -71,7 +71,13 @@ class CbondCoupon extends BaseCatalog implements CouponInterface
     {
         $percent = $this->valueprc;
         $couponfrequency = $this->item->couponfrequency;
-        return $this->item->facevalue * $percent / $couponfrequency / 100;
+
+        if($couponfrequency > 0)
+        {
+            return $this->item->facevalue * $percent / $couponfrequency / 100;
+        }
+
+        return 0;
     }
 
     /**
@@ -83,22 +89,26 @@ class CbondCoupon extends BaseCatalog implements CouponInterface
 
         $percent = $this->valueprc;
         $couponfrequency = $this->item->couponfrequency;
-        $value = $this->item->facevalue * $percent / $couponfrequency / 100;
 
-        if(isset($bondCode[0]))
+        if($couponfrequency > 0)
         {
-            $couponCurrency = Currency::getByCode($bondCode[0]);
+            $value = $this->item->facevalue * $percent / $couponfrequency / 100;
 
-            if($currency->id === $couponCurrency->id)
+            if(isset($bondCode[0]))
             {
-                return $value;
-            }else{
-                //если валюты отличаются то конвертим
-                return $currency->convert(
-                    $value,
-                    $couponCurrency->id,
-                    $this->getCouponDate()
-                );
+                $couponCurrency = Currency::getByCode($bondCode[0]);
+
+                if($currency->id === $couponCurrency->id)
+                {
+                    return $value;
+                }else{
+                    //если валюты отличаются то конвертим
+                    return $currency->convert(
+                        $value,
+                        $couponCurrency->id,
+                        $this->getCouponDate()
+                    );
+                }
             }
         }
 
