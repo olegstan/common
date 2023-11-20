@@ -251,29 +251,54 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      */
     public function copyIsin144A()
     {
+        /**
+         * @var CbondStock $newCbond
+         */
         $newCbond = $this->replicate();
         $newCbond->isin = $this->isin144A;
         $newCbond->secid = $this->isin144A;
         $newCbond->push();
 
-        $cbondCoupons = CbondCoupon::where('cbond_stock_id', $this->id)
+        $newCbond->copyCouponsAndHistory($this);
+    }
+
+    /**
+     * @param $cbond
+     */
+    public function copyCouponsAndHistory($cbond)
+    {
+        $cbondCoupons = CbondCoupon::where('cbond_stock_id', $cbond->id)
             ->get();
 
         foreach ($cbondCoupons as $cbondCoupon)
         {
-            $newCbondCoupon = $cbondCoupon->replicate();
-            $newCbondCoupon->cbond_stock_id = $newCbond->id;
-            $newCbondCoupon->push();
+            $exists = CbondCoupon::where('cbond_stock_id', $this->id)
+                ->whereDate('coupondate', $cbondCoupon->coupondate)
+                ->first();
+
+            if(!$exists)
+            {
+                $newCbondCoupon = $cbondCoupon->replicate();
+                $newCbondCoupon->cbond_stock_id = $this->id;
+                $newCbondCoupon->push();
+            }
         }
 
-        $cbondHistories = CbondHistory::where('cbond_stock_id', $this->id)
+        $cbondHistories = CbondHistory::where('cbond_stock_id', $cbond->id)
             ->get();
 
         foreach ($cbondHistories as $cbondHistory)
         {
-            $newCbondHistory = $cbondHistory->replicate();
-            $newCbondHistory->cbond_stock_id = $newCbond->id;
-            $newCbondHistory->push();
+            $exists = CbondHistory::where('cbond_stock_id', $this->id)
+                ->whereDate('tradedate', $cbondHistory->tradedate)
+                ->first();
+
+            if(!$exists)
+            {
+                $newCbondHistory = $cbondHistory->replicate();
+                $newCbondHistory->cbond_stock_id = $this->id;
+                $newCbondHistory->push();
+            }
         }
     }
 
