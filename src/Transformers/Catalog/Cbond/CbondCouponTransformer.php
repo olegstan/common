@@ -28,15 +28,7 @@ class CbondCouponTransformer extends BaseTransformer
         $currencyId = null;
         if($parent)
         {
-            $json = json_decode($parent->faceunit);
-
-            if(is_array($json) && count($json))
-            {
-                if($currency = Currency::getByCode($json[0]))
-                {
-                    $currencyId = $currency->id;
-                }
-            }
+            $currencyId = $parent->getCurrency();
         }
 
         $data = [
