@@ -245,7 +245,39 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
 
     public $timestamps = false;
 
+
     /**
+     *
+     */
+    public function copyIsin144A()
+    {
+        $newCbond = $this->replicate();
+        $newCbond->isin = $this->isin144A;
+        $newCbond->secid = $this->isin144A;
+        $newCbond->push();
+
+        $cbondCoupons = CbondCoupon::where('cbond_stock_id', $this->id)
+            ->get();
+
+        foreach ($cbondCoupons as $cbondCoupon)
+        {
+            $newCbondCoupon = $cbondCoupon->replicate();
+            $newCbondCoupon->cbond_stock_id = $newCbond->id;
+            $newCbondCoupon->push();
+        }
+
+        $cbondHistories = CbondHistory::where('cbond_stock_id', $this->id)
+            ->get();
+
+        foreach ($cbondHistories as $cbondHistory)
+        {
+            $newCbondHistory = $cbondHistory->replicate();
+            $newCbondHistory->cbond_stock_id = $newCbond->id;
+            $newCbondHistory->push();
+        }
+    }
+
+        /**
      * @param $userId
      * @param $currencyId
      * @param $accountId
