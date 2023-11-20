@@ -270,6 +270,9 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
         $cbondCoupons = CbondCoupon::where('cbond_stock_id', $cbond->id)
             ->get();
 
+        /**
+         * @var CbondCoupon $cbondCoupon
+         */
         foreach ($cbondCoupons as $cbondCoupon)
         {
             $exists = CbondCoupon::where('cbond_stock_id', $this->id)
@@ -281,6 +284,11 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
                 $newCbondCoupon = $cbondCoupon->replicate();
                 $newCbondCoupon->cbond_stock_id = $this->id;
                 $newCbondCoupon->push();
+            }else{
+                $data = $cbondCoupon->toArray();
+                $data['cbond_stock_id'] = $this->id;
+
+                $exists->update($data);
             }
         }
 
@@ -298,6 +306,11 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
                 $newCbondHistory = $cbondHistory->replicate();
                 $newCbondHistory->cbond_stock_id = $this->id;
                 $newCbondHistory->push();
+            }else{
+                $data = $cbondHistory->toArray();
+                $data['cbond_stock_id'] = $this->id;
+
+                $exists->update($data);
             }
         }
     }
