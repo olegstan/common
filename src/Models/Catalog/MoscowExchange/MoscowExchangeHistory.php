@@ -39,7 +39,6 @@ class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHis
      */
     protected $fillable = [
         'tradedate',
-        'secid',
         'numtrades',
         'value',
         'open',
@@ -62,7 +61,6 @@ class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHis
      */
     protected $casts = [
         'tradedate' => 'datetime',
-        'secid' => 'string',
         'numtrades' => 'float',
         'value' => 'float',
         'open' => 'float',

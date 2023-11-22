@@ -28,7 +28,6 @@ class YahooHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
      * @var array
      */
     protected $fillable = [
-        'symbol',
         'date',
         'open',
         'high',
@@ -43,7 +42,6 @@ class YahooHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
      * @var array
      */
     protected $casts = [
-        'symbol' => 'string',
         'date' => 'date',
         'open' => 'double',
         'high' => 'double',
