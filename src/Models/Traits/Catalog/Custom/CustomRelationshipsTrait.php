@@ -27,6 +27,15 @@ trait CustomRelationshipsTrait
     }
 
     /**
+     * @return HasMany
+     */
+    public function history(): HasMany
+    {
+        //fake для совместимости запросов
+        return $this->hasMany(self::class, 'id')->where('id', '<', 0);
+    }
+
+    /**
      * @return HasOne
      */
     public function tradingview(): HasOne

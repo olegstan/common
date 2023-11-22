@@ -3,6 +3,7 @@
 namespace Common\Models\Interfaces\Catalog;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 interface CommonsFuncCatalogInterface
 {
@@ -27,6 +28,8 @@ interface CommonsFuncCatalogInterface
     public function getStockName();
     public function getMaturityDate();
     public function getCouponPercent();
+
+    public function history(): HasMany;
 
     public function createBindActive($userId, $currencyId, $accountId, $classes);
 
