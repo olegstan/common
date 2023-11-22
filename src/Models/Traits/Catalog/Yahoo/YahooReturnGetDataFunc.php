@@ -15,6 +15,14 @@ trait YahooReturnGetDataFunc
     }
 
     /**
+     * @return string
+     */
+    public function getValueField(): string
+    {
+        return 'close';
+    }
+
+    /**
      * @return int
      */
     public function getType(): int
