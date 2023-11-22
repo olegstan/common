@@ -20,7 +20,8 @@ interface CommonsFuncCatalogInterface
 
     public function getSymbolField();
 
-    public function getDateField();
+    public function getDateField();//поле для определения даты из таблицы истории
+    public function getValueField();//поле для определения значения из таблицы истории
 
     public function getCouponFrequency();
     public function getStockName();

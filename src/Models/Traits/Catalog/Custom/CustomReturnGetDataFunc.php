@@ -31,6 +31,14 @@ trait CustomReturnGetDataFunc
     }
 
     /**
+     * @return string
+     */
+    public function getValueField(): string
+    {
+        return '';//нет таблицы истории, поэтому и поля нет
+    }
+
+    /**
      * @return int
      */
     public function getLotSize(): int

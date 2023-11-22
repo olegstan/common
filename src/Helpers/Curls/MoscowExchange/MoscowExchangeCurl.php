@@ -271,8 +271,9 @@ class MoscowExchangeCurl
     public static function getDescription($code, $lang = 'ru', $limit = 1)
     {
         try {
-            //example https://iss.moex.com/iss/securities/RU000A100ZP9.json?limit=1
-            //example https://iss.moex.com/iss/securities/RU000A105WJ8.json?limit=1
+            //https://iss.moex.com/iss/securities/RU000A100ZP9.json?limit=1
+            //https://iss.moex.com/iss/securities/RU000A105WJ8.json?limit=1
+            //https://iss.moex.com/iss/securities/RU000A0ZZCD8.json?limit=1
 
             $response = Curl::get(self::API_URL . 'securities/' . $code . '.json', [
                 'lang' => $lang,

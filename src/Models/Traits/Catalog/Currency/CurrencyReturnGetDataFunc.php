@@ -14,6 +14,15 @@ trait CurrencyReturnGetDataFunc
         return 'date';
     }
 
+
+    /**
+     * @return string
+     */
+    public function getValueField(): string
+    {
+        return 'value';
+    }
+
     /**
      * @return string
      */
