@@ -310,7 +310,6 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
                 if (!$history) {
                     YahooHistory::create([
-                        'symbol' => $stock->symbol,
                         'date' => $datum['date']->format('Y-m-d'),
                         'open' => $datum['open'],
                         'high' => $datum['high'],
