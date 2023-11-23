@@ -5,6 +5,7 @@ namespace Common\Models\Users;
 use App\Models\Actives\ActiveGroup;
 use Common\Models\BaseModel;
 use Common\Models\Interfaces\CommonRemoveActiveInterface;
+use Common\Models\Traits\Users\UserNotification\UserNotificationAttributeTrait;
 use Common\Models\Traits\Users\UserNotification\UserNotificationRelationsTrait;
 use Common\Models\Traits\Users\UserNotification\UserNotificationScopeTrait;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,11 +17,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property $user_id
  * @property $status
  * @property $action_id
+ * @property $data
  */
 class UserNotification extends BaseModel implements CommonRemoveActiveInterface
 {
     use UserNotificationRelationsTrait;
     use UserNotificationScopeTrait;
+    use UserNotificationAttributeTrait;
 
     /**
      * status
@@ -52,11 +55,12 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
     /**
      * @var string[]
      */
-    protected $fillable = [
+    protected array $fillable = [
         'content',
         'user_id',
         'status',
         'action_id',
+        'data',
     ];
 
     /**

@@ -3,6 +3,7 @@
 namespace Common\Models\Users;
 
 use Common\Models\BaseModel;
+use Common\Models\Traits\Users\UserNotificationRelation\UserNotificationRelationAttributeTrait;
 use Common\Models\Traits\Users\UserNotificationRelation\UserNotificationRelationsTrait;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -15,10 +16,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property $is_confirmed
  * @property $local_operation_type
  * @property $local_operation_id
+ * @property $data
  */
 class UserNotificationRelation extends BaseModel
 {
     use UserNotificationRelationsTrait;
+    use UserNotificationRelationAttributeTrait;
 
     /**
      * @var string
@@ -28,7 +31,7 @@ class UserNotificationRelation extends BaseModel
     /**
      * @var string[]
      */
-    protected $fillable = [
+    protected array $fillable = [
         'notification_id',
         'post_type',
         'post_id',
@@ -36,12 +39,13 @@ class UserNotificationRelation extends BaseModel
         'is_confirmed',
         'local_operation_type',
         'local_operation_id',
+        'data',
     ];
 
     /**
-     * @var array
+     * @var string[]
      */
-    protected $casts = [
+    protected array $casts = [
         'notification_id' => 'integer',
         'post_type' => 'string',
         'post_id' => 'integer',
@@ -49,6 +53,7 @@ class UserNotificationRelation extends BaseModel
         'is_confirmed' => 'bool',
         'local_operation_type' => 'string',
         'local_operation_id' => 'integer',
+        'data' => 'string',
     ];
 
     /**
