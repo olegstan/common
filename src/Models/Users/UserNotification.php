@@ -71,7 +71,6 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
         'user_id' => 'integer',
         'status' => 'integer',
         'action_id' => 'integer',
-        'data' => 'string',
     ];
 
     /**

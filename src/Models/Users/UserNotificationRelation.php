@@ -53,7 +53,6 @@ class UserNotificationRelation extends BaseModel
         'is_confirmed' => 'bool',
         'local_operation_type' => 'string',
         'local_operation_id' => 'integer',
-        'data' => 'string',
     ];
 
     /**
