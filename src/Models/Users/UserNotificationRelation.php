@@ -42,18 +42,18 @@ class UserNotificationRelation extends BaseModel
         'data',
     ];
 
-    /**
-     * @var string[]
-     */
-    protected array $casts = [
-        'notification_id' => 'integer',
-        'post_type' => 'string',
-        'post_id' => 'integer',
-        'comment' => 'string',
-        'is_confirmed' => 'bool',
-        'local_operation_type' => 'string',
-        'local_operation_id' => 'integer',
-    ];
+//    /**
+//     * @var string[]
+//     */
+//    protected array $casts = [
+//        'notification_id' => 'integer',
+//        'post_type' => 'string',
+//        'post_id' => 'integer',
+//        'comment' => 'string',
+//        'is_confirmed' => 'bool',
+//        'local_operation_type' => 'string',
+//        'local_operation_id' => 'integer',
+//    ];
 
     /**
      * @var bool

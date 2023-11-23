@@ -63,15 +63,15 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
         'data',
     ];
 
-    /**
-     * @var string[]
-     */
-    protected array $casts = [
-        'content' => 'string',
-        'user_id' => 'integer',
-        'status' => 'integer',
-        'action_id' => 'integer',
-    ];
+//    /**
+//     * @var string[]
+//     */
+//    protected array $casts = [
+//        'content' => 'string',
+//        'user_id' => 'integer',
+//        'status' => 'integer',
+//        'action_id' => 'integer',
+//    ];
 
     /**
      * @param array $attributes = [
