@@ -14,8 +14,8 @@ trait CustomScopeTrait
      */
     public function scopeSearch($query, $original, $text, $translitText)
     {
-        $prompt = 'MATCH (`custom_stocks`.`name`, `custom_stocks`.`symbol`, `custom_stocks`.`user_id`) AGAINST (? IN BOOLEAN MODE)';
-        $likePrompt = ['custom_stocks.name LIKE ?'];
+        $prompt = 'MATCH (`custom_stocks`.`name`, `custom_stocks`.`symbol`) AGAINST (? IN BOOLEAN MODE)';
+        $likePrompt = ['custom_stocks.name LIKE ?', 'custom_stocks.symbol LIKE ?'];
         self::promptScopeSearch($original, $text, $translitText, $query, $prompt, $likePrompt);
     }
 }
