@@ -345,7 +345,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             $query->whereDate($this->getDateField(), '<=', $date);
         }
 
-        $query->where('close', '>', 0)
+        $history = $query->where('close', '>', 0)
             ->orderByDesc($this->getDateField())
             ->first();
 
