@@ -265,6 +265,20 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
     }
 
     /**
+     * @param null $date
+     * @return int
+     */
+    public function getLastPriceByDate($date = null)
+    {
+        //TODO
+
+
+
+
+        return 0;
+    }
+
+    /**
      * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate

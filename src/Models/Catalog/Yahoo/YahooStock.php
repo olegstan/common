@@ -9,6 +9,7 @@ use Common\Helpers\LoggerHelper;
 use Common\Jobs\YahooDataJob;
 use Common\Jobs\YahooJob;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Catalog\Cbond\CbondHistory;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Interfaces\Catalog\Yahoo\DefinitionYahooConst;
@@ -279,6 +280,31 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
         }
 
         return $active;
+    }
+
+    /**
+     * @param null $date
+     * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed
+     */
+    public function getLastPriceByDate($date = null)
+    {
+        /**
+         * @var YahooHistory $history
+         */
+        $query = $this->history();
+
+        if($date)
+        {
+            $query->whereDate($this->getDateField(), '<=', $date);
+        }
+
+        $query->orderByDesc($this->getDateField())
+            ->first();
+
+        if($history)
+        {
+            return $history->getValue();
+        }
     }
 
     /**

@@ -397,6 +397,34 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
     }
 
     /**
+     * @param null $date
+     * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed
+     */
+    public function getLastPriceByDate($date = null)
+    {
+        /**
+         * @var CbondHistory $history
+         */
+        $query = $this->history();
+
+        if($date)
+        {
+            $query->whereDate($this->getDateField(), '<=', $date);
+        }
+
+        $query->where('close', '>', 0)
+            ->orderByDesc($this->getDateField())
+            ->first();
+
+        if($history)
+        {
+            return $history->getValue();
+        }
+
+        return 0;
+    }
+
+    /**
      * @param bool $log
      * @return array|false
      */

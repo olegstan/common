@@ -30,6 +30,8 @@ interface CommonsFuncCatalogInterface
     public function getCouponPercent();
 
     public function history(): HasMany;
+    
+    public function getLastPriceByDate($date = null);
 
     public function createBindActive($userId, $currencyId, $accountId, $classes);
 

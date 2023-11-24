@@ -9,6 +9,7 @@ use Common\Helpers\LoggerHelper;
 use Common\Jobs\MoscowExchangeDataJob;
 use Common\Jobs\MoscowExchangeJob;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Catalog\Cbond\CbondHistory;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst;
@@ -326,6 +327,34 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             'item_type' => $this->getMorphClass(),
             'item_id' => $this->id,
         ]);
+    }
+
+    /**
+     * @param null $date
+     * @return float
+     */
+    public function getLastPriceByDate($date = null)
+    {
+        /**
+         * @var MoscowExchangeHistory $history
+         */
+        $query = $this->history();
+
+        if($date)
+        {
+            $query->whereDate($this->getDateField(), '<=', $date);
+        }
+
+        $query->where('close', '>', 0)
+            ->orderByDesc($this->getDateField())
+            ->first();
+
+        if($history)
+        {
+            return $history->getValue();
+        }
+
+        return 0;
     }
 
     /**

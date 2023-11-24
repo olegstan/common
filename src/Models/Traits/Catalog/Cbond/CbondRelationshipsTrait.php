@@ -20,7 +20,6 @@ trait CbondRelationshipsTrait
 
     /**
      * @return HasMany
-     * @deprecated
      */
     public function history(): HasMany
     {

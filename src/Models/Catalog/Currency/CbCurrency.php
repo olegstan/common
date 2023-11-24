@@ -74,6 +74,11 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
             'item_type' => $this->getMorphClass(),
         ]);
     }
+    
+    public function getLastPriceByDate($date = null)
+    {
+
+    }
 
     /**
      * @param $original
