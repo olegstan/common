@@ -20,6 +20,7 @@ class UserNotificationTransformer extends BaseTransformer
             'status' => $model->status,
             'created_at' => $model->created_at ? $model->created_at->format('H:i:s d.m.Y') : '',
             'action_id' => $model->action_id,
+            'data' => $model->data,
         ];
 
         return $this->withRelations($data, $model);

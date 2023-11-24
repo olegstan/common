@@ -20,6 +20,7 @@ class UserNotificationRelationTransformer extends BaseTransformer
             'post_type' => $model->post_type,
             'comment' => $model->comment,
             'is_confirmed' => $model->is_confirmed,
+            'data' => $model->data,
         ];
 
         return $this->withRelations($data, $model);
