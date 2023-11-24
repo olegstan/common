@@ -3,6 +3,7 @@
 namespace Common\Models\Catalog\Custom;
 
 use App\Models\Actives\ActiveTrade;
+use App\Models\Aton\AtonOperation;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
@@ -80,7 +81,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
 
 
     /**
-     * @param $data
+     * @param AtonOperation $data
      * @param bool $cache
      * @return false|void
      */
