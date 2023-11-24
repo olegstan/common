@@ -286,7 +286,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
      * @param null $date
      * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed
      */
-    public function getLastPriceByDate($date = null)
+    public function getLastPriceByDate($currency, $date = null)
     {
         /**
          * @var YahooHistory $history
@@ -303,7 +303,8 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
         if($history)
         {
-            return $history->getValue();
+            $price = $currency->convert($history->getValue(), $this->getCurrency(), $date);
+            return $price;
         }
     }
 

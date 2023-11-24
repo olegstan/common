@@ -333,7 +333,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      * @param null $date
      * @return float
      */
-    public function getLastPriceByDate($date = null)
+    public function getLastPriceByDate($currency, $date = null)
     {
         /**
          * @var MoscowExchangeHistory $history
@@ -351,7 +351,8 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
         if($history)
         {
-            return $history->getValue();
+            $price = $currency->convert($history->getValue(), $this->getCurrency(), $date);
+            return $price;
         }
 
         return 0;

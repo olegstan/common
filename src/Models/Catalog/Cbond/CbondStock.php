@@ -5,6 +5,7 @@ namespace Common\Models\Catalog\Cbond;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\Cbond\DefinitionCbondConst;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -400,13 +401,12 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      * @param null $date
      * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed
      */
-    public function getLastPriceByDate($date = null)
+    public function getLastPriceByDate($currency, $date = null)
     {
         /**
          * @var CbondHistory $history
          */
         $query = $this->history();
-
         if($date)
         {
             $query->whereDate($this->getDateField(), '<=', $date);
@@ -418,7 +418,9 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
 
         if($history)
         {
-            return $history->getValue();
+            $price = $currency->convert($history->getValue(), $this->getCurrency(), $date);
+
+            return $price;
         }
 
         return 0;

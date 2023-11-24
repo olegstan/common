@@ -268,7 +268,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
      * @param null $date
      * @return int
      */
-    public function getLastPriceByDate($date = null)
+    public function getLastPriceByDate($currency, $date = null)
     {
 
 

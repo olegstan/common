@@ -31,7 +31,7 @@ interface CommonsFuncCatalogInterface
 
     public function history(): HasMany;
     
-    public function getLastPriceByDate($date = null);
+    public function getLastPriceByDate($currency, $date = null);
 
     public function createBindActive($userId, $currencyId, $accountId, $classes);
 

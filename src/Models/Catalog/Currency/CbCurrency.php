@@ -75,7 +75,7 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
         ]);
     }
     
-    public function getLastPriceByDate($date = null)
+    public function getLastPriceByDate($currency, $date = null)
     {
 
     }
