@@ -166,7 +166,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                  */
                 $items[] = [
                     'id' => $item->id,
-                    'name' => $item->name,
+                    'name' => $item->name . ' ' . $item->symbol,
                     'type_id' => $item->getType(),
                     'user_id' => $item->user_id,
                     'symbol' => $item->getSymbol(),
