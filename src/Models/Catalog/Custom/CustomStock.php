@@ -2,10 +2,12 @@
 
 namespace Common\Models\Catalog\Custom;
 
+use App\Models\Actives\ActiveTrade;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -265,14 +267,38 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
     }
 
     /**
+     * @param Currency $currency
      * @param null $date
-     * @return int
+     * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|int|mixed
      */
-    public function getLastPriceByDate($date = null)
+    public function getLastPriceByDate($currency, $date = null)
     {
+        //TODO используется класс из основного проекта, лучше бы как то переделать и вынести логику из метода
+
+        //ищем все ID кастомных активов где может быть такой же каталог
+        $ids = CustomStock::where('symbol', $this->symbol)
+            ->pluck('id')
+            ->toArray();
+
+        $trade = ActiveTrade::whereHas('active', function ($query) use ($ids)
+        {
+            $query->where('item_type', $this->getMorphClass())
+                ->whereIn('item_id', $ids);
+        })
+            ->where('price', '>', 0)
+            ->orderByDesc('trade_at')
+            ->first();
+
+        if($trade)
+        {
+            if($currency->id !== $trade->currency_id)
+            {
+                return $currency->convert($trade->price, $trade->currency_id, $trade->trade_at);
+            }
 
 
-
+            return $trade->price;
+        }
 
         return 0;
     }
