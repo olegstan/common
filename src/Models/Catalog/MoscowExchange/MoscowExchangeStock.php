@@ -10,6 +10,7 @@ use Common\Jobs\MoscowExchangeDataJob;
 use Common\Jobs\MoscowExchangeJob;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Catalog\Cbond\CbondHistory;
+use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Interfaces\Catalog\MoscowExchange\DefinitionMoexConst;
@@ -351,8 +352,13 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
         if($history)
         {
-            $price = $currency->convert($history->getValue(), $this->getCurrency(), $date);
-            return $price;
+            $historyCurrency = Currency::getByCode($history->faceunit);
+            if($historyCurrency)
+            {
+                return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+            }
+
+            return $history->getValue();
         }
 
         return 0;

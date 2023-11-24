@@ -398,6 +398,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
     }
 
     /**
+     * @param Currency $currency
      * @param null $date
      * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed
      */
@@ -418,9 +419,13 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
 
         if($history)
         {
-            $price = $currency->convert($history->getValue(), $this->getCurrency(), $date);
+            $historyCurrency = Currency::getByCode($history->faceunit);
+            if($historyCurrency)
+            {
+                return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+            }
 
-            return $price;
+            return $history->getValue();
         }
 
         return 0;

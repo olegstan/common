@@ -10,6 +10,7 @@ use Common\Jobs\YahooDataJob;
 use Common\Jobs\YahooJob;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Catalog\Cbond\CbondHistory;
+use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Interfaces\Catalog\Yahoo\DefinitionYahooConst;
@@ -283,8 +284,9 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
     }
 
     /**
+     * @param Currency $currency
      * @param null $date
-     * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed
+     * @return mixed
      */
     public function getLastPriceByDate($currency, $date = null)
     {
@@ -303,8 +305,13 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
         if($history)
         {
-            $price = $currency->convert($history->getValue(), $this->getCurrency(), $date);
-            return $price;
+            $historyCurrency = Currency::getByCode($this->currency);
+            if($historyCurrency)
+            {
+                return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+            }
+
+            return $history->getValue();
         }
     }
 
