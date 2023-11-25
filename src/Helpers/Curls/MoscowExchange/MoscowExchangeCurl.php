@@ -14,6 +14,7 @@ use Exception;
  * Class MoscowExchangeCurl
  * @package Common\Helpers\Curls\Yahoo
  *
+ * список всех бумаг https://iss.moex.com/iss/securities
  * история https://iss.moex.com/iss/history/engines/futures/markets/forts/boards/rfud/securities/NGF2
  * свечи https://iss.moex.com/iss/engines/futures/markets/forts/securities/NGF2/candles.json
  * Дата начала и окончания бумаги https://iss.moex.com/iss/history/engines/futures/markets/forts/securities/NGF2/dates
@@ -206,6 +207,30 @@ class MoscowExchangeCurl
             LoggerHelper::getLogger('moscow-exchange')->error($e);
             return false;
         }
+    }
+
+    /**
+     * @param $start
+     * @param $limit
+     * @param string $lang
+     * @return false|string
+     */
+    public static function getList($start, $limit, $lang = 'ru')
+    {
+        //example https://iss.moex.com/iss/securities.json
+        return Curl::get(
+            self::API_URL . 'securities.json',
+            [
+                'start' => $start,
+                'limit' => $limit,
+                'lang' => $lang,
+                'iss.meta' => 'off',
+            ],
+            [],
+            'moscow-exchange',
+            self::$cookies,
+            false
+        );
     }
 
     /**
