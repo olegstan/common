@@ -218,7 +218,7 @@ class MoscowExchangeCurl
     public static function getList($start, $limit, $lang = 'ru')
     {
         //example https://iss.moex.com/iss/securities.json
-        return Curl::get(
+        $response = Curl::get(
             self::API_URL . 'securities.json',
             [
                 'start' => $start,
@@ -231,6 +231,24 @@ class MoscowExchangeCurl
             self::$cookies,
             false
         );
+
+        $arrayResponse = self::toArray(json_decode($response));
+
+        $data = [];
+        if (isset($arrayResponse['securities']['columns'], $arrayResponse['securities']['data']) && is_array(
+                $arrayResponse['securities']['data']
+            )) {
+            foreach ($arrayResponse['securities']['data'] as $datum) {
+                $variant = array_change_key_case(
+                    array_combine($arrayResponse['securities']['columns'], $datum),
+                    CASE_LOWER
+                );
+
+                $data[] = $variant;
+            }
+
+            return $data;
+        }
     }
 
     /**
