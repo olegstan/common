@@ -365,25 +365,12 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
     }
 
     /**
-     * @param $original
-     * @param $text
-     * @param $translitText
-     * @param $foundStocks
-     * @param $items
-     * @param $condition
-     * @param $async
-     * @return void
+     * @param null $foundStocks
+     * @param bool $async
      * @throws Throwable
      */
-    public static function createAndGet(
-        $original,
-        $text,
-        $translitText,
-        $foundStocks = null,
-        &$items,
-        $condition = null,
-        $async = true
-    ) {
+    public static function createBeforeGet($foundStocks = null, $async = true)
+    {
         $secIds = [];
 
         $queueIds = [];
@@ -427,6 +414,29 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
             Queue::push(MoscowExchangeDataJob::class, [$queueIds]);
         }
+    }
+
+    /**
+     * @param $original
+     * @param $text
+     * @param $translitText
+     * @param $foundStocks
+     * @param $items
+     * @param $condition
+     * @param $async
+     * @return void
+     * @throws Throwable
+     */
+    public static function createAndGet(
+        $original,
+        $text,
+        $translitText,
+        $foundStocks = null,
+        &$items,
+        $condition = null,
+        $async = true
+    ) {
+        MoscowExchangeStock::createBeforeGet($foundStocks, $async);
 
         $splitedWords = self::fullTextWildcards($text);
 
@@ -770,4 +780,3 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         }
     }
 }
-
