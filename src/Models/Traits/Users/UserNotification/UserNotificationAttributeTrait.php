@@ -30,6 +30,6 @@ trait UserNotificationAttributeTrait
      */
     public function getDataAttribute($data)
     {
-        return json_decode($data);
+        return object_to_array(json_decode($data));
     }
 }
