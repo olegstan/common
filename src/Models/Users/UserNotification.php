@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property $status
  * @property $action_id
  * @property $data
+ * @property $api_id
  */
 class UserNotification extends BaseModel implements CommonRemoveActiveInterface
 {
@@ -48,6 +49,14 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
     public const CONTACT_BIRTHDAY = 2003;
 
     /**
+     * api_id
+     */
+    public const ATON = 1;
+    public const TINKOFF = 2;
+    public const BCS = 3;
+    public const ZENMONEY = 4;
+
+    /**
      * @var string
      */
     protected $table = 'user_notifications';
@@ -61,6 +70,7 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
         'status',
         'action_id',
         'data',
+        'api_id'
     ];
 
     /**
@@ -71,6 +81,7 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
         'user_id' => 'integer',
         'status' => 'integer',
         'action_id' => 'integer',
+        'api_id' => 'integer',
     ];
 
     /**
@@ -88,6 +99,11 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
             ->whereContent($attributes['content'])
             ->whereActionId($attributes['action_id'])
             ->whereStatus($attributes['status'])
+            ->where(function ($query) use ($attributes) {
+                if (isset($attributes['api_id'])) {
+                    $query->whereApiId($attributes['api_id']);
+                }
+            })
             ->first();
 
         if ($notification) {
@@ -99,6 +115,7 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
             'action_id' => $attributes['action_id'],
             'content' => $attributes['content'],
             'status' => $attributes['status'],
+            'api_id' => $attributes['api_id'] ?? null,
         ]);
 
         if (!$notification) {
