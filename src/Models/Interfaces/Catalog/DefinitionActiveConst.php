@@ -37,6 +37,7 @@ interface DefinitionActiveConst
     public const ACTIVE_SET_PRICE = 13;
     public const CATALOG_COURSE = 14;
     public const IRR = 15;
+    public const ALL_ACTIVES = 16;
 
     /**
      * start types
