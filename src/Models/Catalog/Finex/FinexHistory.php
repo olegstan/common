@@ -10,7 +10,7 @@ use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property $cbond_stock_id
+ * @property $moex_stock_id
  * @property Carbon $tradedate
  * @property $numtrades
  * @property $value
@@ -39,7 +39,7 @@ class FinexHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
      * @var array
      */
     protected $fillable = [
-        'cbond_stock_id',
+        'moex_stock_id',
         'tradedate',
         'numtrades',
         'value',
@@ -61,7 +61,7 @@ class FinexHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
      * @var array
      */
     protected $casts = [
-        'cbond_stock_id' => 'integer',
+        'moex_stock_id' => 'integer',
         'tradedate' => 'datetime',
         'numtrades' => 'float',
         'value' => 'float',
@@ -95,15 +95,15 @@ class FinexHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
      */
     public function item(): HasOne
     {
-        return $this->hasOne(MoscowExchangeStock::class, 'id', 'cbond_stock_id');
+        return $this->hasOne(MoscowExchangeStock::class, 'id', 'moex_stock_id');
     }
 
     /**
      * @param $query
-     * @param CbondStock $item
+     * @param MoscowExchangeStock $item
      * @return void
      */
-    public function scopeByItem($query, CbondStock $item)
+    public function scopeByItem($query, MoscowExchangeStock $item)
     {
         $query->where('isin', $item->isin);
     }

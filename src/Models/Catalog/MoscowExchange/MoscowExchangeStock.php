@@ -9,7 +9,7 @@ use Common\Helpers\LoggerHelper;
 use Common\Jobs\MoscowExchangeDataJob;
 use Common\Jobs\MoscowExchangeJob;
 use Common\Models\Catalog\BaseCatalog;
-use Common\Models\Catalog\Cbond\CbondHistory;
+use Common\Models\Catalog\Finex\FinexHistory;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -336,6 +336,31 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      */
     public function getLastPriceByDate($currency, $date = null)
     {
+        /**
+         * @var FinexHistory $history
+         */
+        $query = $this->finexHistory();
+
+        if($date)
+        {
+            $query->whereDate($this->getDateField(), '<=', $date);
+        }
+
+        $history = $query->where('close', '>', 0)
+            ->orderByDesc($this->getDateField())
+            ->first();
+
+        if($history)
+        {
+            $historyCurrency = Currency::getByCode($history->faceunit);
+            if($historyCurrency)
+            {
+                return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+            }
+
+            return $history->getValue();
+        }
+
         /**
          * @var MoscowExchangeHistory $history
          */

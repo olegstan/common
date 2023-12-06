@@ -2,6 +2,7 @@
 namespace Common\Models\Traits\Catalog\MoscowExchange;
 
 use App\Models\Actives\Active;
+use Common\Models\Catalog\Finex\FinexHistory;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeCoupon;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeDividend;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeHistory;
@@ -36,6 +37,14 @@ trait MoexRelationshipsTrait
     public function history(): HasMany
     {
         return $this->hasMany(MoscowExchangeHistory::class, 'moex_stock_id', 'id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function finexHistory(): HasMany
+    {
+        return $this->hasMany(FinexHistory::class, 'moex_stock_id', 'id');
     }
 
     /**
