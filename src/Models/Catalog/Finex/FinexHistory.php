@@ -6,6 +6,7 @@ use Cache;
 use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
+use Common\Models\Currency as Cur;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -115,6 +116,31 @@ class FinexHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
      */
     public function setPrice($priceKey, $dateKey)
     {
+        if ($this->faceunit === Cur::RUB) {
+            $price = $this->close;
+            $date = $this->tradedate;
+            Cache::forever($priceKey, $price);
+            Cache::forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
+            return [$priceKey, $price, $date, null, 'finex'];
+        }
 
+        /**
+         * @var Cur $convertCurrency
+         */
+        $convertCurrency = Cur::getById(Cur::RUB_ID);
+
+        if ($convertCurrency) {
+            $price = $this->close;
+            $date = $this->tradedate;
+            $convertedPrice = $convertCurrency->convert(
+                $price,
+                Cur::getByCode($this->faceunit)->id,
+                Carbon::now()
+            );
+
+            Cache::forever($priceKey, $convertedPrice);
+            Cache::forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
+            return [$priceKey, $convertedPrice, $date, $price, 'finex'];
+        }
     }
 }

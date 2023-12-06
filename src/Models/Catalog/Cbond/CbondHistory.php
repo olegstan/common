@@ -129,11 +129,7 @@ class CbondHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
         /**
          * @var Cur $convertCurrency
          */
-        $convertCurrency = Cache::rememberForever('currency.' . Cur::RUB_ID, function () {
-            return Cur::where('id', Cur::RUB_ID)
-                ->with('cb_currency')
-                ->first();
-        });
+        $convertCurrency = Cur::getById(Cur::RUB_ID);
 
         if ($convertCurrency) {
             $price = $this->close;
