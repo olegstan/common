@@ -2,6 +2,7 @@
 namespace Common\Models\Traits\Catalog\Custom;
 
 use App\Models\Actives\Active;
+use Common\Models\Catalog\Custom\CustomHistory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -31,8 +32,7 @@ trait CustomRelationshipsTrait
      */
     public function history(): HasMany
     {
-        //fake для совместимости запросов
-        return $this->hasMany(self::class, 'id')->where('id', '<', 0);
+        return $this->hasMany(CustomHistory::class, 'symbol', 'symbol');
     }
 
     /**
