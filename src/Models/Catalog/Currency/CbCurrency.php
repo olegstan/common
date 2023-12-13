@@ -128,6 +128,24 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
     }
 
     /**
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return false
+     */
+    public function getPriceHistory(Carbon $startDate, Carbon $endDate)
+    {
+        $history = $this->history()
+            ->whereBetween($this->getDateField(), [$startDate, $endDate])
+            ->pluck('value', $this->getDateField());
+
+        if ($history) {
+            return $history;
+        }
+
+        return false;
+    }
+
+    /**
      * @param $currency
      * @param Carbon $startDate
      * @param Carbon $endDate

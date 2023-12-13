@@ -331,6 +331,32 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
     }
 
     /**
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return false
+     */
+    public function getPriceHistory(Carbon $startDate, Carbon $endDate)
+    {
+        $history = $this->finexHistory()
+            ->whereBetween($this->getDateField(), [$startDate, $endDate])
+            ->pluck('close', 'tradedate');
+
+        if ($history) {
+            return $history;
+        }
+
+        $history = $this->history()
+            ->whereBetween($this->getDateField(), [$startDate, $endDate])
+            ->pluck('close', 'tradedate');
+
+        if ($history) {
+            return $history;
+        }
+
+        return false;
+    }
+
+    /**
      * @param null $date
      * @return float
      */
@@ -341,8 +367,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
          */
         $query = $this->finexHistory();
 
-        if($date)
-        {
+        if ($date) {
             $query->whereDate($this->getDateField(), '<=', $date);
         }
 
@@ -350,11 +375,9 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             ->orderByDesc($this->getDateField())
             ->first();
 
-        if($history)
-        {
+        if ($history) {
             $historyCurrency = Currency::getByCode($history->faceunit);
-            if($historyCurrency)
-            {
+            if ($historyCurrency) {
                 return $currency->convert($history->getValue(), $historyCurrency->id, $date);
             }
 
@@ -366,8 +389,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
          */
         $query = $this->history();
 
-        if($date)
-        {
+        if ($date) {
             $query->whereDate($this->getDateField(), '<=', $date);
         }
 
@@ -375,11 +397,9 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             ->orderByDesc($this->getDateField())
             ->first();
 
-        if($history)
-        {
+        if ($history) {
             $historyCurrency = Currency::getByCode($history->faceunit);
-            if($historyCurrency)
-            {
+            if ($historyCurrency) {
                 return $currency->convert($history->getValue(), $historyCurrency->id, $date);
             }
 

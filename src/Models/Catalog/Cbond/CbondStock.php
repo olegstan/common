@@ -398,6 +398,24 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
     }
 
     /**
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return false
+     */
+    public function getPriceHistory(Carbon $startDate, Carbon $endDate)
+    {
+        $history = $this->history()
+            ->whereBetween($this->getDateField(), [$startDate, $endDate])
+            ->pluck('close', $this->getDateField());
+
+        if ($history) {
+            return $history;
+        }
+
+        return false;
+    }
+
+    /**
      * @param Currency $currency
      * @param null $date
      * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed

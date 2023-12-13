@@ -305,6 +305,24 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
     }
 
     /**
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return false
+     */
+    public function getPriceHistory(Carbon $startDate, Carbon $endDate)
+    {
+        $history = $this->history()
+            ->whereBetween($this->getDateField(), [$startDate, $endDate])
+            ->pluck('price', $this->getDateField());
+
+        if ($history) {
+            return $history;
+        }
+
+        return false;
+    }
+
+    /**
      * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate
