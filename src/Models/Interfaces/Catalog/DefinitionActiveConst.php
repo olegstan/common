@@ -38,6 +38,7 @@ interface DefinitionActiveConst
     public const CATALOG_COURSE = 14;
     public const IRR = 15;
     public const ALL_ACTIVES = 16;
+    public const REFRESH_ZENMONEY = 17;
 
     /**
      * start types
