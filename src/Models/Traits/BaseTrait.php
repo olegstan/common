@@ -2,7 +2,7 @@
 
 namespace Common\Models\Traits;
 
-use App\Helpers\LoggerHelper;
+use Common\Helpers\LoggerHelper;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
