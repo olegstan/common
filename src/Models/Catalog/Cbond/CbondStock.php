@@ -569,7 +569,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
                  */
                 $items[] = [
                     'id' => $item->id,
-                    'name' => $name . ' ' . $item->isin,
+                    'name' => trim($name . ' ' . $item->isin),
                     'type_id' => $typeId,
                     'type_text' => $item->getTypeText(),
                     'currency_id' => $item->getCurrency(),

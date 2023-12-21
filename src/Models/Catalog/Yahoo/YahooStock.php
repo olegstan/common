@@ -205,7 +205,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
                 $items[] = [
                     'id' => $item->id,
-                    'name' => $item->name . ' ' . $item->symbol,
+                    'name' => trim($item->name . ' ' . $item->symbol),
                     'type_id' => $typeId,
                     'type_text' => $item->getTypeText(),
                     'currency_id' => $item->getCurrency(),

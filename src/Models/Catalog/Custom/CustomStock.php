@@ -167,9 +167,13 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                 /**
                  * @var CustomStock $item
                  */
+
+                //если name и symbol совпадает, то будем показывать только name
+                $name = $item->name === $item->symbol ? $item->name : $item->name . ' ' . $item->symbol;
+
                 $items[] = [
                     'id' => $item->id,
-                    'name' => $item->name . ' ' . $item->symbol,
+                    'name' => trim($name),
                     'type_id' => $item->getType(),
                     'user_id' => $item->user_id,
                     'symbol' => $item->getSymbol(),

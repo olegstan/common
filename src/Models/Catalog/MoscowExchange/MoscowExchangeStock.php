@@ -561,7 +561,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                  */
                 $items[] = [
                     'id' => $item->id,
-                    'name' => $item->name . ' ' . $item->secid,
+                    'name' => trim($item->name . ' ' . $item->secid),
                     'type_id' => $typeId,
                     'type_text' => $item->getTypeText(),
                     'currency_id' => $item->getCurrency(),
