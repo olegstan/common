@@ -28,6 +28,6 @@ class MoscowExchangeSplit extends BaseCatalog
     protected $casts = [
         'before' => 'double',
         'after' => 'double',
-        'date' => 'datetime',
+        'date' => 'date',
     ];
 }
