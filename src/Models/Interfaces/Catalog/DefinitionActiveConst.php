@@ -441,7 +441,7 @@ interface DefinitionActiveConst
     /**
      * All catalog classes
      */
-    public const CATALOG_CLASSES = [
+    public const ALL_CATALOG_CLASSES = [
       MoscowExchangeStock::class,
       CbondStock::class,
       YahooStock::class,
