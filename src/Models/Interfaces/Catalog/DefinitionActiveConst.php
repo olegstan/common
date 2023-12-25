@@ -2,6 +2,12 @@
 
 namespace Common\Models\Interfaces\Catalog;
 
+use Common\Models\Catalog\Cbond\CbondStock;
+use Common\Models\Catalog\Currency\CbCurrency;
+use Common\Models\Catalog\Custom\CustomStock;
+use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
+use Common\Models\Catalog\Yahoo\YahooStock;
+
 interface DefinitionActiveConst
 {
     /**
@@ -432,4 +438,14 @@ interface DefinitionActiveConst
         self::CUSTOM_CLASS_TYPE
     ];
 
+    /**
+     * All catalog classes
+     */
+    public const CATALOG_CLASSES = [
+      MoscowExchangeStock::class,
+      CbondStock::class,
+      YahooStock::class,
+      CbCurrency::class,
+      CustomStock::class,
+    ];
 }
