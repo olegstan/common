@@ -573,7 +573,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
                     'type_id' => $typeId,
                     'type_text' => $item->getTypeText(),
                     'currency_id' => $item->getCurrency(),
-                    'ticker' => 'catalog.5',
+                    'ticker' => DefinitionActiveConst::CBONDS_CATALOG,
                     'facevalue' => $item->facevalue,
                     'couponfrequency' => $item->getCouponFrequency(),
                     'coupondate' => $item->coupondate,

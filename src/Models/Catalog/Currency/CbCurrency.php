@@ -117,7 +117,7 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
                 'type_text' => 'Валюта',
                 'currency_id' => '',
                 'order' => '',
-                'ticker' => 'catalog.1',
+                'ticker' => DefinitionActiveConst::CB_CATALOG,
                 'symbol' => $item->getSymbol(),
                 'country' => '',
                 'industry' => '',

@@ -209,7 +209,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                     'type_id' => $typeId,
                     'type_text' => $item->getTypeText(),
                     'currency_id' => $item->getCurrency(),
-                    'ticker' => 'catalog.2',
+                    'ticker' => DefinitionActiveConst::YAHOO_CATALOG,
                     'facevalue' => '',
                     'couponfrequency' => $item->getCouponFrequency(),
                     'coupondate' => '',

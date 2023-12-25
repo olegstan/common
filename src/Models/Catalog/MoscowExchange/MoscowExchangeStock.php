@@ -565,7 +565,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                     'type_id' => $typeId,
                     'type_text' => $item->getTypeText(),
                     'currency_id' => $item->getCurrency(),
-                    'ticker' => 'catalog.3',
+                    'ticker' => DefinitionActiveConst::MOEX_CATALOG,
                     'facevalue' => $item->facevalue,
                     'couponfrequency' => $item->getCouponFrequency(),
                     'coupondate' => $item->coupondate,
