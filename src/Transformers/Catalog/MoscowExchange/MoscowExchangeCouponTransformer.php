@@ -20,7 +20,7 @@ class MoscowExchangeCouponTransformer extends BaseTransformer
         /**
          * @var MoscowExchangeStock $parent
          */
-        $parent = Cache::tags(['catalog'])->eemember('moex.' . $model->moex_stock_id, Carbon::now()->addDay(), function () use ($model)
+        $parent = Cache::tags(['catalog'])->remember('moex.' . $model->moex_stock_id, Carbon::now()->addDay(), function () use ($model)
         {
             return MoscowExchangeStock::firstWhere('id', $model->moex_stock_id);
         });

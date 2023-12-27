@@ -159,7 +159,7 @@ class Currency extends BaseCatalog
         //неправильные данные
         $cacheString = 'cb_currency.' . $currency->cb_currency->id . ':date.' . $date->format('Y-m-d');
 
-        return Cache::tags(['catalog'])->eemember($cacheString, Carbon::now()->addDay(), static function () use ($currency, $date)
+        return Cache::tags(['catalog'])->remember($cacheString, Carbon::now()->addDay(), static function () use ($currency, $date)
         {
             return CbHistoryCurrencyCourse::where('currency_id', $currency->cb_currency->id)
                 ->where('date', '<', $date->format('Y-m-d'))

@@ -20,7 +20,7 @@ class CbondCouponTransformer extends BaseTransformer
         /**
          * @var CbondStock $parent
          */
-        $parent = Cache::tags(['catalog'])->eemember('cbond.' . $model->cbond_stock_id, Carbon::now()->addDay(), function () use ($model)
+        $parent = Cache::tags(['catalog'])->remember('cbond.' . $model->cbond_stock_id, Carbon::now()->addDay(), function () use ($model)
         {
             return CbondStock::firstWhere('id', $model->cbond_stock_id);
         });
