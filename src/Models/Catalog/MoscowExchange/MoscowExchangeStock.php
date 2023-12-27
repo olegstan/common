@@ -718,7 +718,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         $data = MoscowExchangeCurl::getHistory($stock, $startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
 
         if ($data) {
-            Cache::add($result, true, Carbon::now()->addDay());
+            Cache::tag(['catalog'])->add($result, true, Carbon::now()->addDay());
 
             foreach ($data as $datum) {
                 $history = MoscowExchangeHistory::where('tradedate', '=', $datum['tradedate'])
@@ -753,7 +753,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             return true;
         }
 
-        Cache::add($result, false, Carbon::now()->addDay());
+        Cache::tag(['catalog'])->add($result, false, Carbon::now()->addDay());
         LoggerHelper::getLogger()->info('No any history for ' . $stock->secid);
 
         return false;

@@ -84,7 +84,7 @@ class CbondCurl extends Curl
 
             if (isset($response->result) && $response->result === 'success')
             {
-                Cache::add('cbond' . $searchText, 1, Carbon::now()->addDay());
+                Cache::tag(['catalog'])->add('cbond' . $searchText, 1, Carbon::now()->addDay());
             }
 
             return $time;
