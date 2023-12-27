@@ -121,8 +121,8 @@ class CbondHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
             $price = $this->close;
             $date = $this->tradedate;
 
-            Cache::forever($priceKey, $price);
-            Cache::forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
+            Cache::tags(['catalog'])->forever($priceKey, $price);
+            Cache::tags(['catalog'])->forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
             return [$priceKey, $price, $date, null, 'cbond'];
         }
 
@@ -141,8 +141,8 @@ class CbondHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
                 Carbon::now()
             );
 
-            Cache::forever($priceKey, $convertedPrice);
-            Cache::forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
+            Cache::tags(['catalog'])->forever($priceKey, $convertedPrice);
+            Cache::tags(['catalog'])->forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
             return [$priceKey, $convertedPrice, $date, $price, 'cbond'];
         }
     }

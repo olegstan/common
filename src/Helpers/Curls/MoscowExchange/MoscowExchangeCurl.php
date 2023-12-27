@@ -197,7 +197,7 @@ class MoscowExchangeCurl
 
             if (!empty($stocks)) {
                 $arr = array_unique($stocks, SORT_REGULAR);
-                Cache::put('moex' . $searchText, $arr, Carbon::now()->addDay());
+                Cache::tags(['catalog'])->put('moex' . $searchText, $arr, Carbon::now()->addDay());
 
                 return $arr;
             }

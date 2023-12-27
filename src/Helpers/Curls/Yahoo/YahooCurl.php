@@ -98,7 +98,7 @@ class YahooCurl
             }
 
             $arr = array_values($newArr);
-            Cache::put('yahoo' . $searchText, $arr, Carbon::now()->addDay());
+            Cache::tags(['catalog'])->put('yahoo' . $searchText, $arr, Carbon::now()->addDay());
 
             return $arr;
         }catch (Exception $e){

@@ -117,7 +117,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                 ]);
             }
 
-            Cache::put('custom-' . $userId . '-' . $searchText, $custom, Carbon::now()->addDay());
+            Cache::tags(['catalog'])->put('custom-' . $userId . '-' . $searchText, $custom, Carbon::now()->addDay());
 
             return $custom;
         } catch (Exception $e) {
