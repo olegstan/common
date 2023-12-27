@@ -67,8 +67,8 @@ class CbondCurl extends Curl
     public static function search($searchText, string $lang = 'ru', int $limit = 50, bool $cache = true)
     {
         try {
-            if (Cache::has('cbond' . $searchText)) {
-                return Cache::get('cbond' . $searchText);
+            if (Cache::tag('catalog')->has('cbond' . $searchText)) {
+                return Cache::tag('catalog')->get('cbond' . $searchText);
             }
 
             $url = self::API_URL;
