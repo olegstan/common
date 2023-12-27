@@ -178,7 +178,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                     'user_id' => $item->user_id,
                     'symbol' => $item->getSymbol(),
                     'currency_id' => $item->getCurrency(),
-                    'ticker' => 'catalog.4',
+                    'ticker' => DefinitionActiveConst::CUSTOM_CATALOG,
                     'type_text' => $item->getTypeText(),
                     'facevalue' => '',
                     'couponfrequency' => $item->getCouponFrequency(),

@@ -20,6 +20,15 @@ interface DefinitionActiveConst
     public const CBONDS = 5;
 
     /**
+     * catalogs
+     */
+    public const CB_CATALOG = 'catalog.1';
+    public const YAHOO_CATALOG = 'catalog.2';
+    public const MOEX_CATALOG = 'catalog.3';
+    public const CUSTOM_CATALOG = 'catalog.4';
+    public const CBONDS_CATALOG = 'catalog.5';
+
+    /**
      * periodic
      */
     public const ONCE = 1;
