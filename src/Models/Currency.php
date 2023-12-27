@@ -159,7 +159,7 @@ class Currency extends BaseCatalog
         //неправильные данные
         $cacheString = 'cb_currency.' . $currency->cb_currency->id . ':date.' . $date->format('Y-m-d');
 
-        return Cache::tag(['catalog'])->eemember($cacheString, Carbon::now()->addDay(), static function () use ($currency, $date)
+        return Cache::tags(['catalog'])->eemember($cacheString, Carbon::now()->addDay(), static function () use ($currency, $date)
         {
             return CbHistoryCurrencyCourse::where('currency_id', $currency->cb_currency->id)
                 ->where('date', '<', $date->format('Y-m-d'))
@@ -180,7 +180,7 @@ class Currency extends BaseCatalog
             $code = Currency::RUB;
         }
 
-        return Cache::tag(['catalog'])->eememberForever('currency.' . $code, function () use ($code) {
+        return Cache::tags(['catalog'])->eememberForever('currency.' . $code, function () use ($code) {
             return self::where('code', $code)->first();
         });
     }
@@ -191,7 +191,7 @@ class Currency extends BaseCatalog
      */
     public static function getById($currencyId)
     {
-        return Cache::tag(['catalog'])->eememberForever('currency.' . $currencyId, static function () use ($currencyId) {
+        return Cache::tags(['catalog'])->eememberForever('currency.' . $currencyId, static function () use ($currencyId) {
             return Currency::where('id', $currencyId)
                 ->with('cb_currency')
                 ->first();
@@ -204,7 +204,7 @@ class Currency extends BaseCatalog
      */
     public static function getCodeById($currencyId)
     {
-        return Cache::tag(['catalog'])->eememberForever('currency.code.' . $currencyId, static function () use ($currencyId) {
+        return Cache::tags(['catalog'])->eememberForever('currency.code.' . $currencyId, static function () use ($currencyId) {
             $curr = Currency::where('id', $currencyId)
                 ->first();
 
@@ -221,7 +221,7 @@ class Currency extends BaseCatalog
      */
     public static function getSignById($currencyId)
     {
-        return Cache::tag(['catalog'])->eememberForever('currency.sign.' . $currencyId, static function () use ($currencyId) {
+        return Cache::tags(['catalog'])->eememberForever('currency.sign.' . $currencyId, static function () use ($currencyId) {
             $curr = Currency::where('id', $currencyId)
                 ->first();
 

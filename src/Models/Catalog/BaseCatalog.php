@@ -34,8 +34,8 @@ class BaseCatalog extends BaseModel
     {
         $key = $stock->getMorphClass() . '.' . $stock->id . '.' . $startDate->format('Y-m-d') . '/' . $endDate->format('Y-m-d');
 
-        if (Cache::tag(['catalog'])->has($key)) {
-            return [true, Cache::tag(['catalog'])->get($key)];
+        if (Cache::tags(['catalog'])->has($key)) {
+            return [true, Cache::tags(['catalog'])->get($key)];
         }
 
         return [false, $key];

@@ -96,8 +96,8 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         $searchText = $data->getTicker();
 
         try {
-            if (isset($searchText) && $cache && Cache::tag(['catalog'])->has('custom-' . $userId . '-' . $searchText)) {
-                return Cache::tag(['catalog'])->get('custom-' . $userId . '-' . $searchText);
+            if (isset($searchText) && $cache && Cache::tags(['catalog'])->has('custom-' . $userId . '-' . $searchText)) {
+                return Cache::tags(['catalog'])->get('custom-' . $userId . '-' . $searchText);
             }
 
             $custom = CustomStock::where('symbol', $searchText ?? null)

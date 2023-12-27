@@ -43,9 +43,9 @@ class YahooCurl
 
         try
         {
-            if ($cache && Cache::tag(['catalog'])->has('yahoo' . $searchText))
+            if ($cache && Cache::tags(['catalog'])->has('yahoo' . $searchText))
             {
-                return Cache::tag(['catalog'])->get('yahoo' . $searchText);
+                return Cache::tags(['catalog'])->get('yahoo' . $searchText);
             }
 
             [$original, $text, $translitText] = Translit::make($text);
