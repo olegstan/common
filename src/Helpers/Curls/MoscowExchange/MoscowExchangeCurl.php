@@ -146,8 +146,8 @@ class MoscowExchangeCurl
         $searchText = $text;
 
         try {
-            if ($cache && Cache::tag('catalog')->has('moex' . $searchText)) {
-                return Cache::tag('catalog')->get('moex' . $searchText);
+            if ($cache && Cache::tag(['catalog'])->has('moex' . $searchText)) {
+                return Cache::tag(['catalog'])->get('moex' . $searchText);
             }
 
             [$original, $text, $translitText] = Translit::make($text);
