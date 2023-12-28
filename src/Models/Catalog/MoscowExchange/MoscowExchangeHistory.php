@@ -128,8 +128,8 @@ class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHis
                 Carbon::now()
             );
 
-            Cache::tags(['catalog'])->forever($priceKey, $convertedPrice);
-            Cache::tags(['catalog'])->forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
+            Cache::tags(['back'])->forever($priceKey, $convertedPrice);
+            Cache::tags(['back'])->forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
             return [$priceKey, $convertedPrice, $date, $price, 'moex'];
         }
     }
