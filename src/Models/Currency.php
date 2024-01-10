@@ -206,7 +206,7 @@ class Currency extends BaseCatalog
      */
     public static function getById($currencyId)
     {
-        if(!$currencyId)
+        if(!$currencyId || $currencyId === 'none')
         {
             return null;
         }
