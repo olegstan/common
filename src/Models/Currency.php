@@ -1,6 +1,7 @@
 <?php
 
 namespace Common\Models;
+
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
@@ -180,8 +181,17 @@ class Currency extends BaseCatalog
             $code = Currency::RUB;
         }
 
-        return Cache::tags(['catalog'])->rememberForever('currency.' . $code, function () use ($code) {
-            return self::where('code', $code)->first();
+        return Cache::tags(['catalog'])->rememberForever('currency.' . $code, function () use ($code)
+        {
+            $cuurency = Currency::where('code', $code)
+                ->first();
+
+            if(!$cuurency)
+            {
+                throw new Exception('Currency not found by code ' . $code);
+            }
+
+            return $cuurency;
         });
     }
 
@@ -192,9 +202,16 @@ class Currency extends BaseCatalog
     public static function getById($currencyId)
     {
         return Cache::tags(['catalog'])->rememberForever('currency.' . $currencyId, static function () use ($currencyId) {
-            return Currency::where('id', $currencyId)
+            $cuurency = Currency::where('id', $currencyId)
                 ->with('cb_currency')
                 ->first();
+
+            if(!$cuurency)
+            {
+                throw new Exception('Currency not found by id ' . $cuurency);
+            }
+
+            return $cuurency;
         });
     }
 
