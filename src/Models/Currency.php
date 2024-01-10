@@ -181,6 +181,11 @@ class Currency extends BaseCatalog
             $code = Currency::RUB;
         }
 
+        if(!$code)
+        {
+            return null;
+        }
+
         return Cache::tags(['catalog'])->rememberForever('currency.' . $code, function () use ($code)
         {
             $cuurency = Currency::where('code', $code)
@@ -201,6 +206,11 @@ class Currency extends BaseCatalog
      */
     public static function getById($currencyId)
     {
+        if(!$currencyId)
+        {
+            return null;
+        }
+
         return Cache::tags(['catalog'])->rememberForever('currency.' . $currencyId, static function () use ($currencyId) {
             $cuurency = Currency::where('id', $currencyId)
                 ->with('cb_currency')
