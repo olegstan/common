@@ -186,18 +186,23 @@ class Currency extends BaseCatalog
             return null;
         }
 
-        return Cache::tags(['catalog'])->rememberForever('currency.' . $code, function () use ($code)
-        {
-            $cuurency = Currency::where('code', $code)
-                ->first();
-
-            if(!$cuurency)
+        try {
+            return Cache::tags(['catalog'])->rememberForever('currency.' . $code, function () use ($code)
             {
-                throw new Exception('Currency not found by code ' . $code);
-            }
+                $cuurency = Currency::where('code', $code)
+                    ->first();
 
-            return $cuurency;
-        });
+                if(!$cuurency)
+                {
+                    throw new Exception('Currency not found by code ' . $code);
+                }
+
+                return $cuurency;
+            });
+        }catch (Exception $e){
+            LoggerHelper::getLogger()->error($e);
+            return null;
+        }
     }
 
     /**
@@ -211,18 +216,23 @@ class Currency extends BaseCatalog
             return null;
         }
 
-        return Cache::tags(['catalog'])->rememberForever('currency.' . $currencyId, static function () use ($currencyId) {
-            $cuurency = Currency::where('id', $currencyId)
-                ->with('cb_currency')
-                ->first();
+        try {
+            return Cache::tags(['catalog'])->rememberForever('currency.' . $currencyId, static function () use ($currencyId) {
+                $cuurency = Currency::where('id', $currencyId)
+                    ->with('cb_currency')
+                    ->first();
 
-            if(!$cuurency)
-            {
-                throw new Exception('Currency not found by id ' . $cuurency);
-            }
+                if(!$cuurency)
+                {
+                    throw new Exception('Currency not found by id ' . $cuurency);
+                }
 
-            return $cuurency;
-        });
+                return $cuurency;
+            });
+        }catch (Exception $e){
+            LoggerHelper::getLogger()->error($e);
+            return null;
+        }
     }
 
     /**
