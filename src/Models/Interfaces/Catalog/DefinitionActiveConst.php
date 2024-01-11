@@ -54,6 +54,7 @@ interface DefinitionActiveConst
     public const IRR = 15;
     public const ALL_ACTIVES = 16;
     public const REFRESH_ZENMONEY = 17;
+    public const ZENMONEY_RELATION_BROKER_API = 18;
 
     /**
      * start types
