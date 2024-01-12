@@ -45,6 +45,7 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
     public const NOT_FOUND_STOCK = 1005;
     public const NOT_FOUND_MONEY_ON_DATE = 1006;
     public const ERROR_COUNT_STOCK = 1007;
+    public const ZENMONEY_RELATION_BROKER = 1008;
 
     public const CONTACT_BIRTHDAY = 2003;
 
