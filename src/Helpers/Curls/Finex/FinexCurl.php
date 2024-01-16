@@ -2,8 +2,6 @@
 
 namespace Common\Helpers\Curls\Finex;
 
-use App;
-use Cache;
 use Carbon\Carbon;
 use Common\Helpers\Curls\Curl;
 use Common\Helpers\LoggerHelper;
