@@ -58,6 +58,23 @@ class FinexCurl extends Curl
     }
 
     /**
+     * @return false|string
+     */
+    public static function loadHistory()
+    {
+        try {
+            $url = self::API_URL;
+            $coockies = '';
+
+            $response = json_decode(self::get($url, [], [], 'finex', $coockies));
+            
+        } catch (Exception $e) {
+            LoggerHelper::getLogger('finex-stock')->error($e);
+            return false;
+        }
+    }
+
+    /**
      * @param $searchText
      * @param string $lang
      * @param int $limit
