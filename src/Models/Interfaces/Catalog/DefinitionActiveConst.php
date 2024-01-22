@@ -45,7 +45,6 @@ interface DefinitionActiveConst
     public const WAZZUP = 6;
     public const MAIL = 9;
     public const PLAN = 10;
-    public const ATON_CRM_PARSE = 11;
     public const BCS_FILE_PARSE = 12;
     public const ACTIVE_SET_PRICE = 13;
     public const CATALOG_COURSE = 14;
@@ -55,6 +54,7 @@ interface DefinitionActiveConst
     public const ZENMONEY_RELATION_BROKER_API = 18;
 
 
+    public const ATON_CRM_PARSE = 11;
     public const ATON_FILE_UPLOADER = 7;
     public const ATON_FILE_PARSE = 8;
     public const ATON_CLIENT_CREATE = 19;
