@@ -43,8 +43,6 @@ interface DefinitionActiveConst
     public const STRATEGY = 4;
     public const GOAL_RECALC = 5;
     public const WAZZUP = 6;
-    public const ATON_FILE_UPLOADER = 7;
-    public const ATON_FILE_PARSE = 8;
     public const MAIL = 9;
     public const PLAN = 10;
     public const ATON_CRM_PARSE = 11;
@@ -55,6 +53,13 @@ interface DefinitionActiveConst
     public const ALL_ACTIVES = 16;
     public const REFRESH_API = 17;
     public const ZENMONEY_RELATION_BROKER_API = 18;
+
+
+    public const ATON_FILE_UPLOADER = 7;
+    public const ATON_FILE_PARSE = 8;
+    public const ATON_CLIENT_CREATE = 19;
+
+
 
     /**
      * start types
