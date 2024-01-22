@@ -266,9 +266,9 @@ class MoscowExchangeCurl
     public static function getHistory(MoscowExchangeStock $stock, $from, $till, $lang = 'ru')
     {
         try {
-            //example https://iss.moex.com/iss/history/engines/stock/markets/bonds/boards/TQBR/securities/RU000A105A95.xml?date=2018-12-19
-            //example https://iss.moex.com/iss/history/engines/stock/markets/bonds/boards/TQBR/securities/XS2346922755.xml?date=2018-12-19
-            //example https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQBR/securities/SBERP.xml?date=2018-12-19
+            //example https://iss.moex.com/iss/history/engines/stock/markets/bonds/boards/TQBR/securities/RU000A105A95.xml?from=2018-12-19
+            //example https://iss.moex.com/iss/history/engines/stock/markets/bonds/boards/TQBR/securities/XS2346922755.xml?from=2018-12-19
+            //example https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQBR/securities/SBERP.xml?from=2018-12-19
             $response = Curl::get(
                 self::API_URL . 'history/engines/' . $stock->engine . '/markets/' . $stock->market . '/boards/' . $stock->primary_boardid . '/securities/' . $stock->secid . '.json',
                 [
