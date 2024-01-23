@@ -48,6 +48,7 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
     public const ZENMONEY_RELATION_BROKER = 1008;
 
     public const CONTACT_BIRTHDAY = 2003;
+    public const ATON_CLIENT_CREATE = 2004;
 
     /**
      * api_id
