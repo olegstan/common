@@ -13,6 +13,9 @@ interface DefinitionMoexConst
 
     public const CURRENCY_VALUE = [
         'currency',
+    ];
+
+    public const METAL_VALUE = [
         'silver_metal',
         'gold_metal'
     ];
