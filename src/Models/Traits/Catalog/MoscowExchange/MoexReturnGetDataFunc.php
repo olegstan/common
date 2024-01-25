@@ -67,6 +67,11 @@ trait MoexReturnGetDataFunc
             return DefinitionActiveConst::CURRENCY;
         }
 
+        if(in_array($this->type, self::METAL_VALUE))
+        {
+            return DefinitionActiveConst::PRECIOUS_METAL;
+        }
+
         return DefinitionActiveConst::STOCK;
     }
 

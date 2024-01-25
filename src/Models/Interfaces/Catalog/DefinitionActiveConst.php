@@ -176,6 +176,7 @@ interface DefinitionActiveConst
         DefinitionActiveConst::OBLIGATION,
         DefinitionActiveConst::FUTURES,
         DefinitionActiveConst::PIF,
+        DefinitionActiveConst::PRECIOUS_METAL,
     ];
 
     public const INSURANCE_COMPANY_GROUP = [
