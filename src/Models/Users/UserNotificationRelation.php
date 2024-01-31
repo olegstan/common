@@ -73,9 +73,10 @@ class UserNotificationRelation extends BaseModel
             $item = UserNotificationRelation::where('id', $id)
                 ->first();
 
-            if ($item && $item->update([
+            if ($item) {
+                $item->update([
                     'is_confirmed' => true
-                ])) {
+                ]);
             }
         }
 
