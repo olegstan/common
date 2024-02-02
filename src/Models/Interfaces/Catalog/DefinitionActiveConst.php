@@ -58,6 +58,7 @@ interface DefinitionActiveConst
     public const ATON_FILE_UPLOADER = 7;
     public const ATON_FILE_PARSE = 8;
     public const ATON_CLIENT_CREATE = 19;
+    public const ATON_FILE_VALUATION = 20;
 
 
 
