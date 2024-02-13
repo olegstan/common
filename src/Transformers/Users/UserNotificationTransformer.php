@@ -18,10 +18,11 @@ class UserNotificationTransformer extends BaseTransformer
             'content' => $model->content,
             'user_id' => $model->user_id,
             'status' => $model->status,
-            'created_at' => $model->created_at ? $model->created_at->format('H:i:s d.m.Y') : '',
             'action_id' => $model->action_id,
             'data' => $model->data,
         ];
+
+        $data = array_merge($data, $this->transformDate($model, 'created_at'));
 
         return $this->withRelations($data, $model);
     }
