@@ -36,7 +36,7 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
     public const INFO = 5001;
 
     /**
-     * action type
+     * action type back
      */
     public const TRANSFERED_STOCK = 1001;
     public const CLOSE_INSURANCES = 1002;
@@ -48,8 +48,13 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
     public const ZENMONEY_RELATION_BROKER = 1008;
     public const INVITE_GROUP = 1009;
 
+    /**
+     * action type CRM
+     */
     public const CONTACT_BIRTHDAY = 2003;
     public const ATON_CLIENT_CREATE = 2004;
+    public const ATON_ERROR_PARSE = 2005;
+    public const ATON_DEPOSIT_MONEY = 2006;
 
     /**
      * api_id
