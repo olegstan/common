@@ -54,6 +54,7 @@ class UserNotification extends BaseModel implements CommonRemoveActiveInterface
     public const CONTACT_BIRTHDAY = 2003;
     public const ATON_CLIENT_CREATE = 2004;
     public const ATON_ERROR_PARSE = 2005;
+    public const ATON_DEPOSIT_MONEY = 2006;
 
     /**
      * api_id
