@@ -326,6 +326,21 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         return false;
     }
 
+
+    /**
+     * @param $user
+     * @param $collections
+     * @return void
+     */
+    public function selfRemoveData($user, $collections): void
+    {
+        $selfData = $this->whereUserId(config('app.env') . '-' .$user->id)->cursor();
+
+        foreach ($selfData as $data) {
+            $collections->put($this->getTableWithoutPrefix() . '.' . $data->id, json_encode($data));
+        }
+    }
+
     /**
      * @param $stock
      * @param Carbon $startDate
