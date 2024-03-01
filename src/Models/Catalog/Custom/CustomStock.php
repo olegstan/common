@@ -88,7 +88,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
     public static function search($data, bool $cache = true)
     {
         //в $data всегда должен быть объект модели, что бы мы могли искать не по 1 параметру, а сколько требуется
-        if (!$data->getTicker()) {
+        if (!is_object($data) && !$data->getTicker()) {
             return false;
         }
 
