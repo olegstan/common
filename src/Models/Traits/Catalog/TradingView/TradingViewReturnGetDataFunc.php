@@ -2,6 +2,8 @@
 
 namespace Common\Models\Traits\Catalog\TradingView;
 
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
+
 trait TradingViewReturnGetDataFunc
 {
     /**
@@ -76,5 +78,41 @@ trait TradingViewReturnGetDataFunc
     public function getExchange(): string
     {
         return $this->exchange;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStockName()
+    {
+        return $this->description;
+    }
+
+    public function getType(): int
+    {
+        if(in_array($this->type, self::BOND_VALUES))
+        {
+            return DefinitionActiveConst::OBLIGATION;
+        }
+
+        if(in_array($this->type, self::FUTURES_VALUE))
+        {
+            return DefinitionActiveConst::FUTURES;
+        }
+
+        if(in_array($this->type, self::CURRENCY_VALUE))
+        {
+            return DefinitionActiveConst::CURRENCY;
+        }
+
+        return DefinitionActiveConst::STOCK;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->getType() . ' ' . $this->description . ' ' . $this->symbol;
     }
 }

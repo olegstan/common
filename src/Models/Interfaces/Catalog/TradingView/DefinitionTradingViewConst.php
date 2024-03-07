@@ -5,10 +5,11 @@ namespace Common\Models\Interfaces\Catalog\TradingView;
 
 interface DefinitionTradingViewConst
 {
-    public const TYPE_FIELD = 'type';
-    public const STOCK_VALUES = 'stock';
-    public const BOND_VALUES = 'bond';
-    public const CURRENCY_VALUE = 'forex';
+    public const TYPE_FIELD = ['type'];
+    public const STOCK_VALUES = ['stock'];
+    public const BOND_VALUES = ['bond'];
+    public const CURRENCY_VALUE = ['forex'];
+    public const FUTURES_VALUE = ['futures'];
 
     public const NANOCAP = 1;
     public const MICROCAP = 2;
