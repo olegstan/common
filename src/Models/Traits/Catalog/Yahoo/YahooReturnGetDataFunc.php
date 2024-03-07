@@ -127,4 +127,12 @@ trait YahooReturnGetDataFunc
     {
         return $this->exch_disp ?? '';
     }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->getType() . ' ' . $this->name . ' ' . $this->symbol;
+    }
 }
