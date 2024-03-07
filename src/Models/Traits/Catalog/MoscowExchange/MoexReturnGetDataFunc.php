@@ -253,4 +253,12 @@ trait MoexReturnGetDataFunc
     {
         return $this->matdate;
     }
+
+    /**
+     * @return string
+     */
+    public function getExchange(): string
+    {
+        return '';
+    }
 }

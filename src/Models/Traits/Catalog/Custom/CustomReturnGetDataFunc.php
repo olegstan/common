@@ -121,4 +121,12 @@ trait CustomReturnGetDataFunc
     {
         return null;
     }
+
+    /**
+     * @return string
+     */
+    public function getExchange(): string
+    {
+        return '';
+    }
 }

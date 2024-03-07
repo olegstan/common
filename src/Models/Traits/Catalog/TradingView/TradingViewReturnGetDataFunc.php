@@ -69,4 +69,12 @@ trait TradingViewReturnGetDataFunc
     {
         return $this->icon ? config('app.url') . '/images/icons/' . $this->icon . '.svg' : config('app.url') . '/images/icons/default.svg';
     }
+
+    /**
+     * @return string
+     */
+    public function getExchange(): string
+    {
+        return $this->exchange;
+    }
 }

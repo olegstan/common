@@ -119,4 +119,12 @@ trait YahooReturnGetDataFunc
     {
         return null;
     }
+
+    /**
+     * @return string
+     */
+    public function getExchange(): string
+    {
+        return $this->exch_disp ?? '';
+    }
 }
