@@ -78,4 +78,52 @@ class CustomHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInte
     {
         //TODO
     }
+
+    /**
+     * @return mixed
+     */
+    public function getClose()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOpen(): int
+    {
+        return 0;
+    }
+
+    /**
+     * @return int
+     */
+    public function getHigh(): int
+    {
+        return 0;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLow(): int
+    {
+        return 0;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVolume(): int
+    {
+        return 0;
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getDate(): Carbon
+    {
+        return $this->date;
+    }
 }

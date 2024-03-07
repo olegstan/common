@@ -143,4 +143,52 @@ class FinexHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
             return [$priceKey, $convertedPrice, $date, $price, 'finex'];
         }
     }
+
+    /**
+     * @return mixed
+     */
+    public function getClose()
+    {
+        return $this->close;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOpen()
+    {
+        return $this->open;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHigh()
+    {
+        return $this->high;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLow()
+    {
+        return $this->low;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVolume()
+    {
+        return $this->volume;
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getDate(): Carbon
+    {
+        return $this->tradedate;
+    }
 }

@@ -73,15 +73,64 @@ class YahooHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
     }
 
     /**
-     * @param $key
+     * @param $priceKey
+     * @param $dateKey
      * @return array
      */
-    public function setPrice($priceKey, $dateKey)
+    public function setPrice($priceKey, $dateKey): array
     {
         $price = $this->close;
         $date = $this->date;
         Cache::tags(['back'])->forever($priceKey, $price);
         Cache::tags(['back'])->forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
         return [$priceKey, $price, $date, null, 'yahoo'];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClose()
+    {
+        return $this->close;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOpen()
+    {
+        return $this->open;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHigh()
+    {
+        return $this->high;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLow()
+    {
+        return $this->low;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVolume()
+    {
+        return $this->volume;
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getDate(): Carbon
+    {
+        return $this->date;
     }
 }
