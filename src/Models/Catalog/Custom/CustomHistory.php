@@ -80,6 +80,22 @@ class CustomHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInte
     }
 
     /**
+     * @return string
+     */
+    public function getDateField(): string
+    {
+        return 'date';
+    }
+
+    /**
+     * @return string
+     */
+    public function getStockIdField(): string
+    {
+        return 'symbol';
+    }
+
+    /**
      * @return mixed
      */
     public function getClose()

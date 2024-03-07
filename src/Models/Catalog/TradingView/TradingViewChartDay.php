@@ -146,6 +146,22 @@ class TradingViewChartDay extends BaseCatalog
     }
 
     /**
+     * @return string
+     */
+    public function getDateField(): string
+    {
+        return 'date_at';
+    }
+
+    /**
+     * @return string
+     */
+    public function getStockIdField(): string
+    {
+        return 'ticker_id';
+    }
+
+    /**
      * @return mixed
      */
     public function getClose()

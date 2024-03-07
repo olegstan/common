@@ -99,6 +99,22 @@ class CbondHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
     }
 
     /**
+     * @return string
+     */
+    public function getDateField(): string
+    {
+        return 'tradedate';
+    }
+
+    /**
+     * @return string
+     */
+    public function getStockIdField(): string
+    {
+        return 'cbond_stock_id';
+    }
+
+    /**
      * @return mixed
      */
     public function getClose()

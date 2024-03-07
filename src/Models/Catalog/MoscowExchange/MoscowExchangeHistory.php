@@ -10,7 +10,6 @@ use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
 
 /**
  * @property Carbon $tradedate
- * @property $secid
  * @property $numtrades
  * @property $value
  * @property $open
@@ -26,6 +25,7 @@ use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;
  * @property $marketprice3tradesvalue
  * @property $waval
  * @property $faceunit
+ * @property $moex_stock_id
  */
 class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInterface
 {
@@ -132,6 +132,22 @@ class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHis
             Cache::tags(['back'])->forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
             return [$priceKey, $convertedPrice, $date, $price, 'moex'];
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateField(): string
+    {
+        return 'tradedate';
+    }
+
+    /**
+     * @return string
+     */
+    public function getStockIdField(): string
+    {
+        return 'moex_stock_id';
     }
 
     /**

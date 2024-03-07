@@ -73,6 +73,22 @@ class YahooHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
     }
 
     /**
+     * @return string
+     */
+    public function getDateField(): string
+    {
+        return 'date';
+    }
+
+    /**
+     * @return string
+     */
+    public function getStockIdField(): string
+    {
+        return 'yahoo_stock_id';
+    }
+
+    /**
      * @param $priceKey
      * @param $dateKey
      * @return array
