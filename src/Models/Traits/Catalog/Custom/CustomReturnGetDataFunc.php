@@ -129,4 +129,12 @@ trait CustomReturnGetDataFunc
     {
         return '';
     }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->getType() . ' ' . $this->name . ' ' . $this->symbol;
+    }
 }
