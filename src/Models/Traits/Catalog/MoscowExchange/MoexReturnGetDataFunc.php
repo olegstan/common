@@ -16,6 +16,14 @@ trait MoexReturnGetDataFunc
     /**
      * @return string
      */
+    public function getIsinField(): string
+    {
+        return 'secid';
+    }
+
+    /**
+     * @return string
+     */
     public function getValueField(): string
     {
         return 'close';

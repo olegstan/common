@@ -131,6 +131,14 @@ trait YahooReturnGetDataFunc
     /**
      * @return string
      */
+    public function getIsinField(): string
+    {
+        return 'symbol';
+    }
+
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->getType() . ' ' . $this->name . ' ' . $this->symbol;

@@ -118,4 +118,12 @@ trait CurrencyReturnGetDataFunc
     {
         return 'MOEX';
     }
+
+    /**
+     * @return string
+     */
+    public function getIsinField(): string
+    {
+        return 'char_code';
+    }
 }

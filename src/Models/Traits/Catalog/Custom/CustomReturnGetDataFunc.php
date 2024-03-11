@@ -125,6 +125,14 @@ trait CustomReturnGetDataFunc
     /**
      * @return string
      */
+    public function getIsinField(): string
+    {
+        return 'char_code';
+    }
+
+    /**
+     * @return string
+     */
     public function getExchange(): string
     {
         return '';
