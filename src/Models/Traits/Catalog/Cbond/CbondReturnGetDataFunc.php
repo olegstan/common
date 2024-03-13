@@ -155,99 +155,124 @@ trait CbondReturnGetDataFunc
         }
     }
 
-    /**
-     * @return string
-     */
     public function getDateField(): string
     {
         return 'tradedate';
     }
 
-    /**
-     * @return string
-     */
     public function getValueField(): string
     {
         return 'close';
     }
 
-    /**
-     * @return string
-     */
     public function getSymbolField(): string
     {
         return 'secid';
     }
 
-    /**
-     * @return string
-     */
     public function getIsinField(): string
     {
         return 'isin';
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         $name = $this->name ?? $this->shortname;
         return $this->getType() . ' ' . $name . ' ' . $this->isin;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCodeCurrency()
     {
         return $this->faceunit;
     }
 
-    /**
-     * @return string
-     */
     public function getSymbol(): string
     {
         return $this->isin ?? '';
     }
 
-    /**
-     * @return int
-     */
     public function getLotSize(): int
     {
         return $this->lotsize ?: 1;
     }
 
-    /**
-     * @return mixed
-     */
     public function getStockName()
     {
         return $this->name ?? $this->shortname;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCouponPercent()
     {
         return $this->couponpercent;
     }
 
-    /**
-     * @return mixed
-     */
     public function getMaturityDate()
     {
         return $this->matdate;
     }
 
-    /**
-     * @return string
-     */
     public function getExchange(): string
+    {
+        return '';
+    }
+
+    public function getCatalog(): string
+    {
+        return DefinitionActiveConst::CBONDS_CATALOG;
+    }
+
+    public function getFaceValue()
+    {
+        return $this->facevalue;
+    }
+
+    public function getCouponDate()
+    {
+        return $this->coupondate;
+    }
+
+    public function getCouponValue()
+    {
+        return $this->couponvalue;
+    }
+
+    public function getDecimals()
+    {
+        return $this->decimals;
+    }
+
+    public function getCountry(): string
+    {
+        return $this->country;
+    }
+
+    public function getIndustry(): string
+    {
+        return '';
+    }
+
+    public function getSector(): string
+    {
+        return '';
+    }
+
+    public function getCapitalization(): string
+    {
+        return '';
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getSymbolName(): string
+    {
+        $name = $this->name ?? $this->shortname;
+        return trim($name . ' ' . $this->secid);
+    }
+
+    public function getUserId(): string
     {
         return '';
     }

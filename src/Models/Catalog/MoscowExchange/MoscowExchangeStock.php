@@ -18,6 +18,7 @@ use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexRelationshipsTrait;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexReturnGetDataFunc;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexScopeTrait;
+use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
@@ -104,6 +105,9 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
     //общие трейты
     use CommonCatalogTrait;
+
+    //Общий трейт для каталогов и Актива для поиска бумаг
+    use SearchActiveCatalogTrait;
 
     /**
      * @var string
@@ -554,31 +558,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
         if ($stocks) {
             foreach ($stocks as $item) {
-                $typeId = $item->getType();
-
-                /**
-                 * @var MoscowExchangeStock $item
-                 */
-                $items[] = [
-                    'id' => $item->id,
-                    'name' => trim($item->name . ' ' . $item->secid),
-                    'type_id' => $typeId,
-                    'type_text' => $item->getTypeText(),
-                    'currency_id' => $item->getCurrency(),
-                    'ticker' => DefinitionActiveConst::MOEX_CATALOG,
-                    'facevalue' => $item->facevalue,
-                    'couponfrequency' => $item->getCouponFrequency(),
-                    'coupondate' => $item->coupondate,
-                    'couponpercent' => $item->couponpercent,
-                    'couponvalue' => $item->couponvalue,
-                    'decimals' => $item->decimals,
-                    'lotsize' => $item->getLotSize(),
-                    'symbol' => $item->getSymbol(),
-                    'country' => $item->tradingview ? $item->tradingview->country : '',
-                    'industry' => $item->tradingview ? $item->tradingview->industry : '',
-                    'sector' => $item->tradingview ? $item->tradingview->sector : '',
-                    'capitalization' => $item->tradingview ? $item->tradingview->capitalization : '',
-                ];
+                $items[] = $item->getItemData();
             }
         }
     }

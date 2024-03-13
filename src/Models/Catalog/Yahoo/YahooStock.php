@@ -15,6 +15,7 @@ use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Interfaces\Catalog\Yahoo\DefinitionYahooConst;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
+use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use Common\Models\Traits\Catalog\Yahoo\YahooRelationshipsTrait;
 use Common\Models\Traits\Catalog\Yahoo\YahooReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Yahoo\YahooScopeTrait;
@@ -53,6 +54,9 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
     //общие трейты
     use CommonCatalogTrait;
+
+    //Общий трейт для каталогов и Актива для поиска бумаг
+    use SearchActiveCatalogTrait;
 
     /**
      * @var string
@@ -201,28 +205,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
              * @var YahooStock[] $stocks
              */
             foreach ($stocks as $item) {
-                $typeId = $item->getType();
-
-                $items[] = [
-                    'id' => $item->id,
-                    'name' => trim($item->name . ' ' . $item->symbol),
-                    'type_id' => $typeId,
-                    'type_text' => $item->getTypeText(),
-                    'currency_id' => $item->getCurrency(),
-                    'ticker' => DefinitionActiveConst::YAHOO_CATALOG,
-                    'facevalue' => '',
-                    'couponfrequency' => $item->getCouponFrequency(),
-                    'coupondate' => '',
-                    'couponpercent' => '',
-                    'couponvalue' => '',
-                    'decimals' => '',
-                    'lotsize' => $item->getLotSize(),
-                    'symbol' => $item->getSymbol(),
-                    'country' => $item->tradingview ? $item->tradingview->country : '',
-                    'industry' => $item->tradingview ? $item->tradingview->industry : '',
-                    'sector' => $item->tradingview ? $item->tradingview->sector : '',
-                    'capitalization' => $item->tradingview ? $item->tradingview->capitalization : '',
-                ];
+                $items[] = $item->getItemData();
             }
         }
     }

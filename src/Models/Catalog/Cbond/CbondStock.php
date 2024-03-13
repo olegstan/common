@@ -13,6 +13,7 @@ use Common\Models\Traits\Catalog\Cbond\CbondRelationshipsTrait;
 use Common\Models\Traits\Catalog\Cbond\CbondReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Cbond\CbondScopeTrait;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
+use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use File;
 use Illuminate\Support\Collection;
 
@@ -22,6 +23,7 @@ use Illuminate\Support\Collection;
  * @property $id
  * @property $secid
  * @property $shortname
+ * @property $country
  * @property $regnumber
  * @property $name
  * @property $isin
@@ -99,6 +101,9 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
 
     //общие трейты
     use CommonCatalogTrait;
+
+    //Общий трейт для каталогов и Актива для поиска бумаг
+    use SearchActiveCatalogTrait;
 
     /**
      * @var string
@@ -561,28 +566,7 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
 
         if ($stocks) {
             foreach ($stocks as $item) {
-                $typeId = $item->getType();
-                $name = $item->name ?? $item->shortname;
-
-                /**
-                 * @var CbondStock $item
-                 */
-                $items[] = [
-                    'id' => $item->id,
-                    'name' => trim($name . ' ' . $item->isin),
-                    'type_id' => $typeId,
-                    'type_text' => $item->getTypeText(),
-                    'currency_id' => $item->getCurrency(),
-                    'ticker' => DefinitionActiveConst::CBONDS_CATALOG,
-                    'facevalue' => $item->facevalue,
-                    'couponfrequency' => $item->getCouponFrequency(),
-                    'coupondate' => $item->coupondate,
-                    'couponpercent' => $item->couponpercent,
-                    'couponvalue' => $item->couponvalue,
-                    'decimals' => $item->decimals,
-                    'lotsize' => $item->getLotSize(),
-                    'symbol' => $item->getSymbol(),
-                ];
+                $items[] = $item->getItemData();
             }
         }
     }

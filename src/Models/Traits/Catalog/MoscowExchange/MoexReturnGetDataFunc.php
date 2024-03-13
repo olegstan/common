@@ -1,4 +1,5 @@
 <?php
+
 namespace Common\Models\Traits\Catalog\MoscowExchange;
 
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -6,77 +7,31 @@ use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 trait MoexReturnGetDataFunc
 {
     /**
-     * @return string
-     */
-    public function getDateField(): string
-    {
-        return 'tradedate';
-    }
-
-    /**
-     * @return string
-     */
-    public function getIsinField(): string
-    {
-        return 'secid';
-    }
-
-    /**
-     * @return string
-     */
-    public function getValueField(): string
-    {
-        return 'close';
-    }
-
-    /**
-     * @return string
-     */
-    public function getSymbolField(): string
-    {
-        return 'secid';
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->getType() . ' ' . $this->name . ' ' . $this->secid;
-    }
-
-    /**
      * @return int
      */
     public function getType(): int
     {
-        if(in_array($this->type, self::PIF_VALUES))
-        {
+        if (in_array($this->type, self::PIF_VALUES)) {
             return DefinitionActiveConst::PIF;
         }
 
-        if(in_array($this->type, self::BOND_VALUES))
-        {
+        if (in_array($this->type, self::BOND_VALUES)) {
             return DefinitionActiveConst::OBLIGATION;
         }
 
-        if(in_array($this->type, self::ETF_VALUE))
-        {
+        if (in_array($this->type, self::ETF_VALUE)) {
             return DefinitionActiveConst::ETF;
         }
 
-        if(in_array($this->type, self::FUTURES_VALUE))
-        {
+        if (in_array($this->type, self::FUTURES_VALUE)) {
             return DefinitionActiveConst::FUTURES;
         }
 
-        if(in_array($this->type, self::CURRENCY_VALUE))
-        {
+        if (in_array($this->type, self::CURRENCY_VALUE)) {
             return DefinitionActiveConst::CURRENCY;
         }
 
-        if(in_array($this->type, self::METAL_VALUE))
-        {
+        if (in_array($this->type, self::METAL_VALUE)) {
             return DefinitionActiveConst::PRECIOUS_METAL;
         }
 
@@ -84,37 +39,11 @@ trait MoexReturnGetDataFunc
     }
 
     /**
-     * @return mixed
-     */
-    public function getCodeCurrency()
-    {
-        return $this->faceunit;
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getSymbol(): string
-    {
-        return $this->secid;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLotSize()
-    {
-        return $this->lotsize ?: 1;
-    }
-
-    /**
      * @return int
      */
     public function getCouponFrequency(): int
     {
-        switch ($this->couponfrequency)
-        {
+        switch ($this->couponfrequency) {
             case 2:
                 return DefinitionActiveConst::HALFYEAR;
             case 4:
@@ -134,8 +63,7 @@ trait MoexReturnGetDataFunc
      */
     public function getTypeText(): string
     {
-        switch ($this->type)
-        {
+        switch ($this->type) {
             case 'preferred_share':
                 return 'Акции привилегированные';
 //                return __('model.moscow_exchange_stock.type_text.preferred_share');
@@ -238,34 +166,122 @@ trait MoexReturnGetDataFunc
         }
     }
 
-    /**
-     * @return mixed
-     */
+    public function getDateField(): string
+    {
+        return 'tradedate';
+    }
+
+    public function getIsinField(): string
+    {
+        return 'secid';
+    }
+
+    public function getValueField(): string
+    {
+        return 'close';
+    }
+
+    public function getSymbolField(): string
+    {
+        return 'secid';
+    }
+
+    public function getName(): string
+    {
+        return $this->getType() . ' ' . $this->name . ' ' . $this->secid;
+    }
+
+    public function getCodeCurrency()
+    {
+        return $this->faceunit;
+    }
+
+    public function getSymbol(): string
+    {
+        return $this->secid;
+    }
+
+    public function getLotSize(): int
+    {
+        return $this->lotsize ?: 1;
+    }
+
     public function getStockName()
     {
         return $this->name ?? $this->shortname;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCouponPercent()
     {
         return $this->couponpercent;
     }
 
-    /**
-     * @return mixed
-     */
     public function getMaturityDate()
     {
         return $this->matdate;
     }
 
-    /**
-     * @return string
-     */
     public function getExchange(): string
+    {
+        return '';
+    }
+
+    public function getCatalog(): string
+    {
+        return DefinitionActiveConst::MOEX_CATALOG;
+    }
+
+    public function getFaceValue()
+    {
+        return $this->facevalue;
+    }
+
+    public function getCouponDate()
+    {
+        return $this->coupondate;
+    }
+
+    public function getCouponValue()
+    {
+        return $this->couponvalue;
+    }
+
+    public function getDecimals()
+    {
+        return $this->decimals;
+    }
+
+    public function getCountry(): string
+    {
+        return $this->tradingview ? $this->tradingview->country : '';
+    }
+
+    public function getIndustry(): string
+    {
+        return $this->tradingview ? $this->tradingview->industry : '';
+    }
+
+    public function getSector(): string
+    {
+        return $this->tradingview ? $this->tradingview->sector : '';
+    }
+
+    public function getCapitalization(): string
+    {
+        return $this->tradingview ? $this->tradingview->capitalization : '';
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getSymbolName(): string
+    {
+        return trim($this->name . ' ' . $this->secid);
+    }
+
+    public function getUserId(): string
     {
         return '';
     }

@@ -16,6 +16,7 @@ use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\Custom\CustomRelationshipsTrait;
 use Common\Models\Traits\Catalog\Custom\CustomReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Custom\CustomScopeTrait;
+use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use Exception;
 
 /**
@@ -43,6 +44,9 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
 
     //общие трейты
     use CommonCatalogTrait;
+
+    //Общий трейт для каталогов и Актива для поиска бумаг
+    use SearchActiveCatalogTrait;
 
     /**
      * @var string
@@ -164,30 +168,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
 
         if ($stocks) {
             foreach ($stocks as $item) {
-                /**
-                 * @var CustomStock $item
-                 */
-
-                //если name и symbol совпадает, то будем показывать только name
-                $name = $item->name === $item->symbol ? $item->name : $item->name . ' ' . $item->symbol;
-
-                $items[] = [
-                    'id' => $item->id,
-                    'name' => trim($name),
-                    'type_id' => $item->getType(),
-                    'user_id' => $item->user_id,
-                    'symbol' => $item->getSymbol(),
-                    'currency_id' => $item->getCurrency(),
-                    'ticker' => DefinitionActiveConst::CUSTOM_CATALOG,
-                    'type_text' => $item->getTypeText(),
-                    'facevalue' => '',
-                    'couponfrequency' => $item->getCouponFrequency(),
-                    'coupondate' => '',
-                    'couponpercent' => '',
-                    'couponvalue' => '',
-                    'decimals' => '',
-                    'lotsize' => $item->getLotSize(),
-                ];
+                $items[] = $item->getItemData();
             }
         }
     }

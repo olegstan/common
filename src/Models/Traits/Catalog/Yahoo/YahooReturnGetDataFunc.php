@@ -9,17 +9,19 @@ trait YahooReturnGetDataFunc
     /**
      * @return string
      */
-    public function getDateField(): string
+    public function getTypeText(): string
     {
-        return 'date';
-    }
-
-    /**
-     * @return string
-     */
-    public function getValueField(): string
-    {
-        return 'close';
+        switch ($this->type_disp) {
+            case 'ETF':
+//                return __('model.yahoo_stock.type_text.etf');
+                return 'ETF';
+            case 'Currency':
+                return 'Валюта';
+//                return __('model.yahoo_stock.type_text.currency');
+            default:
+                return 'Акции';
+//                return __('model.yahoo_stock.type_text.default');
+        }
     }
 
     /**
@@ -38,83 +40,51 @@ trait YahooReturnGetDataFunc
         return DefinitionActiveConst::STOCK;
     }
 
-    /**
-     * @return string
-     */
+    public function getDateField(): string
+    {
+        return 'date';
+    }
+
+    public function getValueField(): string
+    {
+        return 'close';
+    }
+
     public function getSymbolField(): string
     {
         return 'symbol';
     }
 
-    /**
-     * @return mixed
-     */
     public function getCodeCurrency()
     {
         return $this->currency;
     }
 
-    /**
-     * @return string
-     */
-    public function getTypeText(): string
-    {
-        switch ($this->type_disp) {
-            case 'ETF':
-//                return __('model.yahoo_stock.type_text.etf');
-                return 'ETF';
-            case 'Currency':
-                return 'Валюта';
-//                return __('model.yahoo_stock.type_text.currency');
-            default:
-                return 'Акции';
-//                return __('model.yahoo_stock.type_text.default');
-        }
-    }
-
-    /**
-     * @return string
-     */
     public function getCouponFrequency(): string
     {
         return '';
     }
 
-    /**
-     * @return string
-     */
     public function getSymbol(): string
     {
         return $this->symbol;
     }
 
-    /**
-     * @return int
-     */
     public function getLotSize(): int
     {
         return 1;
     }
 
-    /**
-     * @return mixed
-     */
     public function getStockName()
     {
         return $this->name;
     }
 
-    /**
-     * @return null
-     */
     public function getCouponPercent()
     {
         return null;
     }
 
-    /**
-     * @return null
-     */
     public function getMaturityDate()
     {
         return null;
@@ -136,11 +106,68 @@ trait YahooReturnGetDataFunc
         return 'symbol';
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->getType() . ' ' . $this->name . ' ' . $this->symbol;
+    }
+
+    public function getCatalog(): string
+    {
+        return DefinitionActiveConst::YAHOO_CATALOG;
+    }
+
+    public function getFaceValue(): string
+    {
+        return '';
+    }
+
+    public function getCouponDate(): string
+    {
+        return '';
+    }
+
+    public function getCouponValue(): string
+    {
+        return '';
+    }
+
+    public function getDecimals(): string
+    {
+        return '';
+    }
+
+    public function getCountry(): string
+    {
+        return $this->tradingview ? $this->tradingview->country : '';
+    }
+
+    public function getIndustry(): string
+    {
+        return $this->tradingview ? $this->tradingview->industry : '';
+    }
+
+    public function getSector(): string
+    {
+        return $this->tradingview ? $this->tradingview->sector : '';
+    }
+
+    public function getCapitalization(): string
+    {
+        return $this->tradingview ? $this->tradingview->capitalization : '';
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getSymbolName(): string
+    {
+        return trim($this->name . ' ' . $this->symbol);
+    }
+
+    public function getUserId(): string
+    {
+        return '';
     }
 }

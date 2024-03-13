@@ -6,124 +6,138 @@ use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 trait CurrencyReturnGetDataFunc
 {
-    /**
-     * @return string
-     */
     public function getDateField(): string
     {
         return 'date';
     }
 
-
-    /**
-     * @return string
-     */
     public function getValueField(): string
     {
         return 'value';
     }
 
-    /**
-     * @return string
-     */
     public function getTypeText(): string
     {
         return '';
     }
 
-    /**
-     * @return mixed
-     */
     public function getName()
     {
         return $this->char_code;
     }
 
-    /**
-     * @return string
-     */
     public function getCouponFrequency(): string
     {
         return '';
     }
 
-    /**
-     * @return string
-     */
     public function getSymbolField(): string
     {
         return 'currency_id';
     }
 
-    /**
-     * @return mixed
-     */
     public function getSymbol()
     {
         return $this->char_code;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCodeCurrency()
     {
         return $this->char_code;
     }
 
-    /**
-     * @return int
-     */
     public function getLotSize(): int
     {
         return 1;
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return DefinitionActiveConst::CURRENCY;
     }
 
-    /**
-     * @return mixed
-     */
     public function getStockName()
     {
         return $this->char_code;
     }
 
-    /**
-     * @return null
-     */
     public function getCouponPercent()
     {
         return null;
     }
 
-    /**
-     * @return null
-     */
     public function getMaturityDate()
     {
         return null;
     }
 
-    /**
-     * @return string
-     */
     public function getExchange(): string
     {
         return 'MOEX';
     }
 
-    /**
-     * @return string
-     */
     public function getIsinField(): string
     {
         return 'char_code';
+    }
+
+    public function getCatalog(): string
+    {
+        return DefinitionActiveConst::CB_CATALOG;
+    }
+
+    public function getFaceValue(): string
+    {
+        return '';
+    }
+
+    public function getCouponDate(): string
+    {
+        return '';
+    }
+
+    public function getCouponValue(): string
+    {
+        return '';
+    }
+
+    public function getDecimals(): string
+    {
+        return '';
+    }
+
+    public function getCountry(): string
+    {
+        return '';
+    }
+
+    public function getIndustry(): string
+    {
+        return '';
+    }
+
+    public function getSector(): string
+    {
+        return '';
+    }
+
+    public function getCapitalization(): string
+    {
+        return '';
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getSymbolName(): string
+    {
+        return $this->char_code . ' - ' . $this->name;
+    }
+
+    public function getUserId(): string
+    {
+        return '';
     }
 }

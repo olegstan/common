@@ -145,4 +145,65 @@ trait CustomReturnGetDataFunc
     {
         return $this->getType() . ' ' . $this->name . ' ' . $this->symbol;
     }
+
+    public function getCatalog(): string
+    {
+        return DefinitionActiveConst::CUSTOM_CATALOG;
+    }
+
+    public function getFaceValue(): string
+    {
+        return '';
+    }
+
+    public function getCouponDate(): string
+    {
+        return '';
+    }
+
+    public function getCouponValue(): string
+    {
+        return '';
+    }
+
+    public function getDecimals(): string
+    {
+        return '';
+    }
+
+    public function getCountry(): string
+    {
+        return '';
+    }
+
+    public function getIndustry(): string
+    {
+        return '';
+    }
+
+    public function getSector(): string
+    {
+        return '';
+    }
+
+    public function getCapitalization(): string
+    {
+        return '';
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getSymbolName(): string
+    {
+        $name = $this->name === $this->symbol ? $this->name : $this->name . ' ' . $this->symbol;
+        return trim($name);
+    }
+
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
 }

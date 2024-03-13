@@ -11,6 +11,7 @@ use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\Currency\CurrencyRelationshipsTrait;
 use Common\Models\Traits\Catalog\Currency\CurrencyReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Currency\CurrencyScopeTrait;
+use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 
 /**
  * @property $cb_id
@@ -32,6 +33,9 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
 
     //общие трейты
     use CommonCatalogTrait;
+
+    //Общий трейт для каталогов и Актива для поиска бумаг
+    use SearchActiveCatalogTrait;
 
     /**
      * @var string
@@ -110,20 +114,7 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
          * @var CbCurrency $item
          */
         foreach ($currencies as $item) {
-            $items[] = [
-                'id' => $item->id,
-                'name' => $item->char_code . ' - ' . $item->name,
-                'type_id' => DefinitionActiveConst::CURRENCY,
-                'type_text' => 'Валюта',
-                'currency_id' => '',
-                'order' => '',
-                'ticker' => DefinitionActiveConst::CB_CATALOG,
-                'symbol' => $item->getSymbol(),
-                'country' => '',
-                'industry' => '',
-                'sector' => '',
-                'capitalization' => '',
-            ];
+            $items[] = $item->getItemData();
         }
     }
 

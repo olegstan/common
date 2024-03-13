@@ -3,7 +3,6 @@
 namespace Common\Models\Interfaces\Catalog;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 interface CommonsFuncCatalogInterface
 {
@@ -39,7 +38,7 @@ interface CommonsFuncCatalogInterface
 
     public function getExchange();
 
-    public function history(): HasMany;
+    public function history();
 
     public function getLastPriceByDate($currency, $date = null);
 
@@ -52,5 +51,26 @@ interface CommonsFuncCatalogInterface
     public static function loadCoupons($stock): void;
 
     public static function loadDividends($stock): void;
+
+    public function getId();
+
+    public function getCatalog();
+
+    public function getFaceValue();
+
+    public function getCouponDate();
+
+    public function getCouponValue();
+
+    public function getDecimals();
+
+    public function getCountry();
+
+    public function getIndustry();
+
+    public function getSector();
+
+    public function getCapitalization();
+    public function getUserId();
 
 }
