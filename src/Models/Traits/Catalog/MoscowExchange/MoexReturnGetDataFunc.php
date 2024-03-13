@@ -253,22 +253,38 @@ trait MoexReturnGetDataFunc
 
     public function getCountry(): string
     {
-        return $this->tradingview ? $this->tradingview->country : '';
+         if (!isset($this->tradingview) || !$this->tradingview->country) {
+            return '';
+        }
+
+        return $this->tradingview->country;
     }
 
     public function getIndustry(): string
     {
-        return $this->tradingview ? $this->tradingview->industry : '';
+         if (!isset($this->tradingview) || !$this->tradingview->industry) {
+            return '';
+        }
+
+        return $this->tradingview->industry;
     }
 
     public function getSector(): string
     {
-        return $this->tradingview ? $this->tradingview->sector : '';
+         if (!isset($this->tradingview) || !$this->tradingview->sector) {
+            return '';
+        }
+
+        return $this->tradingview->sector;
     }
 
     public function getCapitalization(): string
     {
-        return $this->tradingview ? $this->tradingview->capitalization : '';
+         if (!isset($this->tradingview) || !$this->tradingview->capitalization) {
+            return '';
+        }
+
+        return $this->tradingview->capitalization;
     }
 
     public function getId()
