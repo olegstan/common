@@ -123,7 +123,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
 
             Cache::tags(['catalog'])->put('custom-' . $userId . '-' . $searchText, $custom, Carbon::now()->addDay());
             LoggerHelper::getLogger('create-custom')->info('Добавлена новая запись', [
-                'stock' => $custom, 
+                'stock' => $custom,
                 'operation' => $data
             ]);
             return $custom;

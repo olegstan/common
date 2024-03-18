@@ -35,7 +35,7 @@ trait CustomReturnGetDataFunc
      */
     public function getValueField(): string
     {
-        return '';//нет таблицы истории, поэтому и поля нет
+        return 'price';
     }
 
     /**
