@@ -15,6 +15,7 @@ use App\Models\Tinkoff\TinkoffOperation;
 use App\Models\Tinkoff\TinkoffOrder;
 use App\Models\Transfers\Transfer;
 use App\Models\Users\UserCreditLog;
+use App\Models\Users\UserFinanceGroup;
 use Common\Models\Users\UserNotification;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -147,5 +148,21 @@ trait UserRelationsTrait
     public function collectiveUnionUser(): HasOne
     {
         return $this->hasOne(CollectiveGroup::class, 'union_user_id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function financeGroups(): HasMany
+    {
+        return $this->hasMany(UserFinanceGroup::class, 'user_id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function oppositeFinanceGroup(): HasOne
+    {
+        return $this->hasOne(UserFinanceGroup::class, 'union_user_id');
     }
 }
