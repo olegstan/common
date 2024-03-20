@@ -6,6 +6,14 @@ use App\Models\Accounts\Types\Cash;
 use App\Models\Accounts\UserAccountCurrency;
 use App\Models\Actives\ActiveGoal;
 use App\Models\Actives\ActiveGoalPayment;
+use App\Models\Aton\AtonUser;
+use App\Models\Crm\Contact\CrmContact;
+use App\Models\Crm\CrmApplication;
+use App\Models\Users\UserConfig;
+use App\Models\Users\UserDevice;
+use App\Models\Users\UserFinanceGroup;
+use App\Models\Users\UserLogin;
+use App\Models\Users\UserSubscribe;
 use Carbon\Carbon;
 use Common\Models\BaseModel;
 use Common\Models\Currency;
@@ -23,7 +31,10 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Throwable;
@@ -80,6 +91,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use UserRelationsTrait;
     use UserAttributeTrait;
     use UserPathTrait;
+
+    public const CONF_NOTIFICATION_DELETE_AFTER_NEVER = 1001;
+    public const CONF_NOTIFICATION_DELETE_AFTER_DAY_END = 1002;
+    public const CONF_NOTIFICATION_DELETE_AFTER_WEEK = 1003;
+    public const CONF_NOTIFICATION_DELETE_AFTER_TWO_WEEKS = 1004;
+    public const CONF_NOTIFICATION_DELETE_AFTER_MONTH = 1005;
 
     public const MANAGER = 'manager';
     public const OWNER = 'owner';
@@ -201,6 +218,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'currency_id',
         'contact_id',
         'language_id',
+        'rating',
+        'hidden_name',
+        'phone_token',
+        'operator_id',
     ];
 
 
@@ -214,6 +235,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'first_name' => 'string',
         'last_name' => 'string',
         'middle_name' => 'string',
+        'comment' => 'string',
         'sex' => 'integer',
         'manager_id' => 'integer',
         'api_token' => 'string',
@@ -222,9 +244,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'avatar' => 'string',
         'retired_age' => 'integer',
         'dead_age' => 'integer',
-
-        'balance' => 'double',
-        'points' => 'double',
 
         'vk' => 'text',
         'fb' => 'text',
@@ -242,7 +261,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'career_start_month' => 'integer',
 
         'is_imported' => 'boolean',
-        'promo_code' => 'string',
+        'promo_code' => 'string?',
         'tinkoff_token' => 'string?',
         'tinkoff_mode' => 'integer',
         'is_visible_spend' => 'boolean',
@@ -250,7 +269,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'currency_id' => 'integer?',
         'contact_id' => 'integer?',
         'language_id' => 'integer?',
+        'application_id' => 'integer?',
+        'application_max_delay_days' => 'integer?',
+        'notification_delete_after_value' => 'integer?',
         'is_new' => 'boolean',
+        'rating' => 'integer?',
+        'hidden_name' => 'boolean?',
+        'operator_id' => 'integer',
     ];
 
 
@@ -277,11 +302,99 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     ];
 
     /**
+     * @return string
+     */
+    public function getAvatar(): ?string
+    {
+        if ($this->avatar) {
+            $path = self::$avatarPath . $this->avatar;
+            if (file_exists(public_path() . $path)) {
+                return config('app.url') . $path;
+            }
+        }
+
+        //не показывать аватар, если нет, значит и урл пустой
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    public static function avatarPath(): string
+    {
+        return public_path() . self::$avatarPath;
+    }
+
+    /**
+     * @return string
+     */
+    public static function documentPath(): string
+    {
+        return public_path() . self::$documentPath;
+    }
+
+    /**
      * @return BelongsToMany
      */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(config('roles.models.role'), 'role_user', 'user_id')->withTimestamps();
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function configs(): HasMany
+    {
+        return $this->hasMany(UserConfig::class, 'user_id');
+    }
+
+    /**
+     * @param string $key
+     * @return HigherOrderBuilderProxy|int|mixed
+     * TODO тупость передавать дефолтный ключ, но уберу потом как нибудь (Олег)
+     */
+    public function getConfigByKey(string $key = UserConfig::C_WEEK_HOLIDAYS)
+    {
+        $defaultConfig = UserConfig::UserDefaultConfigConstants[$key];
+        $conf = $this->configs()->where('key', '=', $key)->first();
+        if (!$conf) {
+            return $defaultConfig;
+        }
+        if (is_array($defaultConfig)) {
+            return json_decode($conf->value);
+        }
+        if (is_numeric($defaultConfig)) {
+            return (int)$conf->value;
+        }
+        return $conf->value;
+    }
+
+    /**
+     * @param string $key
+     * @param $value
+     * @return void
+     */
+    public function setConfigByKey(string $key = UserConfig::C_WEEK_HOLIDAYS, $value)
+    {
+        $conf = $this->configs()->where('key', '=', $key)->first();
+        $newValue = $value;
+
+        if (is_array($value)) {
+            $newValue = json_decode($value);
+        }
+        if ($conf) {
+            $conf->value = $newValue;
+            $conf->save();
+        } else {
+            UserConfig::create(
+                [
+                    'user_id' => $this->id,
+                    'key' => $key,
+                    'value' => $newValue,
+                ]
+            );
+        }
     }
 
     /**
@@ -323,6 +436,40 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     * @return HasMany
+     */
+    public function atonUsers(): HasMany
+    {
+        return $this->hasMany(AtonUser::class, 'user_id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function contact(): HasOne
+    {
+        return $this->hasOne(CrmContact::class, 'id', 'contact_id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function mainContact(): HasOne
+    {
+        return $this->hasOne(CrmContact::class, 'id', 'contact_id');
+    }
+
+    /**
+     * @return HasOne
+     *
+     * @deprecated в данный момент 14.09.2023 не проставляется в базе ни у одной записи
+     */
+    public function application(): HasOne
+    {
+        return $this->hasOne(CrmApplication::class, 'id', 'application_id');
+    }
+
+    /**
      * @param $query
      * @param $slug
      * @param bool $reverse
@@ -358,6 +505,45 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return parent::newQuery()->role($this->role);
         }
         return parent::newQuery();
+    }
+
+    /**
+     * @param $date
+     */
+    public function setBirthAtAttribute($date)
+    {
+        $this->setDate('birth_at', $date);
+    }
+
+    public function authData(): array
+    {
+        return [
+            'configs' => $this->configs,
+            'contacts' => CrmContact::where('user_id', '=', $this->id)
+                ->with('requisite')
+                ->with('requisite_bank')
+                ->with('files')
+                ->orderBy('id', 'DESC')
+                ->get()
+        ];
+    }
+
+    /**
+     * @return void
+     */
+    public function createWazzupUser(): void
+    {
+//        $url = 'https://api.wazzup24.com/v3/users';
+//
+//        $payload = [
+//            [
+//                'id' => (string)$this->id,
+//                'name' => $this->last_name . ' ' . $this->first_name,
+//                'phone' => str_replace(array('+', ' ', '(' , ')', '-'), '',  $this->phone)
+//            ]
+//        ];
+//
+//        WazzupControllerHelper::curlInit($url, 'post', $payload);
     }
 
     /**
