@@ -2,12 +2,13 @@
 
 namespace Common\Models\Users;
 
+use Common\Models\Traits\Users\Roles\RoleHasRelations;
 use Common\Models\Traits\Users\Roles\Slugable;
 use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    use Slugable, \App\Traits\Models\User\RoleHasRelations;
+    use Slugable, RoleHasRelations;
 
     /**
      * В методе getRoles() как-то криво сделано, что в дальнейших методах ищется айдишник, а из-за fillable он не создается,
