@@ -9,7 +9,7 @@ trait UserPathTrait
      */
     public static function avatarPath(): string
     {
-        return phppublic_path() . self::$avatarPath;
+        return public_path() . self::$avatarPath;
     }
 
     /**
@@ -17,7 +17,7 @@ trait UserPathTrait
      */
     public static function documentPath(): string
     {
-        return phppublic_path() . self::$documentPath;
+        return public_path() . self::$documentPath;
     }
 
     /**
@@ -27,11 +27,11 @@ trait UserPathTrait
     {
         if ($this->avatar) {
             $path = self::$avatarPath . $this->avatar;
-            if (file_exists(phppublic_path() . $path)) {
-                return phpconfig('app.url') . $path;
+            if (file_exists(public_path() . $path)) {
+                return config('app.url') . $path;
             }
         }
 
-        return phpconfig('app.url') . self::$avatarPath . 'default.svg';
+        return config('app.url') . self::$avatarPath . 'default.svg';
     }
 }
