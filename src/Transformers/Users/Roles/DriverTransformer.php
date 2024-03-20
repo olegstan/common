@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Api\V1\Transformers\Base\Users\Roles;
+namespace Common\Transformers\Users\Roles;
 
-use LaravelRest\Http\Transformers\BaseTransformer;
+use Common\Transformers\Users\Roles\RoleTransformer;
+
 
 class DriverTransformer extends RoleTransformer
 {

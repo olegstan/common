@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Api\V1\Transformers\Base\Users\Roles;
+namespace Common\Transformers\Users\Roles;
+
+use Common\Transformers\Users\Roles\RoleTransformer;
 
 class PartnerTransformer extends RoleTransformer
 {
