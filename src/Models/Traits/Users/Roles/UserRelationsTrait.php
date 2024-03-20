@@ -1,5 +1,4 @@
 <?php
-
 namespace Common\Models\Traits\Users\Roles;
 
 use App\Models\Accounts\UserAccount;
@@ -10,6 +9,7 @@ use App\Models\Aton\AtonCommission;
 use App\Models\Aton\AtonOperation;
 use App\Models\Bcs\BcsCommission;
 use App\Models\Bcs\BcsOperation;
+use App\Models\Collective\CollectiveGroup;
 use App\Models\CreditLog;
 use App\Models\Tinkoff\TinkoffOperation;
 use App\Models\Tinkoff\TinkoffOrder;
@@ -17,6 +17,7 @@ use App\Models\Transfers\Transfer;
 use App\Models\Users\UserCreditLog;
 use Common\Models\Users\UserNotification;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 trait UserRelationsTrait
 {
@@ -130,5 +131,21 @@ trait UserRelationsTrait
     public function bcsCommissions(): HasMany
     {
         return $this->hasMany(BcsCommission::class, 'user_id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function collectiveUser(): HasMany
+    {
+        return $this->hasMany(CollectiveGroup::class, 'user_id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function collectiveUnionUser(): HasOne
+    {
+        return $this->hasOne(CollectiveGroup::class, 'union_user_id');
     }
 }
