@@ -18,7 +18,7 @@ trait CurrencyReturnGetDataFunc
 
     public function getTypeText(): string
     {
-        return '';
+        return 'Валюта';
     }
 
     public function getName()
