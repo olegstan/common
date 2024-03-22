@@ -299,22 +299,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * @return string
      */
-    public function getAvatar(): ?string
-    {
-        if ($this->avatar) {
-            $path = self::$avatarPath . $this->avatar;
-            if (file_exists(public_path() . $path)) {
-                return config('app.url') . $path;
-            }
-        }
-
-        //не показывать аватар, если нет, значит и урл пустой
-        return null;
-    }
-
-    /**
-     * @return string
-     */
     public static function avatarPath(): string
     {
         return public_path() . self::$avatarPath;
