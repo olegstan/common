@@ -2,11 +2,10 @@
 
 namespace Common\Transformers\Catalog\Cbond;
 
-use App\Models\Catalog\Cbond\CbondCoupon;
+use Common\Models\Catalog\Cbond\CbondCoupon;
 use Cache;
 use Carbon\Carbon;
 use Common\Models\Catalog\Cbond\CbondStock;
-use Common\Models\Currency;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
 class CbondCouponTransformer extends BaseTransformer

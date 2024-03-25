@@ -2,16 +2,17 @@
 
 namespace Common\Transformers\Catalog\TradingView;
 
-use App\Models\TradingView\TradingViewKey;
+use Common\Models\Catalog\TradingView\TradingViewKey;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
 class TradingViewKeyTransformer extends BaseTransformer
 {
     /**
      * @param TradingViewKey $model
+     *
      * @return array
      */
-    public function transform($model)
+    public function transform(TradingViewKey $model)
     {
         $data = [
             'id' => $model->id,

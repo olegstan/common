@@ -18,6 +18,8 @@ use Common\Models\Traits\Users\Roles\UserPathTrait;
 use Common\Models\Traits\Users\Roles\UserPlanTrait;
 use Common\Models\Traits\Users\Roles\UserRelationsTrait;
 use Common\Models\Traits\Users\StrategyTrait;
+use Common\Models\Users\Crm\UserConfig;
+use Common\Models\Users\Roles\Role;
 use DB;
 use Exception;
 use File;
@@ -75,7 +77,6 @@ use Throwable;
  *
  * @mixin StrategyTrait
  *
- * @package App\Models
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract
 {

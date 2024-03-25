@@ -9,17 +9,17 @@ use App\Models\Actives\ActiveIncomeExpensesMonth;
 use App\Models\Actives\ActivePayment;
 use App\Models\CreditLog;
 use App\Models\Transfers\Transfer;
-use Common\Models\Users\Roles\Client;
 use Carbon\Carbon;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
+use Common\Models\Users\Roles\Types\Client;
 use Exception;
 use Illuminate\Support\Collection;
 
 /**
  * Trait TacticsTrait
  *
- * @mixin Client
+ * @mixin \Common\Models\Users\Roles\Types\Client
  *
  * @package App\Models\Traits
  */

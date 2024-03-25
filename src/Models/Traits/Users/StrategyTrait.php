@@ -9,7 +9,7 @@ use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
-use Common\Models\Users\Roles\Client;
+use Common\Models\Users\Roles\Types\Client;
 use Exception;
 
 /**

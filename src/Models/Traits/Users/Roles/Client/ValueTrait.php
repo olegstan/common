@@ -5,12 +5,12 @@ use App\Helpers\Active\ActiveHelper;
 use App\Models\Actives\Active;
 use App\Models\Actives\ActiveGoal;
 use App\Models\Actives\ActiveTrade;
-use Common\Models\Users\Roles\Client;
+use Common\Models\Users\Roles\Types\Client;
 
 /**
  * Trait StrategyTrait
  *
- * @mixin Client
+ * @mixin \Common\Models\Users\Roles\Types\Client
  *
  * @package App\Models\Traits
  */

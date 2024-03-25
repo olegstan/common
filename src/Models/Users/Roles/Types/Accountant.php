@@ -1,0 +1,17 @@
+<?php
+
+namespace Common\Models\Users\Roles\Types;
+
+use Common\Models\Users\User;
+
+/**
+ * Class Accountant
+ * @package Common\Models\Users
+ */
+class Accountant extends User
+{
+    /**
+     * @var string
+     */
+    public $role = User::ACCOUNTANT;
+}

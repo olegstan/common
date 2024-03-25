@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
-use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\Currency\CurrencyRelationshipsTrait;
 use Common\Models\Traits\Catalog\Currency\CurrencyReturnGetDataFunc;

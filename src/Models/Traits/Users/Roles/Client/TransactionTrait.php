@@ -10,7 +10,7 @@ use App\Models\CreditLog;
 use App\Models\Transfers\Transfer;
 use Carbon\Carbon;
 use Common\Models\Currency;
-use Common\Models\Users\Roles\Client;
+use Common\Models\Users\Roles\Types\Client;
 use Exception;
 
 /**

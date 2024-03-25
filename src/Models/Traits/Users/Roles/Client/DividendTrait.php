@@ -9,7 +9,7 @@ use Common\Models\Catalog\MoscowExchange\MoscowExchangeCoupon;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeDividend;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
-use Common\Models\Users\Roles\Client;
+use Common\Models\Users\Roles\Types\Client;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
 /**

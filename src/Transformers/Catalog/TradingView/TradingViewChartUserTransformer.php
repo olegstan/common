@@ -2,16 +2,17 @@
 
 namespace Common\Transformers\Catalog\TradingView;
 
-use App\Models\TradingView\TradingViewChartUser;
+use Common\Models\Catalog\TradingView\TradingViewChartUser;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
 class TradingViewChartUserTransformer extends BaseTransformer
 {
     /**
      * @param TradingViewChartUser $model
+     *
      * @return array
      */
-    public function transform($model)
+    public function transform(TradingViewChartUser $model)
     {
         $data = [
             'id' => $model->id,

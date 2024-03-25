@@ -2,7 +2,7 @@
 
 namespace Common\Models\Traits\Users\Roles;
 
-use Common\Models\Users\Permission;
+use Common\Models\Users\Roles\Permission;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait RoleHasRelations

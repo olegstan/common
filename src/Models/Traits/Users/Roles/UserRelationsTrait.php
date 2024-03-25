@@ -14,10 +14,10 @@ use App\Models\CreditLog;
 use App\Models\Tinkoff\TinkoffOperation;
 use App\Models\Tinkoff\TinkoffOrder;
 use App\Models\Transfers\Transfer;
+use Common\Models\Users\Crm\UserDevice;
+use Common\Models\Users\Crm\UserFinanceGroup;
+use Common\Models\Users\Notification\UserNotification;
 use Common\Models\Users\UserCreditLog;
-use Common\Models\Users\UserFinanceGroup;
-use Common\Models\Users\UserDevice;
-use Common\Models\Users\UserNotification;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
