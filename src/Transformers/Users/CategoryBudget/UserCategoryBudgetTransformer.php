@@ -12,7 +12,7 @@ class UserCategoryBudgetTransformer extends BaseTransformer
      *
      * @return mixed
      */
-    public function transform(UserCategoryBudget $model)
+    public function transform($model)
     {
         $data = [
             'id' => $model->id,

@@ -11,7 +11,7 @@ class UserCreditLogTransformer extends BaseTransformer
      *
      * @return mixed
      */
-    public function transform(UserCreditLog $model)
+    public function transform($model)
     {
         $data = [
             'user_id' => $model->user_id,

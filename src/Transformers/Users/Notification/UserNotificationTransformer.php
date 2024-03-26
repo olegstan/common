@@ -12,7 +12,7 @@ class UserNotificationTransformer extends BaseTransformer
      *
      * @return array
      */
-    public function transform(UserNotification $model)
+    public function transform($model)
     {
         $data = [
             'id' => $model->id,

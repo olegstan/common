@@ -11,7 +11,7 @@ class UserConfigTransformer extends BaseTransformer
      *
      * @return mixed
      */
-    public function transform(UserConfig $model)
+    public function transform($model)
     {
         $data = [
             'id' => $model->id,

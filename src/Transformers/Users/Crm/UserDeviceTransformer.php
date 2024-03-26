@@ -12,7 +12,7 @@ class UserDeviceTransformer extends BaseTransformer
      *
      * @return array
      */
-    public function transform(UserDevice $model)
+    public function transform($model)
     {
         $data = [
             'id' => $model->id,

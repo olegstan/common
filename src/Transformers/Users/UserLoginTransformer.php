@@ -12,7 +12,7 @@ class UserLoginTransformer extends BaseTransformer
      *
      * @return mixed
      */
-    public function transform(UserLogin $model)
+    public function transform($model)
     {
         $data = [
             'user_id' => $model->user_id,

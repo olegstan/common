@@ -11,7 +11,7 @@ class UserUpdatePlanTransformer extends BaseTransformer
      *
      * @return mixed
      */
-    public function transform(UserUpdatePlan $model)
+    public function transform($model)
     {
         $data = [
             'id' => $model->id,

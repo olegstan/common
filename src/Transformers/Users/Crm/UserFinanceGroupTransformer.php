@@ -16,7 +16,7 @@ class UserFinanceGroupTransformer extends BaseTransformer
      *
      * @return mixed
      */
-    public function transform(UserFinanceGroup $model)
+    public function transform($model)
     {
         $data = [
             'id' => $model->id,

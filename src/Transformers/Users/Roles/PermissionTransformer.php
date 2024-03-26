@@ -12,7 +12,7 @@ class PermissionTransformer extends BaseTransformer
      *
      * @return array
      */
-    public function transform(Permission $model)
+    public function transform($model)
     {
         $data = [
             'name' => $model->name,

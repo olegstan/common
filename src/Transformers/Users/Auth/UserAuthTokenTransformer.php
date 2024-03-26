@@ -12,7 +12,7 @@ class UserAuthTokenTransformer extends BaseTransformer
      *
      * @return array
      */
-    public function transform(UserAuthToken $model)
+    public function transform($model)
     {
         $data = [
             'user_id' => $model->user_id,

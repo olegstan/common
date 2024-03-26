@@ -12,7 +12,7 @@ class UserCategoryBudgetItemTransformer extends BaseTransformer
      *
      * @return array
      */
-    public function transform(UserCategoryBudgetItem $model)
+    public function transform($model)
     {
         $data = [
             'id' => $model->id,

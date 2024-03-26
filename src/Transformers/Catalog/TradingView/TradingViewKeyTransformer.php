@@ -12,7 +12,7 @@ class TradingViewKeyTransformer extends BaseTransformer
      *
      * @return array
      */
-    public function transform(TradingViewKey $model)
+    public function transform($model)
     {
         $data = [
             'id' => $model->id,
