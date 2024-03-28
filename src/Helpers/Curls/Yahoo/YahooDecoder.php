@@ -2,6 +2,7 @@
 
 namespace Common\Helpers\Curls\Yahoo;
 
+use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
 use Exception;
@@ -184,8 +185,7 @@ class YahooDecoder
         }
 
         try {
-            //TODO carbon
-            $date = new DateTime($columns[0], new DateTimeZone('UTC'));
+            $date = Carbon::createFromFormat('Y-m-d', $columns[0]);
         } catch (Exception $e) {
             throw new RuntimeException('Not a date in column "Date":'.$columns[0]);
         }
