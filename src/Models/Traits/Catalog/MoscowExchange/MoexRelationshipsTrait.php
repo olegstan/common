@@ -36,6 +36,10 @@ trait MoexRelationshipsTrait
      */
     public function history(): HasMany
     {
+        if (str_contains(strtolower($this->latname), 'finex')) {
+            return $this->finexHistory();
+        }
+
         return $this->hasMany(MoscowExchangeHistory::class, 'moex_stock_id', 'id');
     }
 
