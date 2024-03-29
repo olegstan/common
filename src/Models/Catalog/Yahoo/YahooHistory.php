@@ -35,7 +35,7 @@ class YahooHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
         'close',
         'adj_close',
         'volume',
-        'symbol_stock_id',
+        'yahoo_stock_id',
     ];
 
     /**
@@ -49,7 +49,7 @@ class YahooHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
         'close' => 'double',
         'adj_close' => 'double',
         'volume' => 'double',
-        'symbol_stock_id' => 'integer',
+        'yahoo_stock_id' => 'integer',
     ];
 
     public $timestamps = false;
