@@ -60,6 +60,7 @@ interface DefinitionActiveConst
     public const ATON_CLIENT_CREATE = 19;
     public const ATON_FILE_VALUATION = 20;
     public const ATON_FILE_SPLIT = 21;
+    public const ATON_CHECK_VALUATION = 22;
 
 
 
