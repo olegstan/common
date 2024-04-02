@@ -14,6 +14,7 @@ use App\Models\CreditLog;
 use App\Models\Tinkoff\TinkoffOperation;
 use App\Models\Tinkoff\TinkoffOrder;
 use App\Models\Transfers\Transfer;
+use Common\Models\Users\Collective\UserCollectiveGroup;
 use Common\Models\Users\Crm\UserDevice;
 use Common\Models\Users\Crm\UserFinanceGroup;
 use Common\Models\Users\Notification\UserNotification;
@@ -172,5 +173,35 @@ trait UserRelationsTrait
     public function devices(): HasMany
     {
         return $this->hasMany(UserDevice::class, 'user_id');
+    }
+
+    /**
+     * Все привязанные сотрудники
+     *
+     * @return HasMany
+     */
+    public function user_employee_groups(): HasMany
+    {
+        return $this->hasMany(UserCollectiveGroup::class, 'user_id')->where('type_id', UserCollectiveGroup::EMPLOYEE);
+    }
+
+    /**
+     * Все привязанные члены семьи
+     *
+     * @return HasMany
+     */
+    public function user_family_groups(): HasMany
+    {
+        return $this->hasMany(UserCollectiveGroup::class, 'user_id')->where('type_id', UserCollectiveGroup::FAMILY);
+    }
+
+    /**
+     * Все привязанные пользователи
+     *
+     * @return HasMany
+     */
+    public function user_all_groups(): HasMany
+    {
+        return $this->hasMany(UserCollectiveGroup::class, 'user_id');
     }
 }
