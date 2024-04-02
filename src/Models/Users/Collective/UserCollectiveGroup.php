@@ -61,7 +61,7 @@ class UserCollectiveGroup extends BaseModel
     /**
      * @return HasOne
      */
-    public function unionUser(): HasOne
+    public function union_user(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'union_user_id');
     }

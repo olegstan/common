@@ -56,6 +56,16 @@ class UserDepartmentController extends BaseController
     public function postStore($request)
     {
         return DB::transaction(function () use ($request) {
+
+            $userDep = UserDepartment::create([
+                'department_id' => $request->input('department_id'),
+                'user_id' => $request->input('user_id'),
+            ]);
+
+            if ($userDep) {
+                return $this->response()->sucess('Пользователь успешно закреплен');
+            }
+
             return $this->response()->error('Ошибка в получении данных');
         }, config('app.transaction_tries'));
     }
@@ -68,6 +78,19 @@ class UserDepartmentController extends BaseController
     public function putUpdate($request)
     {
         return DB::transaction(function () use ($request) {
+            if (!$userDep = UserDepartment::find($request->input('user_department_id'))) {
+                return $this->response()->error('Такой привязки не существует');
+            }
+
+            $upd = $userDep->update([
+                'department_id' => $request->input('department_id'),
+                'user_id' => $request->input('user_id'),
+            ]);
+
+            if ($upd) {
+                return $this->response()->sucess('Данные успешно обновлены');
+            }
+
             return $this->response()->error('Ошибка в получении данных');
         }, config('app.transaction_tries'));
     }
@@ -80,6 +103,13 @@ class UserDepartmentController extends BaseController
     public function deleteRemove($request)
     {
         return DB::transaction(function () use ($request) {
+            if (!$userDep = UserDepartment::find($request->input('department_id'))) {
+                return $this->response()->error('Такой привязки не существует');
+            }
+
+            if ($userDep->delete()) {
+                return $this->response()->sucess('Привязка успешно удалена');
+            }
             return $this->response()->error('Ошибка в получении данных');
         }, config('app.transaction_tries'));
     }

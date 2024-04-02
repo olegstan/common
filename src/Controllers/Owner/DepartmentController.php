@@ -57,7 +57,17 @@ class DepartmentController extends BaseController
     public function postStore($request)
     {
         return DB::transaction(function () use ($request) {
-            return $this->response()->error('Ошибка в получении данных');
+            $department = Department::create([
+                'user_id' => Auth::id(),
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+            ]);
+
+            if ($department) {
+                return $this->response()->sucess('Отдел успешно создан');
+            }
+
+            return $this->response()->error('Ошибка создания отдела');
         }, config('app.transaction_tries'));
     }
 
@@ -69,6 +79,19 @@ class DepartmentController extends BaseController
     public function putUpdate($request)
     {
         return DB::transaction(function () use ($request) {
+            if (!$department = Department::find($request->input('department_id'))) {
+                return $this->response()->error('Такого отдела не существует');
+            }
+
+            $upd = $department->update([
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+            ]);
+
+            if ($upd) {
+                return $this->response()->sucess('Данные успешно обновлены');
+            }
+
             return $this->response()->error('Ошибка в получении данных');
         }, config('app.transaction_tries'));
     }
@@ -81,7 +104,25 @@ class DepartmentController extends BaseController
     public function deleteRemove($request)
     {
         return DB::transaction(function () use ($request) {
+            if (!$department = Department::find($request->input('department_id'))) {
+                return $this->response()->error('Такого отдела не существует');
+            }
+
+            if ($department->delete()) {
+                return $this->response()->sucess('Отдел успешно удален');
+            }
+
             return $this->response()->error('Ошибка в получении данных');
+        }, config('app.transaction_tries'));
+    }
+
+    /**
+     * @return void
+     */
+    public function getAllDepartment($request)
+    {
+        return DB::transaction(function () use ($request) {
+
         }, config('app.transaction_tries'));
     }
 }
