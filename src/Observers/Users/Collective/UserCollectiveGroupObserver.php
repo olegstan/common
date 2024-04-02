@@ -5,7 +5,7 @@ namespace Common\Observers\Users\Collective;
 
 use Common\Models\Users\Collective\UserCollectiveGroup;
 
-class CollectiveGroupObserver
+class UserCollectiveGroupObserver
 {
     /**
      * @param UserCollectiveGroup $data
