@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Api\V1\Controllers\Common\ExtendProfileController;
-
+namespace Common\Controllers\Common\ExtendProfileController;
 use App\Api\V1\Controllers\Common\ProfileController;
-use App\Models\Collective\CollectiveGroup;
+use Common\Models\Users\Collective\CollectiveGroup;
 use Auth;
 use Common\Models\BaseModel;
 use Common\Models\Users\Notification\UserNotification;
