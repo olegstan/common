@@ -11,15 +11,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $union_user_id
  * @property int $type_id
  */
-class CollectiveGroup extends BaseModel
+class UserCollectiveGroup extends BaseModel
 {
     public const TYPES = [
         self::FAMILY,
-        self::ASSISTANT,
+        self::EMPLOYEE,
     ];
 
     public const FAMILY = 1;
-    public const ASSISTANT = 2;
+    public const EMPLOYEE = 2;
 
     /**
      * Название таблицы

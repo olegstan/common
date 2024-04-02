@@ -2,7 +2,7 @@
 
 namespace Common\Controllers\Common\ExtendProfileController;
 use App\Api\V1\Controllers\Common\ProfileController;
-use Common\Models\Users\Collective\CollectiveGroup;
+use Common\Models\Users\Collective\UserCollectiveGroup;
 use Auth;
 use Common\Models\BaseModel;
 use Common\Models\Users\Notification\UserNotification;
@@ -24,10 +24,10 @@ class CollectGroupController extends ProfileController
      * @return Response
      * @throws Exception
      */
-    public static function addAssistUser($request): Response
+    public static function addEmployeeUser($request): Response
     {
         $selfClass = self::selfCreate($request);
-        $selfClass->type = CollectiveGroup::ASSISTANT;
+        $selfClass->type = UserCollectiveGroup::EMPLOYEE;
 
         if (!$selfClass->setData($request)) {
             return $selfClass->error('Такого пользователя не существует');
@@ -66,7 +66,7 @@ class CollectGroupController extends ProfileController
         $selfClass = self::selfCreate($request);
 
         $notification = UserNotificationRelation::find($request->input('notification_id'));
-        CollectiveGroup::where('id', $notification->post_id)->delete();
+        UserCollectiveGroup::where('id', $notification->post_id)->delete();
 
         return $selfClass->success('Вы отказались от приглашения');
     }
@@ -81,7 +81,7 @@ class CollectGroupController extends ProfileController
     public static function sendInviteGroup($request): Response
     {
         $selfClass = self::selfCreate($request);
-        $selfClass->type = CollectiveGroup::FAMILY;
+        $selfClass->type = UserCollectiveGroup::FAMILY;
 
         if (!$selfClass->setData($request)) {
             return $selfClass->error('Такого пользователя не существует');
@@ -109,7 +109,7 @@ class CollectGroupController extends ProfileController
         $inviteUserId = $this->invite_user->id;
         $type = $this->type;
 
-        return CollectiveGroup::where('user_id', $userId)
+        return UserCollectiveGroup::where('user_id', $userId)
             ->where('union_user_id', $inviteUserId)
             ->where('type_id', $type)
             ->firstOrCreate([
@@ -142,10 +142,11 @@ class CollectGroupController extends ProfileController
      * Создание связи уведомления и записи в коллективной группе
      *
      * @param UserNotification $notification
-     * @param BaseModel|CollectiveGroup $invite
+     * @param BaseModel|UserCollectiveGroup $invite
+     *
      * @return BaseModel|UserNotificationRelation
      */
-    public function createNotificationRelationInvite(UserNotification $notification, CollectiveGroup $invite)
+    public function createNotificationRelationInvite(UserNotification $notification, UserCollectiveGroup $invite)
     {
         return UserNotificationRelation::where('notification_id', $notification->id)
             ->where('post_type', $invite->getMorphClass())

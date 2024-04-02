@@ -1,6 +1,6 @@
 <?php
 
-namespace Common\Observers\Users;
+namespace Common\Observers\Users\Roles;
 
 use Common\Models\Users\Roles\Types\Owner;
 
