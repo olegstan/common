@@ -9,7 +9,6 @@ use Common\Helpers\LoggerHelper;
 use Common\Jobs\YahooDataJob;
 use Common\Jobs\YahooJob;
 use Common\Models\Catalog\BaseCatalog;
-use Common\Models\Catalog\Cbond\CbondHistory;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;

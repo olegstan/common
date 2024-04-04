@@ -2,7 +2,6 @@
 
 namespace Common\Models\Users\Roles\Types;
 
-use Common\Models\Users\Collective\UserCollectiveGroup;
 use Common\Models\Users\Departments\Department;
 use Common\Models\Users\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;

@@ -2,8 +2,8 @@
 
 namespace Common\Models\Traits\Users\Roles;
 
-use Common\Models\Users\Roles\Permission;
 use Cache;
+use Common\Models\Users\Roles\Permission;
 use Common\Models\Users\Roles\Role;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

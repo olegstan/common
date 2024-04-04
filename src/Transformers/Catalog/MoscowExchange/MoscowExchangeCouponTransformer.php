@@ -6,7 +6,6 @@ use Cache;
 use Carbon\Carbon;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeCoupon;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
-use Common\Models\Currency;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
 class MoscowExchangeCouponTransformer extends BaseTransformer

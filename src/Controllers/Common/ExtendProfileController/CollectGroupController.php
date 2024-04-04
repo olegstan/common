@@ -2,9 +2,9 @@
 
 namespace Common\Controllers\Common\ExtendProfileController;
 use App\Api\V1\Controllers\Common\ProfileController;
-use Common\Models\Users\Collective\UserCollectiveGroup;
 use Auth;
 use Common\Models\BaseModel;
+use Common\Models\Users\Collective\UserCollectiveGroup;
 use Common\Models\Users\Notification\UserNotification;
 use Common\Models\Users\Notification\UserNotificationRelation;
 use Common\Models\Users\User;

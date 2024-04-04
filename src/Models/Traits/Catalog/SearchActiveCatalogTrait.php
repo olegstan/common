@@ -2,9 +2,6 @@
 
 namespace Common\Models\Traits\Catalog;
 
-use Common\Models\Catalog\BaseCatalog;
-use Common\Models\Currency;
-
 trait SearchActiveCatalogTrait
 {
     /**

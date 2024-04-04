@@ -141,7 +141,7 @@ trait UserRelationsTrait
      */
     public function collectiveUser(): HasMany
     {
-        return $this->hasMany(CollectiveGroup::class, 'user_id');
+        return $this->hasMany(UserCollectiveGroup::class, 'user_id');
     }
 
     /**
@@ -149,7 +149,7 @@ trait UserRelationsTrait
      */
     public function collectiveUnionUser(): HasOne
     {
-        return $this->hasOne(CollectiveGroup::class, 'union_user_id');
+        return $this->hasOne(UserCollectiveGroup::class, 'union_user_id');
     }
 
     /**

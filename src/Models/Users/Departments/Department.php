@@ -4,8 +4,8 @@ namespace Common\Models\Users\Departments;
 
 use Common\Models\BaseModel;
 use Common\Models\Users\User;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Department extends BaseModel
 {

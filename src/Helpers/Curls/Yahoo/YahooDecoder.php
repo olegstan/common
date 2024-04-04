@@ -4,7 +4,6 @@ namespace Common\Helpers\Curls\Yahoo;
 
 use Carbon\Carbon;
 use DateTime;
-use DateTimeZone;
 use Exception;
 use RuntimeException;
 

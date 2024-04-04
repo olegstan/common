@@ -3,7 +3,6 @@
 namespace Common\Controllers\Owner;
 
 use App\Api\V1\Controllers\Common\BaseController;
-use Common\Models\Users\Departments\Department;
 use Auth;
 use Common\Models\Users\Departments\UserDepartment;
 use DB;

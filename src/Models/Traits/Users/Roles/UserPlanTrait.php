@@ -6,8 +6,8 @@ use App\Models\Actives\Active;
 use App\Models\Actives\ActiveGoal;
 use App\Models\Actives\ActiveIncomeExpensesMonth;
 use App\Models\Actives\Incomes\Salary;
-use Common\Models\Users\User;
 use Carbon\Carbon;
+use Common\Models\Users\User;
 use DB;
 
 /**

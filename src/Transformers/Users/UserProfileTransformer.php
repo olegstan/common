@@ -2,10 +2,10 @@
 
 namespace Common\Transformers\Users;
 
-use Common\Models\Users\Notification\UserNotification;
-use Common\Transformers\Users\Notification\UserNotificationTransformer;
 use Auth;
+use Common\Models\Users\Notification\UserNotification;
 use Common\Models\Users\User;
+use Common\Transformers\Users\Notification\UserNotificationTransformer;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
 class UserProfileTransformer extends BaseTransformer
