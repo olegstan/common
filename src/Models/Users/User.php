@@ -103,6 +103,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public const DRIVER = 'driver';
     public const CLIENT = 'client';
 
+    public const MANAGER_GROUP = [
+        self::MANAGER,
+        self::OWNER,
+        self::DIRECTOR,
+        self::ASSISTANT,
+        self::ACCOUNTANT,
+        self::PARTNER,
+        self::DRIVER,
+    ];
+
     public static $avatarPath = '/images/avatar/';
     public static $documentPath = '/storage/document/';
 
