@@ -3,7 +3,7 @@
 namespace Common\Transformers\Users\Roles\Types;
 
 
-class AssistantTransformer extends \Common\Transformers\Users\Roles\RoleTransformer
+class AssistantTransformer extends \Common\Transformers\Users\UserTransformer
 {
 
 }

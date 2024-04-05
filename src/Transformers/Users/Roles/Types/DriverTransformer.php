@@ -3,7 +3,7 @@
 namespace Common\Transformers\Users\Roles\Types;
 
 
-class DriverTransformer extends \Common\Transformers\Users\Roles\RoleTransformer
+class DriverTransformer extends \Common\Transformers\Users\UserTransformer
 {
 
 }
