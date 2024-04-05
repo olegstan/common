@@ -15,7 +15,7 @@ class UserTransformer extends BaseTransformer
     {
         $data = [
             'id' => $model->id,
-            'role' => 'client',
+            'role' => $model->getRole(),
             'email' => $model->email,
             'phone' => $model->phone,
             'first_name' => $model->first_name,

@@ -67,7 +67,9 @@ use Throwable;
  * @property integer $manager_id
  * @property integer $currency_id
  * @property integer $language_id
+ * @property string $email
  * @property string $phone
+ * @property string $email
  * @property string $first_name
  * @property string $middle_name
  * @property string $last_name
@@ -138,6 +140,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
+    /**
+     * @return mixed
+     */
+    public function getRole()
+    {
+        $roles = Role::all();
+        foreach ($roles as $role)
+        {
+            if ($this->is($role->slug))
+            {
+                return $role->slug;
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
     public function getFio()
     {
         return $this->last_name . ' ' . $this->first_name . ($this->middle_name ? ' ' . $this->middle_name : '');
