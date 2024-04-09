@@ -49,6 +49,8 @@ class UserTransformer extends BaseTransformer
             'slot_max_time' => $model->slot_max_time,
             'points' => $model->points,
             'rating' => $model->rating,
+            'salary' => $model->salary,
+            'bonus' => $model->bonus,
             'hidden_name' => $model->hidden_name,
         ];
 

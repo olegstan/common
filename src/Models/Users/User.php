@@ -69,7 +69,6 @@ use Throwable;
  * @property integer $language_id
  * @property string $email
  * @property string $phone
- * @property string $email
  * @property string $first_name
  * @property string $middle_name
  * @property string $last_name
@@ -248,6 +247,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'hidden_name',
         'phone_token',
         'operator_id',
+
+        'salary',
+        'bonus',
     ];
 
 
