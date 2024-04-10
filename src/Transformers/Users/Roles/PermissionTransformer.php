@@ -15,6 +15,7 @@ class PermissionTransformer extends BaseTransformer
     public function transform($model)
     {
         $data = [
+            'id' => $model->id,
             'name' => $model->name,
             'slug' => $model->slug,
             'description' => $model->description,
