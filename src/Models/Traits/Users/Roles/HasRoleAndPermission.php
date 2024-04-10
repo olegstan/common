@@ -228,7 +228,7 @@ trait HasRoleAndPermission
      */
     public function getPermissions(): Collection
     {
-        return (!$this->permissions) ? $this->permissions = $this->rolePermissions()->get()->merge($this->userPermissions()->get()) : $this->permissions;
+        return (!isset($this->permissions)) ? $this->permissions = $this->rolePermissions()->get()->merge($this->userPermissions()->get()) : $this->permissions;
     }
 
     /**
