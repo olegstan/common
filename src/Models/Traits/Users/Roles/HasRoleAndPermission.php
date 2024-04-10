@@ -230,6 +230,7 @@ trait HasRoleAndPermission
     {
         return (!isset($this->permissions)) ? $this->permissions = $this->rolePermissions()->get()->merge($this->userPermissions()->get()) : $this->permissions;
     }
+    
 
     /**
      * Проверьте, есть ли у пользователя разрешение или permissions.
