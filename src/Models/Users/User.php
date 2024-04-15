@@ -18,8 +18,10 @@ use Common\Models\Traits\Users\Roles\UserPathTrait;
 use Common\Models\Traits\Users\Roles\UserPlanTrait;
 use Common\Models\Traits\Users\Roles\UserRelationsTrait;
 use Common\Models\Traits\Users\StrategyTrait;
+use Common\Models\Users\Collective\UserCollectiveGroup;
 use Common\Models\Users\Crm\UserConfig;
 use Common\Models\Users\Roles\Role;
+use Common\Models\Users\Roles\Types\Client;
 use DB;
 use Exception;
 use File;
@@ -380,6 +382,55 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return (int)$conf->value;
         }
         return $conf->value;
+    }
+
+    /**
+     * @return array
+     */
+    public function getClientIds()
+    {
+        switch ($this->getRole())
+        {
+            case User::MANAGER:
+                return Client::where(function($query)
+                {
+                    $query->where('manager_id', $this->id);
+                })
+                    ->pluck('id')
+                    ->toArray();
+            case User::OWNER:
+                $managerIds = UserCollectiveGroup::where('user_id', $this->id)
+                    ->pluck('union_user_id')
+                    ->toArray();
+
+                return Client::where(function($query) use ($managerIds){
+                    $query->where('manager_id', $this->id)
+                        ->orWhereIn('manager_id', $managerIds);
+                })
+                    ->pluck('id')
+                    ->toArray();
+                break;
+            case User::DIRECTOR:
+
+                break;
+            case User::ASSISTANT:
+
+                break;
+            case User::ACCOUNTANT:
+
+                break;
+            case User::PARTNER:
+
+                break;
+            case User::DRIVER:
+
+                break;
+            case User::CLIENT:
+
+                break;
+        }
+
+        return [];
     }
 
     /**
