@@ -434,6 +434,55 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     * @return array
+     */
+    public function getContactIds()
+    {
+        switch ($this->getRole())
+        {
+            case User::MANAGER:
+                return CrmContact::where(function($query)
+                {
+                    $query->where('user_id', $this->id);
+                })
+                    ->pluck('id')
+                    ->toArray();
+            case User::OWNER:
+                $managerIds = UserCollectiveGroup::where('user_id', $this->id)
+                    ->pluck('union_user_id')
+                    ->toArray();
+
+                return CrmContact::where(function($query) use ($managerIds){
+                    $query->where('user_id', $this->id)
+                        ->orWhereIn('user_id', $managerIds);
+                })
+                    ->pluck('id')
+                    ->toArray();
+                break;
+            case User::DIRECTOR:
+
+                break;
+            case User::ASSISTANT:
+
+                break;
+            case User::ACCOUNTANT:
+
+                break;
+            case User::PARTNER:
+
+                break;
+            case User::DRIVER:
+
+                break;
+            case User::CLIENT:
+
+                break;
+        }
+
+        return [];
+    }
+
+    /**
      * @param string $key
      * @param $value
      * @return void
