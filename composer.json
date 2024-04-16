@@ -15,7 +15,8 @@
   "require": {
     "php": ">=7.4.0,<8",
     "ext-json": "*",
-    "nesbot/carbon": "2.x-dev"
+    "nesbot/carbon": "2.x-dev",
+    "laravel/framework": "^7.0"
   },
   "autoload": {
     "psr-4": {

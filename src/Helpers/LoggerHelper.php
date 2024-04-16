@@ -73,27 +73,34 @@ class LoggerHelper
                 }
                 $filename = $path . '/' . $key . '.log';
             }else{
-                $headerKey = Request::server('HTTP_REFERER');
+                $url = Request::fullUrl();
 
-                if(Request::server('HTTP_BOTTOKEN'))
+                if(str_contains($url, 'api/v1/call'))
                 {
-                    $headerKey = 'bot';
-                }
-                $path = storage_path('logs/' . self::prepareKey($headerKey));
-                if(!File::exists($path)) {
-                    File::makeDirectory($path, 0777, true, true);
-                }
+                    $partsBeforeGetParams = explode( '?', $url);
+                    $parts = explode( '/', $partsBeforeGetParams[0] ?? '');
+                    $partsLength = count($parts);
 
-                if($headerKey && in_array($headerKey, [
-                        'admin',
-                        'client',
-                        'bot',
-                    ]) && function_exists('posix_geteuid')) {
-                        $processUser = posix_getpwuid( posix_geteuid() );
-                        $processName= $processUser[ 'name' ];
 
-                        $filename = $path . '/' . $key . '-' . php_sapi_name() . '-' . $processName . '.log';
-                    } else{
+                    if(isset($parts[$partsLength - 1]) && isset($parts[$partsLength - 2]))
+                    {
+                        $controllerName = $parts[$partsLength - 2];
+                        $methodName = $parts[$partsLength - 1];
+
+                        $path = storage_path('logs/front/' . $controllerName . '/' . $methodName);
+                        if(!File::exists($path)) {
+                            File::makeDirectory($path, 0777, true, true);
+                        }
+
+                        $filename = $path . '/' . $key . '.log';
+                    }
+                }else{
+
+                    $path = storage_path('logs/common');
+                    if(!File::exists($path)) {
+                        File::makeDirectory($path, 0777, true, true);
+                    }
+
                     $filename = $path . '/' . $key . '.log';
                 }
             }
@@ -113,23 +120,6 @@ class LoggerHelper
         $handler = new RotatingFileHandler($filename, 10, Logger::DEBUG, true, 0777);
         $handler->setFormatter(new LineFormatter(null, 'Y-m-d H:i:s', true, true));
         $monolog->pushHandler($handler);
-    }
-
-    /**
-     * @param $key
-     * @return null|string|string[]
-     */
-    public static function prepareKey($key)
-    {
-        if(in_array($key, [
-            'admin',
-            'client',
-            'bot',
-        ])){
-            return $key;
-        }
-
-        return 'common';
     }
 
     /**
