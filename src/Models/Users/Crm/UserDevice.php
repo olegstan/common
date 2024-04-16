@@ -5,8 +5,8 @@ namespace Common\Models\Users\Crm;
 use Common\Models\BaseModel;
 
 /**
- * Class UserConfig
- * @package Common\Models\Users
+ * Class UserDevice
+ * @package Common\Models\Users\Crm
  */
 class UserDevice extends BaseModel
 {

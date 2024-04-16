@@ -7,6 +7,7 @@ use Common\Models\Users\User;
 
 /**
  * Class UserConfig
+ * @package Common\Models\Users\Crm
  */
 class UserConfig extends BaseModel
 {
@@ -45,6 +46,9 @@ class UserConfig extends BaseModel
     const C_ATON_GROUP = 'ATON_GROUP';
     const C_ATON_ACCOUNT = 'ATON_ACCOUNT';
     const C_ATON_PATH_TO_2FA = 'ATON_PATH_TO_2FA';
+
+    const MANAGER_PHONE_NUMBER = 'MANAGER_PHONE_NUMBER';
+    const MANAGER_PHONE_TOKEN = 'MANAGER_PHONE_TOKEN';
 
     const  UserDefaultConfigConstants = [
         self::C_NOTIFICATION_DELETE_AFTER_VALUE => 1001,
