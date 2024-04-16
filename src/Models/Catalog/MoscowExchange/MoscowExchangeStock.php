@@ -436,6 +436,12 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             foreach ($foundStocks as $foundStock) {
                 try {
                     if (!isset($stockQuery[$foundStock['secid']])) {
+                        $stock = self::where('secid', $foundStock['secid'])->first();
+
+                        if ($stock) {
+                            continue;
+                        }
+
                         /**
                          * @var MoscowExchangeStock $createdStock
                          */
