@@ -117,15 +117,17 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                     'name' => $data->getName(),
                     'user_id' => $userId,
                     'currency_id' => $data->getCurrency(),
-                    'type_id' => $data->getCustomStockType()
+                    'type_id' => $data->getCustomStockType(),
+                ]);
+                
+                LoggerHelper::getLogger('create-custom')
+                    ->info('Добавлена новая запись', [
+                    'stock' => $custom,
+                    'operation' => $data,
                 ]);
             }
 
             Cache::tags(['catalog'])->put('custom-' . $userId . '-' . $searchText, $custom, Carbon::now()->addDay());
-            LoggerHelper::getLogger('create-custom')->info('Добавлена новая запись', [
-                'stock' => $custom,
-                'operation' => $data
-            ]);
             return $custom;
         } catch (Exception $e) {
             LoggerHelper::getLogger('custom')->error($e);
