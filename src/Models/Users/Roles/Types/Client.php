@@ -91,7 +91,7 @@ class Client extends User
                 'contacts' => [
                     [
                         'is_beneficiary' => 1,
-                        'contact_id' => $contact->id,
+                        'id' => $contact->id,
                     ]
                 ]
             ]);
