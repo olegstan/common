@@ -67,6 +67,22 @@ class UserCollectiveGroup extends BaseModel
     }
 
     /**
+     * Дочерние пользователи
+     */
+    public function children()
+    {
+        return $this->hasMany(UserCollectiveGroup::class, 'user_id', 'union_user_id');
+    }
+
+    /**
+     * Рекурсивные дочерние пользователи
+     */
+    public function all_children()
+    {
+        return $this->children()->with('all_children');
+    }
+
+    /**
      * Возвращает ID группы коллектива.
      *
      * @return integer
