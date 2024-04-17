@@ -65,7 +65,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         'facevalue',
         'matdate',
         'rate_period_type_id',
-        'rate'
+        'rate',
     ];
 
     /**
@@ -85,14 +85,20 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
 
 
     /**
-     * @param AtonOperation $data
+     * @param $data
      * @param bool $cache
+     *
      * @return false|void
      */
     public static function search($data, bool $cache = true)
     {
         //в $data всегда должен быть объект модели, что бы мы могли искать не по 1 параметру, а сколько требуется
-        if (!is_object($data) && !$data->getTicker()) {
+        if (!is_object($data) || !$data->getTicker() || empty($data->getTicker())) {
+            LoggerHelper::getLogger('custom-stock')
+                ->error('Передан пустой тикер', [
+                    'data' => $data,
+                    'ticker' => $data->getTicker(),
+                ]);
             return false;
         }
 
@@ -100,7 +106,9 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         $searchText = $data->getTicker();
 
         try {
-            if (isset($searchText) && $cache && Cache::tags(['catalog'])->has('custom-' . $userId . '-' . $searchText)) {
+            if (isset($searchText) && $cache && Cache::tags(['catalog'])->has(
+                    'custom-' . $userId . '-' . $searchText,
+                )) {
                 return Cache::tags(['catalog'])->get('custom-' . $userId . '-' . $searchText);
             }
 
@@ -119,12 +127,12 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                     'currency_id' => $data->getCurrency(),
                     'type_id' => $data->getCustomStockType(),
                 ]);
-                
+
                 LoggerHelper::getLogger('create-custom')
                     ->info('Добавлена новая запись', [
-                    'stock' => $custom,
-                    'operation' => $data,
-                ]);
+                        'stock' => $custom,
+                        'operation' => $data,
+                    ]);
             }
 
             Cache::tags(['catalog'])->put('custom-' . $userId . '-' . $searchText, $custom, Carbon::now()->addDay());
@@ -143,6 +151,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
      * @param $items
      * @param $condition
      * @param bool $async
+     *
      * @return void
      */
     public static function createAndGet(
@@ -158,7 +167,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
 
         $stocksQuery = self::selectRaw(
             '`custom_stocks`.*,MATCH (`custom_stocks`.`name`, `custom_stocks`.`symbol`) AGAINST (?) as relevance',
-            [implode(' ', $splitedWords)]
+            [implode(' ', $splitedWords)],
         )
             ->search($original, $text, $translitText);
 
@@ -183,6 +192,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
      * @param $currency_id
      * @param $accountId
      * @param $classes
+     *
      * @return mixed
      */
     public function createBindActive($userId, $currencyId, $accountId, $classes)
@@ -260,6 +270,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
     /**
      * @param Currency $currency
      * @param null $date
+     *
      * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|int|mixed
      */
     public function getLastPriceByDate($currency, $date = null)
@@ -271,8 +282,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
             ->pluck('id')
             ->toArray();
 
-        $trade = ActiveTrade::whereHas('active', function ($query) use ($ids)
-        {
+        $trade = ActiveTrade::whereHas('active', function ($query) use ($ids) {
             $query->where('item_type', $this->getMorphClass())
                 ->whereIn('item_id', $ids);
         })
@@ -280,10 +290,8 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
             ->orderByDesc('trade_at')
             ->first();
 
-        if($trade)
-        {
-            if($currency->id !== $trade->currency_id)
-            {
+        if ($trade) {
+            if ($currency->id !== $trade->currency_id) {
                 return $currency->convert($trade->price, $trade->currency_id, $trade->trade_at);
             }
 
@@ -297,6 +305,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
     /**
      * @param Carbon $startDate
      * @param Carbon $endDate
+     *
      * @return false
      */
     public function getPriceHistory(Carbon $startDate, Carbon $endDate)
@@ -316,11 +325,12 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
     /**
      * @param $user
      * @param $collections
+     *
      * @return void
      */
     public function selfRemoveData($user, $collections): void
     {
-        $selfData = $this->whereUserId(config('app.env') . '-' .$user->id)->cursor();
+        $selfData = $this->whereUserId(config('app.env') . '-' . $user->id)->cursor();
 
         foreach ($selfData as $data) {
             $collections->put($this->getTableWithoutPrefix() . '.' . $data->id, json_encode($data));
@@ -331,6 +341,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
      * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate
+     *
      * @return bool
      * polymorhic method
      */
@@ -341,20 +352,21 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
 
     /**
      * @param $stock
+     *
      * @return void
      * polymorhic method
      */
     public static function loadCoupons($stock): void
     {
-
     }
+
     /**
      * @param $stock
+     *
      * @return void
      * polymorhic method
      */
     public static function loadDividends($stock): void
     {
-
     }
 }
