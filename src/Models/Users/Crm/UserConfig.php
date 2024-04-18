@@ -49,6 +49,7 @@ class UserConfig extends BaseModel
 
     const MANAGER_PHONE_NUMBER = 'MANAGER_PHONE_NUMBER';
     const MANAGER_PHONE_TOKEN = 'MANAGER_PHONE_TOKEN';
+    const MANAGER_PHONE_PROXY_TOKEN = 'MANAGER_PHONE_PROXY_TOKEN';
 
     const  UserDefaultConfigConstants = [
         self::C_NOTIFICATION_DELETE_AFTER_VALUE => 1001,
