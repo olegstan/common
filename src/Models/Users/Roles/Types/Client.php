@@ -78,6 +78,7 @@ class Client extends User
             $this->attributes, [
             'user_id' => $this->manager_id,//должен быть id менеджера
             'attitude' => ($data['attitude'] ?? ''),
+            'aton_id' => ($data['aton_id'] ?? ''),
         ]));
 
         if ($contact) {
