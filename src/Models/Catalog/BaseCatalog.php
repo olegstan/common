@@ -45,12 +45,11 @@ class BaseCatalog extends BaseModel
      * @param $term
      * @return array
      */
-    public static function fullTextWildcards($term)
+    public static function fullTextWildcards($term): array
     {
-        $reservedSymbols = ['-', '+', '<', '>', '@', '(', ')', '~',  '*'];
+        $reservedSymbols = ['-', '+', '<', '>', '@', '(', ')', '~',  '*', '"'];
         $term = str_replace($reservedSymbols, ' ', $term);
         $term = preg_replace("/\s+/", ' ', $term);
-
 
         $words = explode(' ', $term);
         $expectedWords = [];
