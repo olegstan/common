@@ -62,6 +62,7 @@ interface DefinitionActiveConst
     public const ATON_FILE_SPLIT = 21;
     public const ATON_CHECK_VALUATION = 22;
     public const ATON_FILE_HISTORY = 23;
+    public const ATON_CREATE_ACTION = 24;
 
 
 
