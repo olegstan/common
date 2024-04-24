@@ -10,6 +10,9 @@ use App\Models\Aton\AtonUser;
 use App\Models\Crm\Contact\CrmContact;
 use App\Models\Crm\CrmApplication;
 use Carbon\Carbon;
+use Common\Casts\BoolCast;
+use Common\Casts\IntegerCast;
+use Common\Casts\StringCast;
 use Common\Models\BaseModel;
 use Common\Models\Currency;
 use Common\Models\Traits\Users\Roles\HasRoleAndPermission;
@@ -291,20 +294,20 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'career_start_month' => 'integer',
 
         'is_imported' => 'boolean',
-        'promo_code' => 'string?',
-        'tinkoff_token' => 'string?',
+        'promo_code' => StringCast::class,
+        'tinkoff_token' => StringCast::class,
         'tinkoff_mode' => 'integer',
         'is_visible_spend' => 'boolean',
         'is_allow_api_operation' => 'boolean',
-        'currency_id' => 'integer?',
-        'contact_id' => 'integer?',
-        'language_id' => 'integer?',
-        'application_id' => 'integer?',
-        'application_max_delay_days' => 'integer?',
-        'notification_delete_after_value' => 'integer?',
+        'currency_id' => IntegerCast::class,
+        'contact_id' => IntegerCast::class,
+        'language_id' => IntegerCast::class,
+        'application_id' => IntegerCast::class,
+        'application_max_delay_days' => IntegerCast::class,
+        'notification_delete_after_value' => IntegerCast::class,
         'is_new' => 'boolean',
-        'rating' => 'integer?',
-        'hidden_name' => 'boolean?',
+        'rating' => IntegerCast::class,
+        'hidden_name' => BoolCast::class,
         'operator_id' => 'integer',
     ];
 
