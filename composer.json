@@ -16,10 +16,10 @@
     "php": ">=7.4.0,<8",
     "ext-json": "*",
     "behat/transliterator": "^1.0@dev",
-    "laravel/framework": "8.x-dev",
     "umpirsky/transliterator": "dev-master"
   },
   "require-dev": {
+    "laravel/framework": "^8.0",
     "nesbot/carbon": "2.x-dev"
   },
   "autoload": {
