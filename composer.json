@@ -16,9 +16,11 @@
     "php": ">=7.4.0,<8",
     "ext-json": "*",
     "behat/transliterator": "^1.0@dev",
-    "nesbot/carbon": "2.x-dev",
     "laravel/framework": "^8.0",
     "umpirsky/transliterator": "dev-master"
+  },
+  "require-dev": {
+    "nesbot/carbon": "2.x-dev"
   },
   "autoload": {
     "psr-4": {
