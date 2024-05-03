@@ -278,11 +278,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'retired_age' => 'integer',
         'dead_age' => 'integer',
 
-        'vk' => 'text',
-        'fb' => 'text',
-        'twit' => 'text',
+        'vk' => 'string',
+        'fb' => 'string',
+        'twit' => 'string',
 
-        'google_data' => 'text',
+        'google_data' => 'string',
 
         'percent_positive' => 'float',
         'percent_neutral' => 'float',
