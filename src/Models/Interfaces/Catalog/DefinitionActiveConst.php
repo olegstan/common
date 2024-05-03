@@ -52,6 +52,9 @@ interface DefinitionActiveConst
     public const ALL_ACTIVES = 16;
     public const REFRESH_API = 17;
     public const ZENMONEY_RELATION_BROKER_API = 18;
+    public const STRATEGY_CACHE = 25;
+    public const TINKOFF_ORDER = 26;
+    public const RECALC_BALANCE = 27;
 
 
     public const ATON_CRM_PARSE = 11;
