@@ -8,31 +8,31 @@ use Common\Models\Users\Notification\UserNotificationRelation;
 class UserNotificationRelationObserver
 {
     /**
-     * @param UserNotification $model
+     * @param UserNotificationRelation $model
      *
      * @return void
      */
-    public function creating(UserNotification $model)
+    public function creating(UserNotificationRelation $model)
     {
 
     }
 
     /**
-     * @param UserNotification $model
+     * @param UserNotificationRelation $model
      *
      * @return void
      */
-    public function created(UserNotification $model)
+    public function created(UserNotificationRelation $model)
     {
         
     }
 
     /**
-     * @param UserNotification $model
+     * @param UserNotificationRelation $model
      *
      * @return void
      */
-    public function updated(UserNotification $model)
+    public function updated(UserNotificationRelation $model)
     {
         //TODO оптимизировать, чтобы это проверялось только один раз, для одного уведомления за запрос, в конце
         $parent = UserNotification::where('id', $model->notification_id)
@@ -65,21 +65,21 @@ class UserNotificationRelationObserver
     }
 
     /**
-     * @param UserNotification $model
+     * @param UserNotificationRelation $model
      *
      * @return void
      */
-    public function deleted(UserNotification $model)
+    public function deleted(UserNotificationRelation $model)
     {
 
     }
 
     /**
-     * @param UserNotification $model
+     * @param UserNotificationRelation $model
      *
      * @return void
      */
-    public function deleting(UserNotification $model)
+    public function deleting(UserNotificationRelation $model)
     {
     }
 }
