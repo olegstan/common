@@ -51,6 +51,8 @@ class UserConfig extends BaseModel
     const MANAGER_PHONE_TOKEN = 'MANAGER_PHONE_TOKEN';
     const MANAGER_PHONE_PROXY_TOKEN = 'MANAGER_PHONE_PROXY_TOKEN';
 
+    const HIERARCHY_NODE_POSITIONS = 'HIERARCHY_NODE_POSITIONS';
+
     const  UserDefaultConfigConstants = [
         self::C_NOTIFICATION_DELETE_AFTER_VALUE => 1001,
         self::C_APPLICATION_MAX_DELAY_DAYS => 0,
