@@ -62,6 +62,12 @@ interface DefinitionActiveConst
     public const MOEX_PROFITABILITY = 32;
     public const TV_TICKERS = 33;
     public const YAHOO_DATA = 34;
+    public const CBOND_PROFITABILITY = 35;
+    public const CBOND_COURSE = 36;
+    public const CBOND_SAVE = 37;
+    public const FINEX_HISTORY = 37;
+    public const MOEX_COURSE = 38;
+    public const YAHOO_COURSE = 39;
 
 
     public const ATON_CRM_PARSE = 11;
