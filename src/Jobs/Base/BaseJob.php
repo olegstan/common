@@ -2,8 +2,8 @@
 
 namespace Common\Jobs\Base;
 
-use App\Traits\Job\ConstructBaseJobTrait;
-use App\Traits\Job\DestructBaseJobTrait;
+use Common\Jobs\Traits\ConstructBaseJobTrait;
+use Common\Jobs\Traits\DestructBaseJobTrait;
 use ReflectionClass;
 use ReflectionException;
 use Storage;
