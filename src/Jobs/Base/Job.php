@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Jobs\Base;
+namespace Common\Jobs\Base;
 
-use App\Interfaces\Job\JobInterface;
+use Common\Jobs\Interfaces\JobInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;

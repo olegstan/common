@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers\Queue;
+namespace Common\Helpers\Queue;
 
 use Carbon\Carbon;
 use DateInterval;

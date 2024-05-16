@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs\Base;
+namespace Common\Jobs\Base;
 
 use App\Traits\Job\ConstructBaseJobTrait;
 use App\Traits\Job\DestructBaseJobTrait;

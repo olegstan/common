@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers\Queue;
+namespace Common\Helpers\Queue;
 
 use Common\Helpers\LoggerHelper;
 use DB;

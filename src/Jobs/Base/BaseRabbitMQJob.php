@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs\Base;
+namespace Common\Jobs\Base;
 
 use App\Helpers\BrokerParsers\Aton\AtonParser;
 use Common\Helpers\LoggerHelper;

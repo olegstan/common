@@ -2,11 +2,12 @@
 
 namespace Common\Jobs;
 
-use App\Jobs\Base\Job;
 use Carbon\Carbon;
 use Common\Helpers\Curls\TradingView\TradingViewCurl;
 use Common\Helpers\LoggerHelper;
+use Common\Jobs\Base\Job;
 use Common\Models\Catalog\Yahoo\YahooStock;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Exception;
 use Illuminate\Queue\Jobs\RedisJob;
 use Illuminate\Queue\SerializesModels;
@@ -16,19 +17,21 @@ class YahooDataJob extends Job
 {
     use SerializesModels;
 
+    public const TYPE = DefinitionActiveConst::YAHOO_HISTORY;
+
     /**
      * @param RedisJob $job
      * @param $data
+     *
      * @throws Throwable
      */
     public function fire($job, $data)
     {
-        try{
+        try {
             $from = Carbon::now()->subDays(10);
             $till = Carbon::now();
 
-            if(!empty($data))
-            {
+            if (!empty($data)) {
                 /**
                  * @var YahooStock[] $stocks
                  */
@@ -37,10 +40,8 @@ class YahooDataJob extends Job
 
 
                 $tickers = [];
-                foreach ($stocks as $stock)
-                {
-                    if($stock->type_disp === 'Equity')
-                    {
+                foreach ($stocks as $stock) {
+                    if ($stock->type_disp === 'Equity') {
                         $tickers[] = TradingViewCurl::tickersExplode($stock->symbol);
                     }
 
@@ -50,7 +51,7 @@ class YahooDataJob extends Job
                 TradingViewCurl::parseData('symbol', $tickers);
             }
             $job->delete();
-        }catch (Exception $e){
+        } catch (Exception $e) {
             LoggerHelper::getLogger()->error($e);
             $job->fail($e);
         }

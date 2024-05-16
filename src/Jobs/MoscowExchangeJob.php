@@ -2,9 +2,10 @@
 
 namespace Common\Jobs;
 
-use App\Jobs\Base\Job;
 use Common\Helpers\LoggerHelper;
+use Common\Jobs\Base\Job;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Exception;
 use Illuminate\Queue\Jobs\RedisJob;
 use Illuminate\Queue\SerializesModels;
@@ -16,37 +17,36 @@ class MoscowExchangeJob extends Job
 {
     use SerializesModels;
 
+    public const TYPE = DefinitionActiveConst::MOEX_PROFITABILITY;
+
     /**
      * @param RedisJob $job
      * @param $data
+     *
      * @throws Throwable
      */
     public function fire($job, $data)
     {
         [$ids] = $data;
 
-        try{
-            if($ids)
-            {
+        try {
+            if ($ids) {
                 $stocks = MoscowExchangeStock::whereIntegerInRaw('id', $ids)
                     ->get();
 
-                foreach ($stocks as $stock)
-                {
+                foreach ($stocks as $stock) {
                     MoscowExchangeStock::loadCoupons($stock);
                     MoscowExchangeStock::loadDividends($stock);
                 }
 
                 Queue::push(TradingViewJob::class, ['moscow', $ids]);
             }
-            if($job)
-            {
+            if ($job) {
                 $job->delete();
             }
-        }catch (Exception $e){
+        } catch (Exception $e) {
             LoggerHelper::getLogger()->error($e);
-            if($job)
-            {
+            if ($job) {
                 $job->fail($e);
             }
         }

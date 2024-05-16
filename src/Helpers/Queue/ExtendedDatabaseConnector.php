@@ -1,5 +1,5 @@
 <?php
-namespace App\Helpers\Queue;
+namespace Common\Helpers\Queue;
 
 use Illuminate\Queue\Connectors\DatabaseConnector;
 use Illuminate\Support\Arr;

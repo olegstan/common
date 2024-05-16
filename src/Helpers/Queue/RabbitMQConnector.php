@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers\Queue;
+namespace Common\Helpers\Queue;
 
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;

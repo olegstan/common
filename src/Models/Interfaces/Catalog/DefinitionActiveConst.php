@@ -55,6 +55,13 @@ interface DefinitionActiveConst
     public const STRATEGY_CACHE = 25;
     public const TINKOFF_ORDER = 26;
     public const RECALC_BALANCE = 27;
+    public const MOEX_HISTORY = 28;
+    public const YAHOO_HISTORY = 29;
+    public const CBOND_HISTORY = 30;
+    public const CB_HISTORY = 31;
+    public const MOEX_PROFITABILITY = 32;
+    public const TV_TICKERS = 33;
+    public const YAHOO_DATA = 34;
 
 
     public const ATON_CRM_PARSE = 11;

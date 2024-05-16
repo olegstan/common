@@ -2,11 +2,12 @@
 
 namespace Common\Jobs;
 
-use App\Jobs\Base\Job;
 use Carbon\Carbon;
 use Common\Helpers\Curls\TradingView\TradingViewCurl;
 use Common\Helpers\LoggerHelper;
+use Common\Jobs\Base\Job;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Exception;
 use Illuminate\Queue\Jobs\RedisJob;
 use Illuminate\Queue\SerializesModels;
@@ -16,21 +17,23 @@ class MoscowExchangeDataJob extends Job
 {
     use SerializesModels;
 
+    public const TYPE = DefinitionActiveConst::MOEX_HISTORY;
+
     /**
      * @param RedisJob $job
      * @param $data
+     *
      * @throws Throwable
      */
     public function fire($job, $data)
     {
         [$ids] = $data;
 
-        try{
+        try {
             $from = Carbon::now()->subDays(10);
             $till = Carbon::now();
 
-            if($ids)
-            {
+            if ($ids) {
                 /**
                  * @var MoscowExchangeStock[] $stocks
                  */
@@ -38,10 +41,8 @@ class MoscowExchangeDataJob extends Job
                     ->get();
 
                 $tickers = [];
-                foreach ($stocks as $stock)
-                {
-                    if($stock->groupname === 'Акции')
-                    {
+                foreach ($stocks as $stock) {
+                    if ($stock->groupname === 'Акции') {
                         $tickers[] = TradingViewCurl::tickersExplode($stock->secid);
                     }
 
@@ -51,7 +52,7 @@ class MoscowExchangeDataJob extends Job
                 TradingViewCurl::parseData('symbol', $tickers);
             }
             $job->delete();
-        }catch (Exception $e){
+        } catch (Exception $e) {
             LoggerHelper::getLogger()->error($e);
             $job->fail($e);
         }

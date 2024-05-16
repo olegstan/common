@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers\Queue;
+namespace Common\Helpers\Queue;
 
 use Illuminate\Queue\Failed\DatabaseFailedJobProvider;
 use Illuminate\Support\Facades\Date;
