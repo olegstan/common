@@ -2,6 +2,7 @@
 
 namespace Common\Jobs;
 
+use App\Jobs\Base\Job;
 use Common\Helpers\LoggerHelper;
 use Exception;
 use Illuminate\Queue\Jobs\RedisJob;

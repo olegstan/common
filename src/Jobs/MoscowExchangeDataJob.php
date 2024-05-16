@@ -2,6 +2,7 @@
 
 namespace Common\Jobs;
 
+use App\Jobs\Base\Job;
 use Carbon\Carbon;
 use Common\Helpers\Curls\TradingView\TradingViewCurl;
 use Common\Helpers\LoggerHelper;
