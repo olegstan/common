@@ -10,6 +10,9 @@ use Common\Models\BaseModel;
  */
 class UserDevice extends BaseModel
 {
+    const VOIP_TOKEN = 1;
+    const PUSH_TOKEN = 2;
+
     /**
      * The table associated with the model.
      *
