@@ -42,7 +42,8 @@ class UserDevice extends BaseModel
         'supported_cpu_architectures',
         'total_memory',
         'is_active',
-        'not_active_at'
+        'not_active_at',
+        'type'
     ];
 
     /**

@@ -34,6 +34,7 @@ class UserDeviceTransformer extends BaseTransformer
             'product_name' => $model->product_name,
             'supported_cpu_architectures' => $model->supported_cpu_architectures,
             'total_memory' => $model->total_memory,
+            'type' => $model->type,
         ];
 
         return $this->withRelations($data, $model);
