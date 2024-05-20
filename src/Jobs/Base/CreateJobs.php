@@ -2,13 +2,14 @@
 
 namespace Common\Jobs\Base;
 
-use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\LogJob\LogJobParser;
 use Common\Models\BaseModel;
 use Exception;
-use Queue;
+use Illuminate\Queue\Queue;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class CreateJobs
 {
@@ -52,11 +53,19 @@ class CreateJobs
     public static function addQueue($jobClass)
     {
         $date = Carbon::now()->subMinute()->format('Y-m-d H:i:s');
-        [self::$userId] = self::$data;
+
+        //Если первое значение не число, скорее всего переделан не айдишник пользователя
+        //В таком случа нам незачем проверять дальше в кэше, но что бы не добавлять много лишний логики
+        //просто рандомное значение запишем
+        if (!is_numeric(self::$data[0])) {
+            self::$userId = Str::random(4);
+        } else {
+            [self::$userId] = self::$data;
+        }
 
         //Для юзеров которые онлайн делаем отдельную очередь, что бы они не ждали
         //В middleware в кэш записывает время онлайна пользователя. Если оно будет больше текущего с минус минутой, значит он онлайн (по край не мере был в течении минуты)
-        if (in_array($jobClass, config('create-jobs.parse_jobs')) &&
+        if (config()->has('create-jobs.parse_jobs') && in_array($jobClass, config('create-jobs.parse_jobs')) &&
             Cache::tags([config('cache.tags')])->has(self::PREFIX_ONLINE . self::$userId) &&
             Cache::tags([config('cache.tags')])->get(self::PREFIX_ONLINE . self::$userId) > $date) {
             self::$priority = 'high-online';
@@ -169,7 +178,10 @@ class CreateJobs
      */
     public static function createLogParse($priority, $jobClass, $userId, $filePath = null)
     {
-        if ($priority === 'parse' || in_array($jobClass, config('create-jobs.parse_jobs'))) {
+        if ($priority === 'parse' || (config()->has('create-jobs.parse_jobs') && in_array(
+                    $jobClass,
+                    config('create-jobs.parse_jobs'),
+                ))) {
             try {
                 return LogJobParser::create([
                     'user_id' => $userId,
