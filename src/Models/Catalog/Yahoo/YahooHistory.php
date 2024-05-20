@@ -97,8 +97,8 @@ class YahooHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
     {
         $price = $this->close;
         $date = $this->date;
-        Cache::tags(['back'])->forever($priceKey, $price);
-        Cache::tags(['back'])->forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
+        Cache::tags([config('cache.tags')])->forever($priceKey, $price);
+        Cache::tags([config('cache.tags')])->forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
         return [$priceKey, $price, $date, null, 'yahoo'];
     }
 

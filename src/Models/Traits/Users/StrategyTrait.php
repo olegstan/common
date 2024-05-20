@@ -137,7 +137,7 @@ trait StrategyTrait
             $start_time = microtime(TRUE);
 
             try {
-                Cache::tags(['back'])->forever('job_id.' . $jobId, round($count / $size * 100, 1));
+                Cache::tags([config('cache.tags')])->forever('job_id.' . $jobId, round($count / $size * 100, 1));
                 JobsEvent::percentJob($this->id, 'job_id.' . $jobId, DefinitionActiveConst::STRATEGY, JobsEvent::PROCESSING, time());
             }catch (Exception $e)
             {
@@ -160,7 +160,7 @@ trait StrategyTrait
         foreach ($userAccounts as $key => $userAccount)
         {
             try {
-                Cache::tags(['back'])->forever('job_id.' . $jobId, round($count / $size * 100, 1));
+                Cache::tags([config('cache.tags')])->forever('job_id.' . $jobId, round($count / $size * 100, 1));
                 JobsEvent::percentJob($this->id, 'job_id.' . $jobId, DefinitionActiveConst::STRATEGY, JobsEvent::PROCESSING, time());
             }catch (Exception $e)
             {
@@ -194,7 +194,7 @@ trait StrategyTrait
         while ($startDate->lessThan($endDate))
         {
             try {
-                Cache::tags(['back'])->forever('job_id.' . $jobId, round($count / $size * 100, 1));
+                Cache::tags([config('cache.tags')])->forever('job_id.' . $jobId, round($count / $size * 100, 1));
                 JobsEvent::percentJob($this->id, 'job_id.' . $jobId, DefinitionActiveConst::STRATEGY, JobsEvent::PROCESSING, time());
             }catch (Exception $e)
             {

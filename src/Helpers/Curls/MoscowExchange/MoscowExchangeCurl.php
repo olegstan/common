@@ -146,8 +146,8 @@ class MoscowExchangeCurl
         $searchText = $text;
 
         try {
-            if ($cache && Cache::tags(['catalog'])->has('moex' . $searchText)) {
-                return Cache::tags(['catalog'])->get('moex' . $searchText);
+            if ($cache && Cache::tags([config('cache.tags')])->has('moex' . $searchText)) {
+                return Cache::tags([config('cache.tags')])->get('moex' . $searchText);
             }
 
             [$original, $text, $translitText] = Translit::make($text);
@@ -197,7 +197,7 @@ class MoscowExchangeCurl
 
             if (!empty($stocks)) {
                 $arr = array_unique($stocks, SORT_REGULAR);
-                Cache::tags(['catalog'])->put('moex' . $searchText, $arr, Carbon::now()->addDay());
+                Cache::tags([config('cache.tags')])->put('moex' . $searchText, $arr, Carbon::now()->addDay());
 
                 return $arr;
             }

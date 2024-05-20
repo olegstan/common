@@ -160,7 +160,7 @@ class Currency extends BaseCatalog
         //неправильные данные
         $cacheString = 'cb_currency.' . $currency->cb_currency->id . ':date.' . $date->format('Y-m-d');
 
-        return Cache::tags(['catalog'])->remember($cacheString, Carbon::now()->addDay(), static function () use ($currency, $date)
+        return Cache::tags([config('cache.tags')])->remember($cacheString, Carbon::now()->addDay(), static function () use ($currency, $date)
         {
             return CbHistoryCurrencyCourse::where('currency_id', $currency->cb_currency->id)
                 ->where('date', '<', $date->format('Y-m-d'))
@@ -187,7 +187,7 @@ class Currency extends BaseCatalog
         }
 
         try {
-            return Cache::tags(['catalog'])->rememberForever('currency.' . $code, function () use ($code)
+            return Cache::tags([config('cache.tags')])->rememberForever('currency.' . $code, function () use ($code)
             {
                 $cuurency = Currency::where('code', $code)
                     ->first();
@@ -217,7 +217,7 @@ class Currency extends BaseCatalog
         }
 
         try {
-            return Cache::tags(['catalog'])->rememberForever('currency.' . $currencyId, static function () use ($currencyId) {
+            return Cache::tags([config('cache.tags')])->rememberForever('currency.' . $currencyId, static function () use ($currencyId) {
                 $cuurency = Currency::where('id', $currencyId)
                     ->with('cb_currency')
                     ->first();
@@ -241,7 +241,7 @@ class Currency extends BaseCatalog
      */
     public static function getCodeById($currencyId)
     {
-        return Cache::tags(['catalog'])->rememberForever('currency.code.' . $currencyId, static function () use ($currencyId) {
+        return Cache::tags([config('cache.tags')])->rememberForever('currency.code.' . $currencyId, static function () use ($currencyId) {
             $curr = Currency::where('id', $currencyId)
                 ->first();
 
@@ -258,7 +258,7 @@ class Currency extends BaseCatalog
      */
     public static function getSignById($currencyId)
     {
-        return Cache::tags(['catalog'])->rememberForever('currency.sign.' . $currencyId, static function () use ($currencyId) {
+        return Cache::tags([config('cache.tags')])->rememberForever('currency.sign.' . $currencyId, static function () use ($currencyId) {
             $curr = Currency::where('id', $currencyId)
                 ->first();
 

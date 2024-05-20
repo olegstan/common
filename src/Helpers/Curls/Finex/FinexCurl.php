@@ -82,8 +82,8 @@ class FinexCurl extends Curl
     public static function search($searchText, string $lang = 'ru', int $limit = 50, bool $cache = true)
     {
         try {
-            if (Cache::tags(['catalog'])->has('finex' . $searchText)) {
-                return Cache::tags(['catalog'])->get('finex' . $searchText);
+            if (Cache::tags([config('cache.tags')])->has('finex' . $searchText)) {
+                return Cache::tags([config('cache.tags')])->get('finex' . $searchText);
             }
 
             $url = self::API_URL;
@@ -99,7 +99,7 @@ class FinexCurl extends Curl
 
             if (isset($response->result) && $response->result === 'success')
             {
-                Cache::tags(['catalog'])->add('finex' . $searchText, 1, Carbon::now()->addDay());
+                Cache::tags([config('cache.tags')])->add('finex' . $searchText, 1, Carbon::now()->addDay());
             }
 
             return $time;

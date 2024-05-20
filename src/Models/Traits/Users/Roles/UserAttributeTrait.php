@@ -79,7 +79,7 @@ trait UserAttributeTrait
                     if(isset($token['user_id']))
                     {
                         $cacheKey = 'zenmoeney_user.' . $token['user_id'];
-                        $zenUserLogin = Cache::tags(['back'])->rememberForever($cacheKey, function () use ($token)
+                        $zenUserLogin = Cache::tags([config('cache.tags')])->rememberForever($cacheKey, function () use ($token)
                         {
                             $zenUser = ZenMoneyUser::where('zenmoney_id', $token['user_id'])
                                 ->first();
@@ -94,7 +94,7 @@ trait UserAttributeTrait
                         {
                             $zenmoneyData[$token['user_id']] = $zenUserLogin;
                         }else{
-                            Cache::tags(['back'])->forget($cacheKey);//не нашло логин, значит чистим кэш
+                            Cache::tags([config('cache.tags')])->forget($cacheKey);//не нашло логин, значит чистим кэш
                         }
                     }
                 }

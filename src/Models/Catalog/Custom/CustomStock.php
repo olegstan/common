@@ -106,10 +106,10 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         $searchText = $data->getTicker();
 
         try {
-            if (isset($searchText) && $cache && Cache::tags(['catalog'])->has(
+            if (isset($searchText) && $cache && Cache::tags([config('cache.tags')])->has(
                     'custom-' . $userId . '-' . $searchText,
                 )) {
-                return Cache::tags(['catalog'])->get('custom-' . $userId . '-' . $searchText);
+                return Cache::tags([config('cache.tags')])->get('custom-' . $userId . '-' . $searchText);
             }
 
             $custom = CustomStock::where('symbol', $searchText ?? null)
@@ -135,7 +135,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                     ]);
             }
 
-            Cache::tags(['catalog'])->put('custom-' . $userId . '-' . $searchText, $custom, Carbon::now()->addDay());
+            Cache::tags([config('cache.tags')])->put('custom-' . $userId . '-' . $searchText, $custom, Carbon::now()->addDay());
             return $custom;
         } catch (Exception $e) {
             LoggerHelper::getLogger('custom')->error($e);

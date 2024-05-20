@@ -43,9 +43,9 @@ class YahooCurl
 
         try
         {
-            if ($cache && Cache::tags(['catalog'])->has('yahoo' . $searchText))
+            if ($cache && Cache::tags([config('cache.tags')])->has('yahoo' . $searchText))
             {
-                return Cache::tags(['catalog'])->get('yahoo' . $searchText);
+                return Cache::tags([config('cache.tags')])->get('yahoo' . $searchText);
             }
 
             [$original, $text, $translitText] = Translit::make($text);
@@ -98,7 +98,7 @@ class YahooCurl
             }
 
             $arr = array_values($newArr);
-            Cache::tags(['catalog'])->put('yahoo' . $searchText, $arr, Carbon::now()->addDay());
+            Cache::tags([config('cache.tags')])->put('yahoo' . $searchText, $arr, Carbon::now()->addDay());
 
             return $arr;
         }catch (Exception $e){
