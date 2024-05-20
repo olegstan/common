@@ -59,7 +59,7 @@ class CreateJobs
     public static function addQueue($jobClass)
     {
         $date = Carbon::now()->subMinute()->format('Y-m-d H:i:s');
-        self::$sync_command = config('app.create_jobs')
+        self::$sync_command = config('app.create_jobs');
         [self::$userId] = self::$data;
 
         //Для юзеров которые онлайн делаем отдельную очередь, что бы они не ждали
