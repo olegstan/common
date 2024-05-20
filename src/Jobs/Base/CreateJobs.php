@@ -133,6 +133,36 @@ class CreateJobs
     }
 
     /**
+     * Очередь для CRM связанная с Атон
+     *
+     * @param $jobClass
+     * @param $data
+     *
+     * @return false|null
+     */
+    public static function crmAton($jobClass, $data): ?bool
+    {
+        self::$data = $data;
+        self::$priority = 'crm-aton';
+        return self::checkTypeJob($jobClass);
+    }
+
+    /**
+     * Очередь для Атон
+     *
+     * @param $jobClass
+     * @param $data
+     *
+     * @return false|null
+     */
+    public static function aton($jobClass, $data): ?bool
+    {
+        self::$data = $data;
+        self::$priority = 'crm-aton';
+        return self::checkTypeJob($jobClass);
+    }
+
+    /**
      * Очередь с высоким приоритетом
      *
      * @param $jobClass
