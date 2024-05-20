@@ -13,13 +13,6 @@ use Queue;
 class CreateJobs
 {
     /**
-     * Перечислены джобы которые запускают постоянно синхронизированное в течение дня
-     *
-     * @var array
-     */
-    protected static array $sync_command = [];
-
-    /**
      * Содержит в себе все переданные параметры очереди
      *
      * @var array
@@ -59,12 +52,11 @@ class CreateJobs
     public static function addQueue($jobClass)
     {
         $date = Carbon::now()->subMinute()->format('Y-m-d H:i:s');
-        self::$sync_command = config('app.create_jobs');
         [self::$userId] = self::$data;
 
         //Для юзеров которые онлайн делаем отдельную очередь, что бы они не ждали
         //В middleware в кэш записывает время онлайна пользователя. Если оно будет больше текущего с минус минутой, значит он онлайн (по край не мере был в течении минуты)
-        if (in_array($jobClass, self::$sync_command) &&
+        if (in_array($jobClass, config('create-jobs.parse_jobs')) &&
             Cache::tags([config('cache.tags')])->has(self::PREFIX_ONLINE . self::$userId) &&
             Cache::tags([config('cache.tags')])->get(self::PREFIX_ONLINE . self::$userId) > $date) {
             self::$priority = 'high-online';
@@ -177,7 +169,7 @@ class CreateJobs
      */
     public static function createLogParse($priority, $jobClass, $userId, $filePath = null)
     {
-        if ($priority === 'parse' || in_array($jobClass, self::$sync_command)) {
+        if ($priority === 'parse' || in_array($jobClass, config('create-jobs.parse_jobs'))) {
             try {
                 return LogJobParser::create([
                     'user_id' => $userId,
