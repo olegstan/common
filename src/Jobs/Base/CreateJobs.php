@@ -7,8 +7,8 @@ use Common\Helpers\LoggerHelper;
 use Common\Jobs\LogJob\LogJobParser;
 use Common\Models\BaseModel;
 use Exception;
-use Illuminate\Queue\Queue;
-use Illuminate\Support\Facades\Cache;
+use Queue;
+use Cache;
 use Illuminate\Support\Str;
 
 class CreateJobs
