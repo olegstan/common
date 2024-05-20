@@ -3,6 +3,7 @@
 namespace Common\Jobs;
 
 use Common\Helpers\LoggerHelper;
+use Common\Jobs\Base\CreateJobs;
 use Common\Jobs\Base\Job;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Exception;
@@ -29,7 +30,7 @@ class YahooJob extends Job
 
         try {
             if ($ids) {
-                Queue::push(TradingViewJob::class, ['yahoo', $ids]);
+                CreateJobs::default(TradingViewJob::class, ['yahoo', $ids]);
             }
             if ($job) {
                 $job->delete();

@@ -3,6 +3,7 @@
 namespace Common\Jobs;
 
 use Common\Helpers\LoggerHelper;
+use Common\Jobs\Base\CreateJobs;
 use Common\Jobs\Base\Job;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -39,7 +40,7 @@ class MoscowExchangeJob extends Job
                     MoscowExchangeStock::loadDividends($stock);
                 }
 
-                Queue::push(TradingViewJob::class, ['moscow', $ids]);
+                CreateJobs::default(TradingViewJob::class, ['moscow', $ids]);
             }
             if ($job) {
                 $job->delete();

@@ -6,6 +6,7 @@ use Cache;
 use Carbon\Carbon;
 use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Helpers\LoggerHelper;
+use Common\Jobs\Base\CreateJobs;
 use Common\Jobs\MoscowExchangeDataJob;
 use Common\Jobs\MoscowExchangeJob;
 use Common\Models\Catalog\BaseCatalog;
@@ -462,12 +463,12 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
         if ($queueIds) {
             if ($async) {
-                Queue::push(MoscowExchangeJob::class, [$queueIds]);
+                CreateJobs::default(MoscowExchangeJob::class, [$queueIds]);
             } else {
                 (new MoscowExchangeJob())->fire(null, [$queueIds]);
             }
 
-            Queue::push(MoscowExchangeDataJob::class, [$queueIds]);
+            CreateJobs::default(MoscowExchangeDataJob::class, [$queueIds]);
         }
     }
 

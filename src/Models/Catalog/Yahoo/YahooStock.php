@@ -6,6 +6,7 @@ use Cache;
 use Carbon\Carbon;
 use Common\Helpers\Curls\Yahoo\YahooCurl;
 use Common\Helpers\LoggerHelper;
+use Common\Jobs\Base\CreateJobs;
 use Common\Jobs\YahooDataJob;
 use Common\Jobs\YahooJob;
 use Common\Models\Catalog\BaseCatalog;
@@ -167,11 +168,11 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
         if ($queueIds) {
             if ($async) {
-                Queue::push(YahooJob::class, [$queueIds]);
+                CreateJobs::default(YahooJob::class, [$queueIds]);
             } else {
                 (new YahooJob())->fire(null, [$queueIds]);
             }
-            Queue::push(YahooDataJob::class, [$queueIds]);
+            CreateJobs::default(YahooDataJob::class, [$queueIds]);
         }
 
         $splitedWords = self::fullTextWildcards($text);
