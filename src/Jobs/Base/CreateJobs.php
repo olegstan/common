@@ -135,17 +135,17 @@ class CreateJobs
     }
 
     /**
-     * Очередь для чата 
+     * Очередь для чата
      *
      * @param $jobClass
      * @param $data
      *
      * @return false|null
      */
-    public static function messages($jobClass, $data): ?bool
+    public static function chat($jobClass, $data): ?bool
     {
         self::$data = $data;
-        self::$priority = 'messages';
+        self::$priority = 'chat';
         return self::checkTypeJob($jobClass);
     }
 
