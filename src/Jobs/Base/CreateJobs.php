@@ -10,6 +10,7 @@ use Exception;
 use Queue;
 use Cache;
 use Illuminate\Support\Str;
+use Random\RandomException;
 
 class CreateJobs
 {
@@ -49,6 +50,7 @@ class CreateJobs
      * @param $jobClass
      *
      * @return false|mixed
+     * @throws RandomException
      */
     public static function addQueue($jobClass)
     {
@@ -58,7 +60,7 @@ class CreateJobs
         //В таком случа нам незачем проверять дальше в кэше, но что бы не добавлять много лишний логики
         //просто рандомное значение запишем
         if (!is_numeric(self::$data[0])) {
-            self::$userId = Str::random(4);
+            self::$userId = random_int(1, 10000);
         } else {
             [self::$userId] = self::$data;
         }
