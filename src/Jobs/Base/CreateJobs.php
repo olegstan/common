@@ -135,6 +135,21 @@ class CreateJobs
     }
 
     /**
+     * Очередь для чата 
+     *
+     * @param $jobClass
+     * @param $data
+     *
+     * @return false|null
+     */
+    public static function messages($jobClass, $data): ?bool
+    {
+        self::$data = $data;
+        self::$priority = 'messages';
+        return self::checkTypeJob($jobClass);
+    }
+
+    /**
      * Очередь для CRM связанная с Атон
      *
      * @param $jobClass
