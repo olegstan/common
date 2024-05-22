@@ -81,6 +81,7 @@ interface DefinitionActiveConst
     public const ATON_CREATE_ACTION = 24;
     public const PHONE_CALL = 40;
     public const CHAT_MESSAGE = 41;
+    public const CRM_ATON_SEND_FINBACK = 42;
 
 
 
