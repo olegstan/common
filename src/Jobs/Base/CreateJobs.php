@@ -42,6 +42,14 @@ class CreateJobs
      */
     protected static int $userId;
 
+    /**
+     * Для некоторых очередей нельзя указать тип
+     * Вместо этого будет указывать его здесь
+     *
+     * @var int
+     */
+    public static int $type = 0;
+
     public const PREFIX_ONLINE = 'last_online.';
 
     /**
@@ -90,6 +98,8 @@ class CreateJobs
         //Тк перешли на реббит, теперь не можем отслеживать сообщения в очереди.
         //Будем создавать кэш и проверять что бы не создать дубли
         $data['cache_key'] = 'queue_' . self::$priority . '_' . self::$userId . '_' . $jobClass::TYPE;
+        //у рэббита нет айдишника джобы, так что создадим его сами
+        $data[] = Str::random(10);
 
         //внутри добавлена проверка кэша
         $queue = Queue::push($jobClass, $data, self::$priority);
@@ -175,7 +185,7 @@ class CreateJobs
     public static function aton($jobClass, $data): ?bool
     {
         self::$data = $data;
-        self::$priority = 'crm-aton';
+        self::$priority = 'aton';
         return self::checkTypeJob($jobClass);
     }
 
