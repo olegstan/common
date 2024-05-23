@@ -11,6 +11,7 @@ use Exception;
 use Queue;
 use Cache;
 use Illuminate\Support\Str;
+use Random\RandomException;
 
 class CreateJobs implements DefaultStaticValuesInterface
 {
@@ -50,6 +51,13 @@ class CreateJobs implements DefaultStaticValuesInterface
      */
     public static int $type = 0;
 
+    /**
+     * Содержится название подключения из конфига, когда это требуется
+     *
+     * @var string
+     */
+    public static string $connect;
+
     public const PREFIX_ONLINE = 'last_online.';
 
     /**
@@ -67,7 +75,7 @@ class CreateJobs implements DefaultStaticValuesInterface
         //В таком случа нам незачем проверять дальше в кэше, но что бы не добавлять много лишний логики
         //просто рандомное значение запишем
         if (!is_numeric(self::$data[0])) {
-            self::$userId = random_int(1, 10000);
+            self::$userId = rand(1, 10000);
         } else {
             [self::$userId] = self::$data;
         }
@@ -101,7 +109,7 @@ class CreateJobs implements DefaultStaticValuesInterface
         $data[] = Str::random(10);
 
         //внутри добавлена проверка кэша
-        $queue = Queue::push($jobClass, $data, self::$priority);
+        $queue = Queue::connection(self::$connect ?? env('QUEUE_DRIVER'))->push($jobClass, $data, self::$priority);
 
         if ($queue) {
             self::createLogParse(self::$priority, $jobClass, self::$userId, self::$path);
@@ -174,6 +182,22 @@ class CreateJobs implements DefaultStaticValuesInterface
     }
 
     /**
+     * Очередь для Атон дэфолтная
+     * не уверен точно где используется
+     *
+     * @param $jobClass
+     * @param $data
+     *
+     * @return false|null
+     */
+    public static function atonDefault($jobClass, $data): ?bool
+    {
+        self::$data = $data;
+        self::$priority = 'aton-default';
+        return self::checkTypeJob($jobClass);
+    }
+
+    /**
      * Очередь для Атон
      *
      * @param $jobClass
@@ -185,6 +209,21 @@ class CreateJobs implements DefaultStaticValuesInterface
     {
         self::$data = $data;
         self::$priority = 'aton';
+        return self::checkTypeJob($jobClass);
+    }
+
+    /**
+     * Очередь для связи сокета
+     *
+     * @param $jobClass
+     * @param $data
+     *
+     * @return false|null
+     */
+    public static function socket($jobClass, $data): ?bool
+    {
+        self::$data = $data;
+        self::$priority = 'socket';
         return self::checkTypeJob($jobClass);
     }
 
@@ -234,10 +273,9 @@ class CreateJobs implements DefaultStaticValuesInterface
      */
     public static function createLogParse($priority, $jobClass, $userId, $filePath = null)
     {
-        if ($priority === 'parse' || (config()->has('create-jobs.parse_jobs') && in_array(
-                    $jobClass,
-                    config('create-jobs.parse_jobs'),
-                ))) {
+        $config = 'create-jobs.parse_jobs';
+
+        if ($priority === 'parse' || (config()->has($config) && in_array($jobClass, config($config)))) {
             try {
                 return LogJobParser::create([
                     'user_id' => $userId,
