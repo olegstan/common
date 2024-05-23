@@ -6,6 +6,10 @@ use ReflectionClass;
 use ReflectionException;
 use Storage;
 
+/**
+ * Остался как рудимент и временно не используется.
+ * Вместо трейта используется \Common\Jobs\Base\BaseJob::recordAllStaticValues
+ */
 trait ConstructBaseJobTrait
 {
     /**
@@ -15,7 +19,7 @@ trait ConstructBaseJobTrait
      */
     public function recordStaticValues(): void
     {
-        $disks = ['models', 'jobs', 'helpers'];
+        $disks = ['models', 'jobs', 'helpers', 'common_models', 'common_jobs', 'common_helpers'];
 
         foreach ($disks as $disk) {
             $files = Storage::disk($disk)->allFiles();

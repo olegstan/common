@@ -72,11 +72,12 @@ class DepartmentController extends BaseController
     }
 
     /**
+     * @param $id
      * @param $request
      *
      * @return mixed
      */
-    public function putUpdate($request)
+    public function putUpdate($id, $request)
     {
         return DB::transaction(function () use ($request) {
             if (!$department = Department::find($request->input('department_id'))) {
@@ -97,11 +98,12 @@ class DepartmentController extends BaseController
     }
 
     /**
+     * @param $id
      * @param $request
      *
      * @return mixed
      */
-    public function deleteRemove($request)
+    public function deleteRemove($id, $request)
     {
         return DB::transaction(function () use ($request) {
             if (!$department = Department::find($request->input('department_id'))) {

@@ -37,10 +37,13 @@ class BaseJob extends Job
         'App' . DIRECTORY_SEPARATOR . 'Jobs' . DIRECTORY_SEPARATOR,
         'App' . DIRECTORY_SEPARATOR . 'Helpers' . DIRECTORY_SEPARATOR,
         'App' . DIRECTORY_SEPARATOR . 'Traits' . DIRECTORY_SEPARATOR,
+        'Common' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR,
+        'Common' . DIRECTORY_SEPARATOR . 'Jobs' . DIRECTORY_SEPARATOR,
+        'Common' . DIRECTORY_SEPARATOR . 'Helpers' . DIRECTORY_SEPARATOR,
     ];
 
     /**
-     * @throws ReflectionException
+     *
      */
     public function __construct()
     {
@@ -55,21 +58,27 @@ class BaseJob extends Job
             return;
         }
 
-        $this->recordAllStaticValues();
+        $fileSysNames = ['app', 'common'];
+        array_walk($fileSysNames, [$this, 'recordAllStaticValues']);
     }
 
     /**
+     * Записывает все статические значения из всех файлов в указанной файловой системе.
+     *
+     * @param string $fileSysName Имя файловой системы для сканирования.
+     *
      * @return void
-     * @throws ReflectionException
+     * @throws ReflectionException Если процесс отражения не удался.
      */
-    public function recordAllStaticValues(): void
+    public function recordAllStaticValues(string $fileSysName): void
     {
         //Пройдемся по всем файлам проекта
-        foreach (Storage::disk('app')->allFiles() as $file) {
+        foreach (Storage::disk($fileSysName)->allFiles() as $file) {
             //Для корректного namespace обработаем путь
-            $file = 'App' . DIRECTORY_SEPARATOR . str_replace(['.php', '/'], ['', '\\'], $file);
+            $file = ucfirst($fileSysName) . DIRECTORY_SEPARATOR . str_replace(['.php', '/'], ['', '\\'], $file);
 
-            //файлы в которых надо откатить статичные значения будут содержать указанный метод
+            // Пропускать файлы, которые не находятся в пространстве имен App\helpers, не имеют метода getAllStaticValues,
+            // или имеют родительский класс
             if ($file === 'App\helpers' ||
                 !method_exists($file, 'getAllStaticValues') ||
                 (new ReflectionClass($file))->getParentClass()) {

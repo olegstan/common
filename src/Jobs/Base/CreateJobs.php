@@ -6,13 +6,13 @@ use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\LogJob\LogJobParser;
 use Common\Models\BaseModel;
+use Common\Models\Interfaces\DefaultStaticValuesInterface;
 use Exception;
 use Queue;
 use Cache;
 use Illuminate\Support\Str;
-use Random\RandomException;
 
-class CreateJobs
+class CreateJobs implements DefaultStaticValuesInterface
 {
     /**
      * Содержит в себе все переданные параметры очереди
@@ -58,7 +58,6 @@ class CreateJobs
      * @param $jobClass
      *
      * @return false|mixed
-     * @throws RandomException
      */
     public static function addQueue($jobClass)
     {
@@ -251,5 +250,15 @@ class CreateJobs
         }
 
         return false;
+    }
+
+    /**
+     * Указывает на возвращение дэфолтных значений класса и его трейтов
+     *
+     * @return bool
+     */
+    public function getAllStaticValues(): bool
+    {
+        return true;
     }
 }
