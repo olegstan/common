@@ -20,7 +20,7 @@ class RabbitMQQueue extends BaseQueue
      *
      * @throws AMQPProtocolChannelException Если возникла ошибка канала протокола AMQP.
      */
-    public function push($job, $data = '', string $queue = null)
+    public function push($job, $data = '', $queue = null)
     {
         // Проверьте, является ли задание экземпляром SendQueuedMailable (Отправка письма на почту).
         // Или является ли задание экземпляром BroadcastEvent (вебсокета для процентовки выполнения очереди).
