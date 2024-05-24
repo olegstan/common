@@ -8,11 +8,20 @@ use Exception;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use DB;
+use Illuminate\Support\Str;
 use VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class BaseRabbitMQJob extends RabbitMQJob
 {
+    /**
+     * У рэббита нет очереди для работы с сообщениями
+     * По этому сами обозначим в конструкторе
+     *
+     * @var string
+     */
+    private string $jobId;
+
     /**
      * Конструктор класса BaseRabbitMQJob.
      *
@@ -25,6 +34,8 @@ class BaseRabbitMQJob extends RabbitMQJob
     public function __construct($container, $rabbitmq, $message, $connectionName, $queue)
     {
         parent::__construct($container, $rabbitmq, $message, $connectionName, $queue);
+
+        $this->setJobId(Str::random(10));
 
         // Проверяем, включено ли расширенное ведение журнала
         if (config('app.extended_log')) {
@@ -113,5 +124,24 @@ class BaseRabbitMQJob extends RabbitMQJob
                 LoggerHelper::getLogger('job-fail')->error($e);
             }
         }
+    }
+
+    /**
+     * @param $id
+     *
+     * @return BaseRabbitMQJob
+     */
+    public function setJobId($id): BaseRabbitMQJob
+    {
+        $this->jobId = $id;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getJobId(): string
+    {
+        return $this->jobId;
     }
 }
