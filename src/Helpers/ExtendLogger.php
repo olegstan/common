@@ -2,7 +2,7 @@
 
 namespace Common\Helpers;
 
-use App\Helpers\Curls\TelegramCurl;
+use Common\Helpers\Curls\TelegramCurl;
 use Exception;
 use Monolog\Logger;
 
