@@ -57,7 +57,7 @@ class LoggerHelper
                     self::$removeDefaultHandler = false;
                 }
             }else{
-                $monolog = new Logger($key);
+                $monolog = new ExtendLogger($key);
             }
 
             if(self::$commandKey)
