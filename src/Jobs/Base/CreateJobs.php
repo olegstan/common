@@ -113,7 +113,7 @@ class CreateJobs implements DefaultStaticValuesInterface
 
         if ($queue) {
             self::createLogParse(self::$priority, $jobClass, self::$userId, self::$path);
-            return $queue;
+            return end($data);
         }
 
         return false;
