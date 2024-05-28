@@ -128,7 +128,7 @@ class CreateJobs implements DefaultStaticValuesInterface
      *
      * @return false|null
      */
-    public static function parse($jobClass, $data, string $path = ''): ?bool
+    public static function parse($jobClass, $data, string $path = ''): ?string
     {
         self::$data = $data;
         self::$priority = 'parse';
@@ -144,7 +144,7 @@ class CreateJobs implements DefaultStaticValuesInterface
      *
      * @return false|null
      */
-    public static function default($jobClass, $data): ?bool
+    public static function default($jobClass, $data): ?string
     {
         self::$data = $data;
         self::$priority = 'default';
@@ -159,7 +159,7 @@ class CreateJobs implements DefaultStaticValuesInterface
      *
      * @return false|null
      */
-    public static function chat($jobClass, $data): ?bool
+    public static function chat($jobClass, $data): ?string
     {
         self::$data = $data;
         self::$priority = 'chat';
@@ -174,7 +174,7 @@ class CreateJobs implements DefaultStaticValuesInterface
      *
      * @return false|null
      */
-    public static function crmAton($jobClass, $data): ?bool
+    public static function crmAton($jobClass, $data): ?string
     {
         self::$data = $data;
         self::$priority = 'crm-aton';
@@ -190,7 +190,7 @@ class CreateJobs implements DefaultStaticValuesInterface
      *
      * @return false|null
      */
-    public static function atonDefault($jobClass, $data): ?bool
+    public static function atonDefault($jobClass, $data): ?string
     {
         self::$data = $data;
         self::$priority = 'aton-default';
@@ -205,7 +205,7 @@ class CreateJobs implements DefaultStaticValuesInterface
      *
      * @return false|null
      */
-    public static function aton($jobClass, $data): ?bool
+    public static function aton($jobClass, $data): ?string
     {
         self::$data = $data;
         self::$priority = 'aton';
@@ -220,7 +220,7 @@ class CreateJobs implements DefaultStaticValuesInterface
      *
      * @return false|null
      */
-    public static function socket($jobClass, $data): ?bool
+    public static function socket($jobClass, $data): ?string
     {
         self::$data = $data;
         self::$priority = 'socket';
@@ -235,7 +235,7 @@ class CreateJobs implements DefaultStaticValuesInterface
      *
      * @return false|null
      */
-    public static function high($jobClass, $data): ?bool
+    public static function high($jobClass, $data): ?string
     {
         self::$data = $data;
         self::$priority = 'high';
