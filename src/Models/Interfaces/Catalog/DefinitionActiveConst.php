@@ -79,6 +79,7 @@ interface DefinitionActiveConst
     public const ATON_CHECK_VALUATION = 22;
     public const ATON_FILE_HISTORY = 23;
     public const ATON_CREATE_ACTION = 24;
+    public const ATON_PSM_VALUATION = 25;
     public const PHONE_CALL = 40;
     public const CHAT_MESSAGE = 41;
     public const CRM_ATON_SEND_FINBACK = 42;
