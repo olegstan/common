@@ -33,6 +33,7 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -86,6 +87,7 @@ use Throwable;
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract
 {
+    use HasFactory;
     use Authenticatable;
     use CanResetPassword;
     use HasRoleAndPermission;
