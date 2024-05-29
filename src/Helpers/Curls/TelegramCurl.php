@@ -49,6 +49,8 @@ class TelegramCurl extends Curl
         $data = json_encode([
             'chat_id' => !$chatId ? TelegramCurl::FINTEST_MONITOR_CHAT_ID : $chatId,
             'text' => $text,
+            'none_stop' => true,
+            'timeout' => 123
         ]);
 
         $response = self::post($url, $data, [
