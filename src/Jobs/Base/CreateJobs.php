@@ -219,9 +219,8 @@ class CreateJobs
             $config = 'create-jobs.parse_jobs';
             $checkPriority = $this->getPriority() === 'parse';
             $configHas = config()->has($config);
-            $jobInConfig = in_array($this->getJobClass(), config($config));
 
-            if ($checkPriority || ($configHas && $jobInConfig)) {
+            if ($checkPriority || ($configHas && in_array($this->getJobClass(), config($config)))) {
                 return LogJobParser::create([
                     'user_id' => $this->getUserId(),
                     'job_name' => $this->getJobClass(),
