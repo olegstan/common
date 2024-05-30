@@ -463,12 +463,12 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
         if ($queueIds) {
             if ($async) {
-                CreateJobs::default(MoscowExchangeJob::class, [$queueIds]);
+                CreateJobs::create(MoscowExchangeJob::class, [$queueIds]);
             } else {
                 (new MoscowExchangeJob())->fire(null, [$queueIds]);
             }
 
-            CreateJobs::default(MoscowExchangeDataJob::class, [$queueIds]);
+            CreateJobs::create(MoscowExchangeDataJob::class, [$queueIds]);
         }
     }
 

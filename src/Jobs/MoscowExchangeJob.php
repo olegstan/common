@@ -40,7 +40,7 @@ class MoscowExchangeJob extends Job
                     MoscowExchangeStock::loadDividends($stock);
                 }
 
-                CreateJobs::default(TradingViewJob::class, ['moscow', $ids]);
+                CreateJobs::create(TradingViewJob::class, ['moscow', $ids]);
             }
             if ($job) {
                 $job->delete();

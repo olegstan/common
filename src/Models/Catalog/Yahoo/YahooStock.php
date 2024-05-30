@@ -168,11 +168,11 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
         if ($queueIds) {
             if ($async) {
-                CreateJobs::default(YahooJob::class, [$queueIds]);
+                CreateJobs::create(YahooJob::class, [$queueIds]);
             } else {
                 (new YahooJob())->fire(null, [$queueIds]);
             }
-            CreateJobs::default(YahooDataJob::class, [$queueIds]);
+            CreateJobs::create(YahooDataJob::class, [$queueIds]);
         }
 
         $splitedWords = self::fullTextWildcards($text);
