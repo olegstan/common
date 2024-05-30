@@ -75,6 +75,13 @@ class CreateJobs
     private string $cache_key_queue;
 
     /**
+     * Ключ проверки кэша на онлайн пользователя
+     *
+     * @var string
+     */
+    public const PREFIX_ONLINE = 'last_online.';
+
+    /**
      * Создает новый экземпляр класса.
      *
      * @param string $jobClass Имя класса задания.

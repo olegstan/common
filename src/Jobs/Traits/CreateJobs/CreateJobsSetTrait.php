@@ -73,7 +73,7 @@ trait CreateJobsSetTrait
     {
         $date = Carbon::now()->subMinute()->format('Y-m-d H:i:s');
         $cache = Cache::tags([config('cache.tags')]);
-        $cacheKey = 'last_online.' . $this->getUserId();
+        $cacheKey = self::PREFIX_ONLINE . $this->getUserId();
         $configHas = config()->has('create-jobs.parse_jobs');
         $jobInConfig = in_array($this->getJobClass(), config('create-jobs.parse_jobs'));
 
