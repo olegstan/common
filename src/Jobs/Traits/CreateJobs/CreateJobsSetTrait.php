@@ -75,10 +75,10 @@ trait CreateJobsSetTrait
         $cache = Cache::tags([config('cache.tags')]);
         $cacheKey = self::PREFIX_ONLINE . $this->getUserId();
         $configHas = config()->has('create-jobs.parse_jobs');
-        $jobInConfig = in_array($this->getJobClass(), config('create-jobs.parse_jobs'));
 
         // Проверьте, находится ли пользователь в сети, и установите соответствующий приоритет.
-        if ($configHas && $jobInConfig && $cache->has($cacheKey) && $cache->get($cacheKey) > $date) {
+        if ($configHas && in_array($this->getJobClass(), config('create-jobs.parse_jobs'))
+            && $cache->has($cacheKey,) && $cache->get($cacheKey) > $date) {
             $priority = 'high-online';
         }
 
