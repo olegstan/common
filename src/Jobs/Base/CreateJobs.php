@@ -2,301 +2,236 @@
 
 namespace Common\Jobs\Base;
 
-use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\LogJob\LogJobParser;
+use Common\Jobs\Traits\CreateJobs\CreateJobsGetTrait;
+use Common\Jobs\Traits\CreateJobs\CreateJobsSetTrait;
 use Common\Models\BaseModel;
-use Common\Models\Interfaces\DefaultStaticValuesInterface;
 use Exception;
 use Queue;
 use Cache;
-use Illuminate\Support\Str;
-use Random\RandomException;
 
-class CreateJobs implements DefaultStaticValuesInterface
+class CreateJobs
 {
-    /**
-     * Содержит в себе все переданные параметры очереди
-     *
-     * @var array
-     */
-    protected static array $data = [];
+    use CreateJobsGetTrait;
+    use CreateJobsSetTrait;
 
     /**
-     * Обозначение приоритета/названия очереди
+     * Путь джобы
      *
      * @var string
      */
-    protected static string $priority = '';
+    private string $job_class;
 
     /**
-     * Путь к файлу, если он требуется (Обычно передается путь до Атон файлов)
+     * Переданные данные
+     *
+     * @var
+     */
+    private $data;
+
+    /**
+     * Приоритет джобы | название очереди
      *
      * @var string
      */
-    protected static string $path = '';
+    private string $priority = 'default';
 
     /**
-     * Айдишник пользователя
+     * Путь к какому-либо файлу
+     * Обычно требуется для файлов Атон
+     *
+     * @var string
+     */
+    private string $path;
+
+    /**
+     * Уникальный идентификатор джобы
+     *
+     * @var string
+     */
+    private string $uuid;
+
+    /**
+     * Идентификатор пользователя (или рандомное число, если его нет)
      *
      * @var int
      */
-    protected static int $userId;
-
-    /**
-     * Для некоторых очередей нельзя указать тип
-     * Вместо этого будет указывать его здесь
-     *
-     * @var int
-     */
-    public static int $type = 0;
+    private int $user_id;
 
     /**
      * Содержится название подключения из конфига, когда это требуется
      *
      * @var string
      */
-    public static string $connect;
+    private string $connection_name;
 
+    /**
+     * Ключ кэша, для проверки на дублирование в RabbitMQ
+     * Если обнаружатся 2 одинаковых ключа, второй раз отправки в очередь не будет
+     *
+     * @var string
+     */
+    private string $cache_key_queue;
+
+    /**
+     * Ключ проверки кэша на онлайн пользователя
+     *
+     * @var string
+     */
     public const PREFIX_ONLINE = 'last_online.';
 
     /**
-     * Обработка и проверка очереди
+     * Создает новый экземпляр класса.
      *
-     * @param $jobClass
-     *
-     * @return false|mixed
+     * @param string $jobClass Имя класса задания.
+     * @param mixed $data Данные, которые будут переданы в задание.
+     * @param string $connection Название подключения очереди.
      */
-    public static function addQueue($jobClass)
+    public function __construct(string $jobClass, $data, string $connection)
     {
-        $date = Carbon::now()->subMinute()->format('Y-m-d H:i:s');
-
-        //Если первое значение не число, скорее всего переделан не айдишник пользователя
-        //В таком случа нам незачем проверять дальше в кэше, но что бы не добавлять много лишний логики
-        //просто рандомное значение запишем
-        if (!is_numeric(self::$data[0])) {
-            self::$userId = rand(1, 10000);
-        } else {
-            [self::$userId] = self::$data;
-        }
-
-        //Для юзеров которые онлайн делаем отдельную очередь, что бы они не ждали
-        //В middleware в кэш записывает время онлайна пользователя. Если оно будет больше текущего с минус минутой, значит он онлайн (по край не мере был в течении минуты)
-        if (config()->has('create-jobs.parse_jobs') && in_array($jobClass, config('create-jobs.parse_jobs')) &&
-            Cache::tags([config('cache.tags')])->has(self::PREFIX_ONLINE . self::$userId) &&
-            Cache::tags([config('cache.tags')])->get(self::PREFIX_ONLINE . self::$userId) > $date) {
-            self::$priority = 'high-online';
-        }
-
-        return self::push($jobClass);
+        // Установить класс работы
+        $this->setJobClass($jobClass);
+        // Установите данные
+        $this->setData($data);
+        // Установить идентификатор пользователя
+        $this->setUserId($data);
+        // Установить путь до файла
+        $this->setPath($data);
+        // Установите UUID
+        $this->setUuid();
+        // Установите название подключения очереди
+        $this->setConnectionName($connection);
     }
 
     /**
-     * Отправка джобы в очередь
+     * Создайте новое задание и поместите его в очередь.
      *
-     * @param $jobClass
+     * @param string $jobClass Название класса работы.
+     * @param mixed $data Данные, которые будут переданы в задание.
+     * @param string $priority Приоритет задания (по умолчанию: «по умолчанию»).
+     * @param string $connection Название подключения из конфига queue
      *
-     * @return false|mixed
+     * @return false|string Возвращает false, если тип задания не существует, в противном случае возвращает результат
+     *     помещения задания в очередь.
      */
-    public static function push($jobClass)
+    public static function create(string $jobClass, $data, string $priority = 'default', string $connection = '')
     {
-        //Очистим все ключи перед добавлением ключа кэша, тк он обязателен
-        $data = array_values(self::$data);
-        //Тк перешли на реббит, теперь не можем отслеживать сообщения в очереди.
-        //Будем создавать кэш и проверять что бы не создать дубли
-        $data['cache_key'] = 'queue_' . self::$priority . '_' . self::$userId . '_' . $jobClass::TYPE;
-        //у рэббита нет айдишника джобы, так что создадим его сами
-        $data[] = Str::random(10);
+        try {
+            // Создайте новый экземпляр задания
+            $self = new self($jobClass, $data, $connection);
 
-        //внутри добавлена проверка кэша
-        $queue = Queue::connection(self::$connect ?? env('QUEUE_DRIVER'))->push($jobClass, $data, self::$priority);
+            // Проверьте, существует ли тип задания
+            if (!$self->existsTypeJob()) {
+                return false;
+            }
 
+            // Установить приоритет
+            $self->setPriority($priority);
+            // Установите ключ кэша
+            $self->setCacheKeyQueue();
+
+            // Поместите задание в очередь и верните результат
+            return $self->push();
+        } catch (Exception $e) {
+            LoggerHelper::getLogger('create-jobs-' . __FUNCTION__)->error($e);
+            return false;
+        }
+    }
+
+    /**
+     * Помещает задание в очередь.
+     *
+     * @return false|string UUID отправленного задания в случае успеха, в противном случае — false.
+     */
+    public function push()
+    {
+        // Поместите задание в очередь с указанным приоритетом и данными.
+        $queue = Queue::connection($this->getConnectionName())
+            ->push($this->getJobClass(), $this->addDataParams(), $this->getPriority());
+
+        // Если задание было успешно отправлено, создайте запись в журнале и верните UUID.
         if ($queue) {
-            self::createLogParse(self::$priority, $jobClass, self::$userId, self::$path);
-            return end($data);
+            $this->createLogParse();
+            return $this->getUuid();
         }
 
+        // Если задание не удалось отправить, верните false
         return false;
     }
 
     /**
-     * Очередь типа парсер
+     * Добавляет параметры данных в существующий массив данных.
      *
-     * @param $jobClass
-     * @param $data
-     * @param string $path
+     * Этот метод удаляет все ключи из существующего массива данных перед добавлением ключей «cache_key» и «uuid».
+     * «Cache_key» получается из метода getCacheKeyQueue(), а «uuid» — из метода getUuid().
      *
-     * @return false|null
+     * @return array Обновленный массив данных с добавленными параметрами.
      */
-    public static function parse($jobClass, $data, string $path = ''): ?string
+    public function addDataParams(): array
     {
-        self::$data = $data;
-        self::$priority = 'parse';
-        self::$path = $path;
-        return self::checkTypeJob($jobClass);
+        // Если данные джобы это массив, сбросим ключи
+        // В противном случае, нам надо сделать массив, что бы дальше дополнить данными
+        $data = is_array($this->getData()) ? array_values($this->getData()) : [$this->getData()];
+        // Добавьте параметр «cache_key»
+        $data['cache_key'] = $this->getCacheKeyQueue();
+        // Добавьте параметр uuid
+        $data[] = $this->getUuid();
+
+        return $data;
     }
 
     /**
-     * Очередь с обычным приоритетом
+     * Проверьте, существует ли тип задания.
      *
-     * @param $jobClass
-     * @param $data
+     * Этот метод проверяет, определен ли тип задания для данного класса заданий.
+     * Если тип задания не определен, оно регистрирует сообщение об ошибке и возвращает false.
+     * В противном случае он возвращает true.
      *
-     * @return false|null
+     * @return bool Возвращает true, если тип задания существует, в противном случае — false.
      */
-    public static function default($jobClass, $data): ?string
+    public function existsTypeJob(): bool
     {
-        self::$data = $data;
-        self::$priority = 'default';
-        return self::checkTypeJob($jobClass);
-    }
+        // Получить класс работы
+        $jobClass = $this->getJobClass();
 
-    /**
-     * Очередь для чата
-     *
-     * @param $jobClass
-     * @param $data
-     *
-     * @return false|null
-     */
-    public static function chat($jobClass, $data): ?string
-    {
-        self::$data = $data;
-        self::$priority = 'chat';
-        return self::checkTypeJob($jobClass);
-    }
-
-    /**
-     * Очередь для CRM связанная с Атон
-     *
-     * @param $jobClass
-     * @param $data
-     *
-     * @return false|null
-     */
-    public static function crmAton($jobClass, $data): ?string
-    {
-        self::$data = $data;
-        self::$priority = 'crm-aton';
-        return self::checkTypeJob($jobClass);
-    }
-
-    /**
-     * Очередь для Атон дэфолтная
-     * не уверен точно где используется
-     *
-     * @param $jobClass
-     * @param $data
-     *
-     * @return false|null
-     */
-    public static function atonDefault($jobClass, $data): ?string
-    {
-        self::$data = $data;
-        self::$priority = 'aton-default';
-        return self::checkTypeJob($jobClass);
-    }
-
-    /**
-     * Очередь для Атон
-     *
-     * @param $jobClass
-     * @param $data
-     *
-     * @return false|null
-     */
-    public static function aton($jobClass, $data): ?string
-    {
-        self::$data = $data;
-        self::$priority = 'aton';
-        return self::checkTypeJob($jobClass);
-    }
-
-    /**
-     * Очередь для связи сокета
-     *
-     * @param $jobClass
-     * @param $data
-     *
-     * @return false|null
-     */
-    public static function socket($jobClass, $data): ?string
-    {
-        self::$data = $data;
-        self::$priority = 'socket';
-        return self::checkTypeJob($jobClass);
-    }
-
-    /**
-     * Очередь с высоким приоритетом
-     *
-     * @param $jobClass
-     * @param $data
-     *
-     * @return false|null
-     */
-    public static function high($jobClass, $data): ?string
-    {
-        self::$data = $data;
-        self::$priority = 'high';
-        return self::checkTypeJob($jobClass);
-    }
-
-    /**
-     * Проверяем, что у джобы проставлен ее тип
-     *
-     * @param $jobClass
-     *
-     * @return false|mixed
-     */
-    public static function checkTypeJob($jobClass)
-    {
+        // Проверьте, определен ли тип задания
         if ($jobClass::TYPE === 0) {
-            LoggerHelper::getLogger('add-queue-' . self::$priority)
+            // Зарегистрировать сообщение об ошибке
+            LoggerHelper::getLogger('add-queue-' . $this->getPriority())
                 ->error('Для класса такой очереди не определен тип (' . $jobClass . ')');
+
             return false;
         }
 
-        return self::addQueue($jobClass);
-    }
-
-    /**
-     * Создание лога парсера
-     * что бы записывать время когда пользователь создаст джобу на парс файла или токена брокера
-     *
-     * @param $priority
-     * @param $jobClass
-     * @param $userId
-     * @param $filePath
-     *
-     * @return BaseModel|false
-     */
-    public static function createLogParse($priority, $jobClass, $userId, $filePath = null)
-    {
-        $config = 'create-jobs.parse_jobs';
-
-        if ($priority === 'parse' || (config()->has($config) && in_array($jobClass, config($config)))) {
-            try {
-                return LogJobParser::create([
-                    'user_id' => $userId,
-                    'job_name' => $jobClass,
-                    'path_file' => $filePath,
-                ]);
-            } catch (Exception $e) {
-                LoggerHelper::getLogger('Add-queue->create-log-parser')->error($e);
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Указывает на возвращение дэфолтных значений класса и его трейтов
-     *
-     * @return bool
-     */
-    public function getAllStaticValues(): bool
-    {
         return true;
+    }
+
+    /**
+     *  Создание лога парсера
+     *  что бы записывать время когда пользователь создаст джобу на парс файла или токена брокера
+     *
+     * @return bool|LogJobParser|BaseModel
+     */
+    public function createLogParse()
+    {
+        try {
+            $config = 'create-jobs.parse_jobs';
+            $checkPriority = $this->getPriority() === 'parse';
+            $configHas = config()->has($config);
+
+            if ($checkPriority || ($configHas && in_array($this->getJobClass(), config($config)))) {
+                return LogJobParser::create([
+                    'user_id' => $this->getUserId(),
+                    'job_name' => $this->getJobClass(),
+                    'path_file' => $this->getPath(),
+                ]);
+            }
+
+            return true;
+        } catch (Exception $e) {
+            LoggerHelper::getLogger(class_basename($this) . '_' . __FUNCTION__)->error($e);
+            return false;
+        }
     }
 }

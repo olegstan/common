@@ -30,7 +30,7 @@ class YahooJob extends Job
 
         try {
             if ($ids) {
-                CreateJobs::default(TradingViewJob::class, ['yahoo', $ids]);
+                CreateJobs::create(TradingViewJob::class, ['yahoo', $ids]);
             }
             if ($job) {
                 $job->delete();

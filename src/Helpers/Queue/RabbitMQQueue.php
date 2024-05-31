@@ -38,6 +38,8 @@ class RabbitMQQueue extends BaseQueue
 
         // Добавить ключ кеша в кеш со сроком действия 1440 минут (1 день)
         Cache::add($data['cache_key'], true, 1440);
+        //Очистите ключ кэша из данных для джобы
+        unset($data['cache_key']);
 
         // Создайте полезную нагрузку и поместите ее в очередь.
         return $this->pushRaw($this->createPayload($job, $queue, $data), $queue);

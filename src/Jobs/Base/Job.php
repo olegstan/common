@@ -2,13 +2,12 @@
 
 namespace Common\Jobs\Base;
 
-use Common\Jobs\Interfaces\JobInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-abstract class Job implements JobInterface
+abstract class Job
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -25,4 +24,10 @@ abstract class Job implements JobInterface
      * @var int
      */
     public int $maxExceptions = 3;
+
+    /**
+     * У каждой очереди должен быть указан свой тип
+     * для разделения
+     */
+    public const TYPE = 0;
 }
