@@ -8,8 +8,7 @@ use Common\Jobs\Traits\CreateJobs\CreateJobsGetTrait;
 use Common\Jobs\Traits\CreateJobs\CreateJobsSetTrait;
 use Common\Models\BaseModel;
 use Exception;
-use Queue;
-use Cache;
+use Illuminate\Support\Facades\Queue;
 
 class CreateJobs
 {
@@ -22,6 +21,15 @@ class CreateJobs
      * @var string
      */
     private string $job_class;
+
+    /**
+     * Тип джобы
+     * Указывается, если вызывается джоба из другого проекта
+     * И не можем определить фактический тип из файла
+     *
+     * @var int
+     */
+    private int $job_type;
 
     /**
      * Переданные данные
@@ -102,6 +110,8 @@ class CreateJobs
         $this->setUuid();
         // Установите название подключения очереди
         $this->setConnectionName($connection);
+        // Установите тип вызываемой джобы
+        $this->setJobType($data);
     }
 
     /**
@@ -194,9 +204,10 @@ class CreateJobs
     {
         // Получить класс работы
         $jobClass = $this->getJobClass();
+        $jobType = $this->getJobType();
 
         // Проверьте, определен ли тип задания
-        if ($jobClass::TYPE === 0) {
+        if ((!class_exists($jobClass) && $jobType === 0) || $jobClass::TYPE === 0) {
             // Зарегистрировать сообщение об ошибке
             LoggerHelper::getLogger('add-queue-' . $this->getPriority())
                 ->error('Для класса такой очереди не определен тип (' . $jobClass . ')');

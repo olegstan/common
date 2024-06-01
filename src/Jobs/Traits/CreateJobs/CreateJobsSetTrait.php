@@ -23,6 +23,24 @@ trait CreateJobsSetTrait
     }
 
     /**
+     * Когда в проекте нет джобы и надо вызвать в другом проекте
+     * Здесь обозначается тип вызываемой джобы
+     *
+     * @param $data //Данные.
+     *
+     * @return CreateJobs
+     */
+    public function setJobType($data): CreateJobs
+    {
+        if (is_array($data) && array_key_exists('job_type', $data)) {
+            $jobType = $data['job_type'];
+        }
+
+        $this->job_type = $jobType ?? 0;
+        return $this;
+    }
+
+    /**
      * Установите данные джобы.
      *
      * @param $data //Данные.
