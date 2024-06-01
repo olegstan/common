@@ -4,8 +4,8 @@ namespace Common\Jobs\Traits\CreateJobs;
 
 use Carbon\Carbon;
 use Common\Jobs\Base\CreateJobs;
-use Str;
-use Cache;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 trait CreateJobsSetTrait
 {
