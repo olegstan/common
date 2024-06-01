@@ -110,8 +110,6 @@ class CreateJobs
         $this->setUuid();
         // Установите название подключения очереди
         $this->setConnectionName($connection);
-        // Установите тип вызываемой джобы
-        $this->setJobType($data);
     }
 
     /**
@@ -130,19 +128,16 @@ class CreateJobs
         try {
             // Создайте новый экземпляр задания
             $self = new self($jobClass, $data, $connection);
-
-            // Проверьте, существует ли тип задания
-            if (!$self->existsTypeJob()) {
-                return false;
-            }
-
             // Установить приоритет
             $self->setPriority($priority);
+            // Установите тип вызываемой джобы
+            $self->setJobType();
             // Установите ключ кэша
             $self->setCacheKeyQueue();
 
+            // Проверьте, существует ли тип задания
             // Поместите задание в очередь и верните результат
-            return $self->push();
+            return $self->existsTypeJob() ? $self->push() : false;
         } catch (Exception $e) {
             LoggerHelper::getLogger('create-jobs-' . __FUNCTION__)->error($e);
             return false;
@@ -207,7 +202,7 @@ class CreateJobs
         $jobType = $this->getJobType();
 
         // Проверьте, определен ли тип задания
-        if ((!class_exists($jobClass) && $jobType === 0) || $jobClass::TYPE === 0) {
+        if ($jobType === 0) {
             // Зарегистрировать сообщение об ошибке
             LoggerHelper::getLogger('add-queue-' . $this->getPriority())
                 ->error('Для класса такой очереди не определен тип (' . $jobClass . ')');
