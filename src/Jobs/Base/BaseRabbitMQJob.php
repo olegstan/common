@@ -81,7 +81,7 @@ class BaseRabbitMQJob extends RabbitMQJob
 
         $data = json_decode($this->getRawBody());
 
-        if (isset($data['cache_key'])) {
+        if ((is_array($data) && isset($data['cache_key'])) || (is_object($data) && isset($data->cache_key))) {
             Cache::forget($data['cache_key']);
         }
 
@@ -110,7 +110,7 @@ class BaseRabbitMQJob extends RabbitMQJob
 
         $data = json_decode($this->getRawBody());
 
-        if (isset($data['cache_key'])) {
+        if ((is_array($data) && isset($data['cache_key'])) || (is_object($data) && isset($data->cache_key))) {
             Cache::forget($data['cache_key']);
         }
 
