@@ -36,7 +36,7 @@ class BaseRabbitMQJob extends RabbitMQJob
 
             // Проверяем, не пуста ли полезная нагрузка
             if ($payload) {
-                $jsonDecoded = json_decode($message->getBody(), true);
+                $jsonDecoded = json_decode($payload, true);
 
                 // Проверяем, установлен ли ключ 'job' в декодированном JSON
                 if (isset($jsonDecoded['job'])) {
