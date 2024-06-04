@@ -2,6 +2,7 @@
 
 namespace Common\Jobs\Traits\CreateJobs;
 
+
 trait CreateJobsGetTrait
 {
     /**
@@ -12,6 +13,16 @@ trait CreateJobsGetTrait
     public function getJobClass(): string
     {
         return $this->job_class;
+    }
+
+    /**
+     * Получить тип джобы
+     *
+     * @return int
+     */
+    public function getJobType(): int
+    {
+        return $this->job_type;
     }
 
     /**

@@ -4,8 +4,8 @@ namespace Common\Jobs\Traits\CreateJobs;
 
 use Carbon\Carbon;
 use Common\Jobs\Base\CreateJobs;
-use Str;
-use Cache;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 trait CreateJobsSetTrait
 {
@@ -19,6 +19,29 @@ trait CreateJobsSetTrait
     public function setJobClass(string $jobClass): CreateJobs
     {
         $this->job_class = $jobClass;
+        return $this;
+    }
+
+    /**
+     * Когда в проекте нет джобы и надо вызвать в другом проекте
+     * Здесь обозначается тип вызываемой джобы
+     *
+     * @return CreateJobs
+     */
+    public function setJobType(): CreateJobs
+    {
+        $data = $this->getData();
+        $jobClass = $this->getJobClass();
+
+        if (class_exists($jobClass)) {
+            $jobType = $jobClass::TYPE;
+        } elseif (!class_exists($jobClass) && is_array($data) && array_key_exists('job_type', $data)) {
+            $jobType = $data['job_type'];
+        } else {
+            $jobType = 0;
+        }
+
+        $this->job_type = $jobType;
         return $this;
     }
 
@@ -124,7 +147,7 @@ trait CreateJobsSetTrait
     {
         $this->cache_key_queue = 'queue_' . $this->getPriority() .
             '_' . $this->getUserId() .
-            '_' . $this->getJobClass()::TYPE;
+            '_' . $this->getJobType();
 
         return $this;
     }

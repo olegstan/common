@@ -275,31 +275,38 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
      */
     public function getLastPriceByDate($currency, $date = null)
     {
-        //TODO используется класс из основного проекта, лучше бы как то переделать и вынести логику из метода
+        try{
+            //TODO используется класс из основного проекта, лучше бы как то переделать и вынести логику из метода
 
-        //ищем все ID кастомных активов где может быть такой же каталог
-        $ids = CustomStock::where('symbol', $this->symbol)
-            ->pluck('id')
-            ->toArray();
+            //ищем все ID кастомных активов где может быть такой же каталог
+            $ids = CustomStock::where('symbol', $this->symbol)
+                ->pluck('id')
+                ->toArray();
 
-        $trade = ActiveTrade::whereHas('active', function ($query) use ($ids) {
-            $query->where('item_type', $this->getMorphClass())
-                ->whereIn('item_id', $ids);
-        })
-            ->where('price', '>', 0)
-            ->orderByDesc('trade_at')
-            ->first();
+            $trade = ActiveTrade::whereHas('active', function ($query) use ($ids) {
+                $query->where('item_type', $this->getMorphClass())
+                    ->whereIn('item_id', $ids);
+            })
+                ->where('price', '>', 0)
+                ->orderByDesc('trade_at')
+                ->first();
 
-        if ($trade) {
-            if ($currency->id !== $trade->currency_id) {
-                return $currency->convert($trade->price, $trade->currency_id, $trade->trade_at);
+            if ($trade) {
+                if ($currency->id !== $trade->currency_id) {
+                    return $currency->convert($trade->price, $trade->currency_id, $trade->trade_at);
+                }
+
+
+                return $trade->price;
             }
 
+            return 0;
+        }catch (Exception $e){
+            LoggerHelper::getLogger('convert')->error($e);
+            LoggerHelper::getLogger('convert')->error('currency ID' . $currency->id);
 
-            return $trade->price;
+            return 0;
         }
-
-        return 0;
     }
 
     /**

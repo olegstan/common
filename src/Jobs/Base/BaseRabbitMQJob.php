@@ -8,7 +8,7 @@ use Exception;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use DB;
-use Illuminate\Support\Str;
+use Cache;
 use VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -36,7 +36,7 @@ class BaseRabbitMQJob extends RabbitMQJob
 
             // Проверяем, не пуста ли полезная нагрузка
             if ($payload) {
-                $jsonDecoded = json_decode($message->getBody(), true);
+                $jsonDecoded = json_decode($payload, true);
 
                 // Проверяем, установлен ли ключ 'job' в декодированном JSON
                 if (isset($jsonDecoded['job'])) {
@@ -79,6 +79,12 @@ class BaseRabbitMQJob extends RabbitMQJob
     {
         parent::delete();
 
+        $data = json_decode($this->getRawBody());
+
+        if ((is_array($data) && isset($data['cache_key'])) || (is_object($data) && isset($data->cache_key))) {
+            Cache::forget($data['cache_key']);
+        }
+
         //Возвращаем статическим переменным их дефолтные значения
         foreach (BaseJob::$allStaticValues as $path => $statics) {
             try {
@@ -101,6 +107,12 @@ class BaseRabbitMQJob extends RabbitMQJob
     public function fail($e = null): void
     {
         parent::fail($e);
+
+        $data = json_decode($this->getRawBody());
+
+        if ((is_array($data) && isset($data['cache_key'])) || (is_object($data) && isset($data->cache_key))) {
+            Cache::forget($data['cache_key']);
+        }
 
         //Возвращаем статическим переменным их дефолтные значения
         foreach (BaseJob::$allStaticValues as $path => $statics) {

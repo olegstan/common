@@ -8,8 +8,7 @@ use Common\Jobs\Traits\CreateJobs\CreateJobsGetTrait;
 use Common\Jobs\Traits\CreateJobs\CreateJobsSetTrait;
 use Common\Models\BaseModel;
 use Exception;
-use Queue;
-use Cache;
+use Illuminate\Support\Facades\Queue;
 
 class CreateJobs
 {
@@ -22,6 +21,15 @@ class CreateJobs
      * @var string
      */
     private string $job_class;
+
+    /**
+     * Тип джобы
+     * Указывается, если вызывается джоба из другого проекта
+     * И не можем определить фактический тип из файла
+     *
+     * @var int
+     */
+    private int $job_type;
 
     /**
      * Переданные данные
@@ -120,19 +128,16 @@ class CreateJobs
         try {
             // Создайте новый экземпляр задания
             $self = new self($jobClass, $data, $connection);
-
-            // Проверьте, существует ли тип задания
-            if (!$self->existsTypeJob()) {
-                return false;
-            }
-
             // Установить приоритет
             $self->setPriority($priority);
+            // Установите тип вызываемой джобы
+            $self->setJobType();
             // Установите ключ кэша
             $self->setCacheKeyQueue();
 
+            // Проверьте, существует ли тип задания
             // Поместите задание в очередь и верните результат
-            return $self->push();
+            return $self->existsTypeJob() ? $self->push() : false;
         } catch (Exception $e) {
             LoggerHelper::getLogger('create-jobs-' . __FUNCTION__)->error($e);
             return false;
@@ -192,14 +197,11 @@ class CreateJobs
      */
     public function existsTypeJob(): bool
     {
-        // Получить класс работы
-        $jobClass = $this->getJobClass();
-
         // Проверьте, определен ли тип задания
-        if ($jobClass::TYPE === 0) {
+        if ($this->getJobType() === 0) {
             // Зарегистрировать сообщение об ошибке
             LoggerHelper::getLogger('add-queue-' . $this->getPriority())
-                ->error('Для класса такой очереди не определен тип (' . $jobClass . ')');
+                ->error('Для класса такой очереди не определен тип (' . $this->getJobClass() . ')');
 
             return false;
         }

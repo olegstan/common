@@ -64,7 +64,7 @@ class LoggerHelper
             {
                 if(self::$commandKey === 'queue')
                 {
-                    $path = storage_path('logs/commands/queue/' . self::prepareCommandKey(self::$jobKey));
+                    $path = storage_path('logs/queue/' . self::prepareCommandKey(self::$jobKey));
                 }else{
                     $path = storage_path('logs/commands/' . self::prepareCommandKey(self::$commandKey));
                 }
