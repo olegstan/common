@@ -197,15 +197,11 @@ class CreateJobs
      */
     public function existsTypeJob(): bool
     {
-        // Получить класс работы
-        $jobClass = $this->getJobClass();
-        $jobType = $this->getJobType();
-
         // Проверьте, определен ли тип задания
-        if ($jobType === 0) {
+        if ($this->getJobType() === 0) {
             // Зарегистрировать сообщение об ошибке
             LoggerHelper::getLogger('add-queue-' . $this->getPriority())
-                ->error('Для класса такой очереди не определен тип (' . $jobClass . ')');
+                ->error('Для класса такой очереди не определен тип (' . $this->getJobClass() . ')');
 
             return false;
         }
