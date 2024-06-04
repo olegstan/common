@@ -273,28 +273,37 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
      */
     public function getLastPriceByDate($currency, $date = null)
     {
-        /**
-         * @var YahooHistory $history
-         */
-        $query = $this->history();
+        try {
+            /**
+             * @var YahooHistory $history
+             */
+            $query = $this->history();
 
-        if($date)
-        {
-            $query->whereDate($this->getDateField(), '<=', $date);
-        }
-
-        $history = $query->orderByDesc($this->getDateField())
-            ->first();
-
-        if($history)
-        {
-            $historyCurrency = Currency::getByCode($this->currency);
-            if($historyCurrency)
+            if($date)
             {
-                return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+                $query->whereDate($this->getDateField(), '<=', $date);
             }
 
-            return $history->getValue();
+            $history = $query->orderByDesc($this->getDateField())
+                ->first();
+
+            if($history)
+            {
+                $historyCurrency = Currency::getByCode($this->currency);
+                if($historyCurrency)
+                {
+                    return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+                }
+
+                return $history->getValue();
+            }
+
+            return 0;
+        }catch (Exception $e){
+            LoggerHelper::getLogger('convert')->error($e);
+            LoggerHelper::getLogger('convert')->error('currency ID' . $currency->id);
+
+            return 0;
         }
     }
 

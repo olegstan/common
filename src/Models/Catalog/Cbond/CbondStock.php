@@ -15,6 +15,7 @@ use Common\Models\Traits\Catalog\Cbond\CbondScopeTrait;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use File;
+use Exception;
 use Illuminate\Support\Collection;
 
 /**
@@ -427,31 +428,38 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      */
     public function getLastPriceByDate($currency, $date = null)
     {
-        /**
-         * @var CbondHistory $history
-         */
-        $query = $this->history();
-        if($date)
-        {
-            $query->whereDate($this->getDateField(), '<=', $date);
-        }
-
-        $history = $query->where('close', '>', 0)
-            ->orderByDesc($this->getDateField())
-            ->first();
-
-        if($history)
-        {
-            $historyCurrency = Currency::getByCode($history->faceunit);
-            if($historyCurrency)
+        try {
+            /**
+             * @var CbondHistory $history
+             */
+            $query = $this->history();
+            if($date)
             {
-                return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+                $query->whereDate($this->getDateField(), '<=', $date);
             }
 
-            return $history->getValue();
-        }
+            $history = $query->where('close', '>', 0)
+                ->orderByDesc($this->getDateField())
+                ->first();
 
-        return 0;
+            if($history)
+            {
+                $historyCurrency = Currency::getByCode($history->faceunit);
+                if($historyCurrency)
+                {
+                    return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+                }
+
+                return $history->getValue();
+            }
+
+            return 0;
+        }catch (Exception $e){
+            LoggerHelper::getLogger('convert')->error($e);
+            LoggerHelper::getLogger('convert')->error('currency ID' . $currency->id);
+
+            return 0;
+        }
     }
 
     /**

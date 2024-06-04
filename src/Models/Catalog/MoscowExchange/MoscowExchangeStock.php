@@ -22,8 +22,8 @@ use Common\Models\Traits\Catalog\MoscowExchange\MoexScopeTrait;
 use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Queue;
 use Throwable;
+use Exception;
 
 /**
  * Class MoscowExchangeStock
@@ -367,51 +367,58 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      */
     public function getLastPriceByDate($currency, $date = null)
     {
-        /**
-         * @var FinexHistory $history
-         */
-        $query = $this->finexHistory();
+        try{
+            /**
+             * @var FinexHistory $history
+             */
+            $query = $this->finexHistory();
 
-        if ($date) {
-            $query->whereDate($this->getDateField(), '<=', $date);
-        }
-
-        $history = $query->where('close', '>', 0)
-            ->orderByDesc($this->getDateField())
-            ->first();
-
-        if ($history) {
-            $historyCurrency = Currency::getByCode($history->faceunit);
-            if ($historyCurrency) {
-                return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+            if ($date) {
+                $query->whereDate($this->getDateField(), '<=', $date);
             }
 
-            return $history->getValue();
-        }
+            $history = $query->where('close', '>', 0)
+                ->orderByDesc($this->getDateField())
+                ->first();
 
-        /**
-         * @var MoscowExchangeHistory $history
-         */
-        $query = $this->history();
+            if ($history) {
+                $historyCurrency = Currency::getByCode($history->faceunit);
+                if ($historyCurrency) {
+                    return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+                }
 
-        if ($date) {
-            $query->whereDate($this->getDateField(), '<=', $date);
-        }
-
-        $history = $query->where('close', '>', 0)
-            ->orderByDesc($this->getDateField())
-            ->first();
-
-        if ($history) {
-            $historyCurrency = Currency::getByCode($history->faceunit);
-            if ($historyCurrency) {
-                return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+                return $history->getValue();
             }
 
-            return $history->getValue();
-        }
+            /**
+             * @var MoscowExchangeHistory $history
+             */
+            $query = $this->history();
 
-        return 0;
+            if ($date) {
+                $query->whereDate($this->getDateField(), '<=', $date);
+            }
+
+            $history = $query->where('close', '>', 0)
+                ->orderByDesc($this->getDateField())
+                ->first();
+
+            if ($history) {
+                $historyCurrency = Currency::getByCode($history->faceunit);
+                if ($historyCurrency) {
+                    return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+                }
+
+                return $history->getValue();
+            }
+
+            return 0;
+        }catch (Exception $e){
+            LoggerHelper::getLogger('convert')->error($e);
+            LoggerHelper::getLogger('convert')->error('currency ID' . $currency->id);
+
+            return 0;
+        }
     }
 
     /**
