@@ -84,19 +84,6 @@ class BaseRabbitMQJob extends RabbitMQJob
         if ((is_array($data) && isset($data['cache_key'])) || (is_object($data) && isset($data->cache_key))) {
             Cache::forget($data['cache_key']);
         }
-
-        //Возвращаем статическим переменным их дефолтные значения
-        foreach (BaseJob::$allStaticValues as $path => $statics) {
-            try {
-                $class = new $path();
-
-                foreach ($statics as $key => $value) {
-                    $class::$$key = $value;
-                }
-            } catch (Exception $e) {
-                LoggerHelper::getLogger('job-delete')->error($e);
-            }
-        }
     }
 
     /**
@@ -112,19 +99,6 @@ class BaseRabbitMQJob extends RabbitMQJob
 
         if ((is_array($data) && isset($data['cache_key'])) || (is_object($data) && isset($data->cache_key))) {
             Cache::forget($data['cache_key']);
-        }
-
-        //Возвращаем статическим переменным их дефолтные значения
-        foreach (BaseJob::$allStaticValues as $path => $statics) {
-            try {
-                $class = new $path();
-
-                foreach ($statics as $key => $value) {
-                    $class::$$key = $value;
-                }
-            } catch (Exception $e) {
-                LoggerHelper::getLogger('job-fail')->error($e);
-            }
         }
     }
 }
