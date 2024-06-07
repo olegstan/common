@@ -45,7 +45,7 @@ class ExtendedDatabaseQueue extends DatabaseQueue
      * @param  string|null  $queue
      * @return mixed
      */
-    public function push($job, $data = '', ?string $queue = null)
+    public function push($job, $data = '', $queue = null)
     {
         return $this->enqueueUsing(
             $job,
