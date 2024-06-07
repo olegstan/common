@@ -10,78 +10,77 @@ use VladimirYuldashev\LaravelQueueRabbitMQ\Queue\RabbitMQQueue as BaseQueue;
 class RabbitMQQueue extends BaseQueue
 {
     /**
-     * Поместите задание в очередь.
+     * Помещает задание в очередь.
      *
-     * @param mixed $job Работа, которую нужно продвигать.
-     * @param mixed $data Данные, связанные с заданием.
-     * @param string|null $queue Имя очереди.
-     *
-     * @return mixed Результат помещения задания в очередь.
-     *
-     * @throws AMQPProtocolChannelException Если возникла ошибка канала протокола AMQP.
+     * @param mixed $job
+     * @param mixed $data
+     * @param string|null $queue
+     * @return mixed
+     * @throws AMQPProtocolChannelException
      */
-    public function push($job, $data = '', $queue = null)
+    public function push($job, $data = '', string $queue = null)
     {
-        // Проверьте, является ли задание экземпляром SendQueuedMailable (Отправка письма на почту).
-        // Или является ли задание экземпляром BroadcastEvent (вебсокета для процентовки выполнения очереди).
-        if (class_basename($job) === 'SendQueuedMailable' || class_basename($job) === 'BroadcastEvent') {
-            // Создайте полезную нагрузку и поместите ее в очередь.
+        if ($this->isImmediateJob($job)) {
             return $this->pushRaw($this->createPayload($job, $queue, $data), $queue);
         }
 
-        // Проверьте, являются ли данные массивом, присутствует ли в данных ключ кэша,
-        // или если ключ кеша уже присутствует в кеше
-        if ($this->checkArrayData($data) || $this->checkCacheKeyInData($data) || Cache::get($data['cache_key'])) {
-            // Верните false, чтобы указать, что задание не следует помещать в очередь.
+        if ($this->isInvalidData($data)) {
             return false;
         }
 
-        // Добавить ключ кеша в кеш со сроком действия 1440 минут (1 день)
         Cache::add($data['cache_key'], true, 1440);
-        //Очистите ключ кэша из данных для джобы
-        unset($data['cache_key']);
 
-        // Создайте полезную нагрузку и поместите ее в очередь.
         return $this->pushRaw($this->createPayload($job, $queue, $data), $queue);
     }
 
     /**
-     * Проверьте, являются ли данные массивом.
+     * Проверьте, является ли задание экземпляром SendQueuedMailable (Отправка письма на почту).
+     * Или является ли задание экземпляром BroadcastEvent (вебсокета для процентовки выполнения очереди).
      *
-     * @param mixed $data Данные, которые необходимо проверить.
+     * @param mixed $job
      *
-     * @return bool True, если данные представляют собой массив, в противном случае — false.
+     * @return bool
      */
-    private function checkArrayData($data): bool
+    protected function isImmediateJob($job): bool
     {
-        // Проверьте, являются ли данные массивом
+        return in_array(class_basename($job), ['SendQueuedMailable', 'BroadcastEvent']);
+    }
+
+    /**
+     * Проверяет данные на корректность.
+     *
+     * @param mixed $data
+     * @return bool
+     */
+    protected function isInvalidData($data): bool
+    {
         if (!is_array($data)) {
-            // Зарегистрируйте ошибку и верните true, чтобы указать, что данные не являются массивом.
-            LoggerHelper::getLogger(class_basename($this) . '-' . __FUNCTION__)->error('Значение очереди, должно быть массивом', [$data]);
+            $this->logError(__FUNCTION__, 'Значение очереди, должно быть массивом', $data);
             return true;
         }
 
-        // Верните false, чтобы указать, что данные представляют собой массив.
+        if (!isset($data['cache_key'])) {
+            $this->logError(__FUNCTION__, 'В значении очереди не определен ключ для кэширования', $data);
+            return true;
+        }
+
+        if (Cache::has($data['cache_key'])) {
+            $this->logError(__FUNCTION__, 'Такой ключ уже существует', $data);
+            return true;
+        }
+
         return false;
     }
 
     /**
-     * Проверьте, присутствует ли в данных ключ кэша.
+     * Логирует ошибки.
      *
-     * @param mixed $data Данные, которые необходимо проверить.
-     *
-     * @return bool True, если ключ кэша присутствует в данных, в противном случае — false.
+     * @param string $method
+     * @param string $message
+     * @param mixed $data
      */
-    private function checkCacheKeyInData($data): bool
+    protected function logError(string $method, string $message, $data): void
     {
-        // Проверьте, присутствует ли ключ кэша в данных
-        if (!isset($data['cache_key'])) {
-            // Зарегистрируйте ошибку и верните true, чтобы указать, что ключ кэша отсутствует в данных.
-            LoggerHelper::getLogger(class_basename($this) . '-' . __FUNCTION__)->error('В значении очереди не определен ключ для кэширования', [$data]);
-            return true;
-        }
-
-        // Верните false, чтобы указать, что ключ кэша присутствует в данных.
-        return false;
+        LoggerHelper::getLogger(class_basename($this) . '-' . $method)->error($message, [$data]);
     }
 }
