@@ -59,7 +59,7 @@ class BaseRabbitMQJob extends RabbitMQJob
      */
     protected function listenToDatabaseQueries(): void
     {
-        DB::listen(function ($sql) {
+        DB::listen(static function ($sql) {
             $key = $sql->time > 100 ? 'slow-query' : 'query';
             $sqlWithBindings = $sql->sql;
 
@@ -86,24 +86,21 @@ class BaseRabbitMQJob extends RabbitMQJob
     public function delete(): void
     {
         parent::delete();
-
-        $data = json_decode($this->getRawBody());
-
-        if ((is_array($data) && isset($data['cache_key'])) || (is_object($data) && isset($data->cache_key))) {
-            Cache::forget($data['cache_key']);
-        }
+        $this->clearCache();
+//        $this->resetStaticValues();
     }
 
     /**
-     * @param $e
+     * Обрабатывает ошибку и очищает кэш.
      *
+     * @param mixed $e
      * @return void
      */
     public function fail($e = null): void
     {
         parent::fail($e);
         $this->clearCache();
-        $this->resetStaticValues();
+//        $this->resetStaticValues();
     }
 
     /**
@@ -114,6 +111,23 @@ class BaseRabbitMQJob extends RabbitMQJob
         $data = json_decode($this->getRawBody(), true);
         if (isset($data['cache_key'])) {
             Cache::forget($data['cache_key']);
+        }
+    }
+
+    /**
+     * Возвращает статическим переменным их дефолтные значения.
+     */
+    protected function resetStaticValues(): void
+    {
+        foreach (BaseJob::$allStaticValues as $path => $statics) {
+            try {
+                $class = new $path();
+                foreach ($statics as $key => $value) {
+                    $class::$$key = $value;
+                }
+            } catch (Exception $e) {
+                LoggerHelper::getLogger('job-reset')->error($e);
+            }
         }
     }
 }
