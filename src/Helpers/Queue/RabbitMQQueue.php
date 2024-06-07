@@ -18,7 +18,7 @@ class RabbitMQQueue extends BaseQueue
      * @return mixed
      * @throws AMQPProtocolChannelException
      */
-    public function push($job, $data = '', string $queue = null)
+    public function push($job, $data = '', ?string $queue = null)
     {
         if ($this->isImmediateJob($job)) {
             return $this->pushRaw($this->createPayload($job, $queue, $data), $queue);
