@@ -29,101 +29,104 @@ class BaseRabbitMQJob extends RabbitMQJob
 
         // Проверяем, включено ли расширенное ведение журнала
         if (config('app.extended_log')) {
-            // Устанавливаем командную клавишу для ведения журнала
-            LoggerHelper::$commandKey = 'queue';
-
-            $payload = $message->getBody();
-
-            // Проверяем, не пуста ли полезная нагрузка
-            if ($payload) {
-                $jsonDecoded = json_decode($payload, true);
-
-                // Проверяем, установлен ли ключ 'job' в декодированном JSON
-                if (isset($jsonDecoded['job'])) {
-                    $path = explode('\\', $jsonDecoded['job']);
-                    $count = count($path);
-
-                    // Проверяем, существует ли последний элемент пути
-                    if (isset($path[$count - 1])) {
-                        // Устанавливаем ключ задания для регистрации
-                        LoggerHelper::$jobKey = strtolower($path[$count - 1]);
-                    }
-                }
-            }
-
-            // Прослушиваем запросы к базе данных и записываем их при необходимости
-            DB::listen(function ($sql) {
-                $key = $sql->time > 100 ? 'slow-query' : 'query';
-                $sqlWithBindings = $sql->sql;
-
-                if (LoggerHelper::$logQuery || $sql->time > 100) {
-                    foreach ($sql->bindings as $binding) {
-                        $value = is_numeric($binding) ? $binding : "'" . $binding . "'";
-                        $sqlWithBindings = preg_replace('/\?/', $value, $sqlWithBindings, 1);
-                    }
-
-                    LoggerHelper::getLogger($key)->debug(
-                        'SQL => ' . $sqlWithBindings . PHP_EOL .
-                        'TIME => ' . $sql->time . ' milliseconds' . PHP_EOL,
-                    );
-                }
-            });
+            $this->setupLogging($message);
+            $this->listenToDatabaseQueries();
         }
     }
 
     /**
+     * Настраивает ведение журнала для задания.
+     *
+     * @param AMQPMessage $message Экземпляр AMQPMessage.
+     */
+    protected function setupLogging($message): void
+    {
+        LoggerHelper::$commandKey = 'queue';
+        $payload = $message->getBody();
+
+        if ($payload) {
+            $jsonDecoded = json_decode($payload, true);
+            if (isset($jsonDecoded['job'])) {
+                $path = explode('\\', $jsonDecoded['job']);
+                $jobName = strtolower(end($path));
+                LoggerHelper::$jobKey = $jobName;
+            }
+        }
+    }
+
+    /**
+     * Слушает запросы к базе данных и записывает их при необходимости.
+     */
+    protected function listenToDatabaseQueries(): void
+    {
+        DB::listen(function ($sql) {
+            $key = $sql->time > 100 ? 'slow-query' : 'query';
+            $sqlWithBindings = $sql->sql;
+
+            if (LoggerHelper::$logQuery || $sql->time > 100) {
+                foreach ($sql->bindings as $binding) {
+                    $value = is_numeric($binding) ? $binding : "'{$binding}'";
+                    $sqlWithBindings = preg_replace('/\?/', $value, $sqlWithBindings, 1);
+                }
+
+                LoggerHelper::getLogger($key)->debug(
+                    "SQL => {$sqlWithBindings}" . PHP_EOL .
+                    "TIME => {$sql->time} milliseconds" . PHP_EOL
+                );
+            }
+        });
+    }
+
+    /**
+     * Удаляет задание из очереди и очищает кэш.
+     *
      * @return void
      * @throws BindingResolutionException
      */
     public function delete(): void
     {
         parent::delete();
-
-        $data = json_decode($this->getRawBody());
-
-        if ((is_array($data) && isset($data['cache_key'])) || (is_object($data) && isset($data->cache_key))) {
-            Cache::forget($data['cache_key']);
-        }
-
-        //Возвращаем статическим переменным их дефолтные значения
-        foreach (BaseJob::$allStaticValues as $path => $statics) {
-            try {
-                $class = new $path();
-
-                foreach ($statics as $key => $value) {
-                    $class::$$key = $value;
-                }
-            } catch (Exception $e) {
-                LoggerHelper::getLogger('job-delete')->error($e);
-            }
-        }
+        $this->clearCache();
+        $this->resetStaticValues();
     }
 
     /**
-     * @param $e
+     * Обрабатывает ошибку и очищает кэш.
      *
+     * @param mixed $e
      * @return void
      */
     public function fail($e = null): void
     {
         parent::fail($e);
+        $this->clearCache();
+        $this->resetStaticValues();
+    }
 
-        $data = json_decode($this->getRawBody());
-
-        if ((is_array($data) && isset($data['cache_key'])) || (is_object($data) && isset($data->cache_key))) {
+    /**
+     * Очищает кэш на основе ключа из данных задания.
+     */
+    protected function clearCache(): void
+    {
+        $data = json_decode($this->getRawBody(), true);
+        if (isset($data['cache_key'])) {
             Cache::forget($data['cache_key']);
         }
+    }
 
-        //Возвращаем статическим переменным их дефолтные значения
+    /**
+     * Возвращает статическим переменным их дефолтные значения.
+     */
+    protected function resetStaticValues(): void
+    {
         foreach (BaseJob::$allStaticValues as $path => $statics) {
             try {
                 $class = new $path();
-
                 foreach ($statics as $key => $value) {
                     $class::$$key = $value;
                 }
             } catch (Exception $e) {
-                LoggerHelper::getLogger('job-fail')->error($e);
+                LoggerHelper::getLogger('job-reset')->error($e);
             }
         }
     }
