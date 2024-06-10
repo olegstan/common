@@ -28,7 +28,7 @@ class RabbitMQQueue extends BaseQueue
             return false;
         }
 
-        Cache::add($data['cache_key'], true, 1440);
+        Cache::tags([config('cache.tags')])->add($data['cache_key'], true, 1440);
 
         return $this->pushRaw($this->createPayload($job, $queue, $data), $queue);
     }
