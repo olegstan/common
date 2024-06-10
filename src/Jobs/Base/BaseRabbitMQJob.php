@@ -110,7 +110,7 @@ class BaseRabbitMQJob extends RabbitMQJob
     {
         $data = json_decode($this->getRawBody(), true);
         if (isset($data['data']['cache_key'])) {
-            Cache::forget($data['data']['cache_key']);
+            Cache::tags([config('cache.tags')])->forget($data['data']['cache_key']);
         }
     }
 
