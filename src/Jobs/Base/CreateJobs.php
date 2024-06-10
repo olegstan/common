@@ -178,10 +178,10 @@ class CreateJobs
         // Если данные джобы это массив, сбросим ключи
         // В противном случае, нам надо сделать массив, что бы дальше дополнить данными
         $data = is_array($this->getData()) ? array_values($this->getData()) : [$this->getData()];
-        // Добавьте параметр «cache_key»
-        $data['cache_key'] = $this->getCacheKeyQueue();
         // Добавьте параметр uuid
         $data[] = $this->getUuid();
+        // Добавьте параметр «cache_key»
+        $data['cache_key'] = $this->getCacheKeyQueue();
 
         return $data;
     }

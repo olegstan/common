@@ -109,8 +109,8 @@ class BaseRabbitMQJob extends RabbitMQJob
     protected function clearCache(): void
     {
         $data = json_decode($this->getRawBody(), true);
-        if (isset($data['cache_key'])) {
-            Cache::forget($data['cache_key']);
+        if (isset($data['data']['cache_key'])) {
+            Cache::forget($data['data']['cache_key']);
         }
     }
 
