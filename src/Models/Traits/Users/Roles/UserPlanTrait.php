@@ -5,7 +5,7 @@ use App\Models\Accounts\UserAccountCurrency;
 use App\Models\Actives\Active;
 use App\Models\Actives\ActiveGoal;
 use App\Models\Actives\ActiveIncomeExpensesMonth;
-use App\Models\Actives\Incomes\Salary;
+use App\Models\UserPlan;
 use Carbon\Carbon;
 use Common\Models\Users\User;
 use DB;
@@ -40,16 +40,16 @@ trait UserPlanTrait
 
             for($n = 0; $n <= $diffYears; $n++)
             {
-                $salaryFound = Salary::where('user_id', $this->id)
+                $salaryFound = UserPlan::where('user_id', $this->id)
                     ->whereYear('buy_at', $helpDate->year)
                     ->first();
 
                 if(!$salaryFound)
                 {
                     /**
-                     * @var Salary $salary
+                     * @var UserPlan $salary
                      */
-                    $salary = Salary::create([
+                    $salary = UserPlan::create([
                         'user_id' => $this->id,
                         'payment_type_id' => Active::PERIOD,
                         'income' => 0,
@@ -80,7 +80,7 @@ trait UserPlanTrait
                 $helpDate->addYearNoOverflow();
             }
         }else{
-            Salary::where('user_id', $this->id)
+            UserPlan::where('user_id', $this->id)
                 ->whereYear('buy_at', '<', $startDate->year)
                 ->chunkById(1000, function ($items) use (&$deletedData)
                 {
@@ -135,7 +135,7 @@ trait UserPlanTrait
 
         $account = UserAccountCurrency::generateMainTempAccount($this->id, $this->currency_id);
 
-        $salaries = Salary::where('user_id', $this->id)
+        $salaries = UserPlan::where('user_id', $this->id)
             ->get();
 
         //TODO сделать блокировку если идёт апдейт по планированию, чтобы цифры не перетирали друг друга
@@ -185,7 +185,7 @@ trait UserPlanTrait
 
                 $account = UserAccountCurrency::generateMainTempAccount($this->id, $this->currency_id);
 
-                $firstSalary = Salary::where('user_id', $this->id)
+                $firstSalary = UserPlan::where('user_id', $this->id)
                     ->orderBy('buy_at')
                     ->first();
 
@@ -212,11 +212,11 @@ trait UserPlanTrait
                 {
                     $ages[] = $helpDate->format('Y-m-d H:i:s');
 
-                    $salary = Salary::where('user_id', $this->id)
+                    $salary = UserPlan::where('user_id', $this->id)
                         ->where('buy_at', $helpDate)
                         ->first();
 
-                    if(Salary::isRetire($this, $helpDate))
+                    if(UserPlan::isRetire($this, $helpDate))
                     {
                         if($salary)
                         {
@@ -272,7 +272,7 @@ trait UserPlanTrait
 
 
                     if (!$salary) {
-                        $salary = Salary::create([
+                        $salary = UserPlan::create([
                             'user_id' => $this->id,
                             'payment_type_id' => Active::PERIOD,
                             'income' => 0,
@@ -341,7 +341,7 @@ trait UserPlanTrait
                 }
             }
 
-            Salary::where('user_id', $this->id)
+            UserPlan::where('user_id', $this->id)
                 ->whereNotIn('buy_at', $ages)
                 ->where('buy_at', '>=', $startDate)
                 ->chunkById(1000, function ($items) use (&$deletedData) {
