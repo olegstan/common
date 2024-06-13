@@ -84,6 +84,7 @@ interface DefinitionActiveConst
     public const CHAT_MESSAGE = 41;
     public const CRM_ATON_SEND_FINBACK = 42;
     public const APN_MESSAGE = 43;
+    public const PHONE_CALL_RECORD_UPLOAD = 44;
 
 
 
