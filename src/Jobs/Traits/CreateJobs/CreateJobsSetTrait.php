@@ -119,7 +119,7 @@ trait CreateJobsSetTrait
     public function setPath($data): CreateJobs
     {
         $path = '';
-        if (array_key_exists('path', $data)) {
+        if (is_array($data) && array_key_exists('path', $data)) {
             $path = $data['path'];
         }
 
