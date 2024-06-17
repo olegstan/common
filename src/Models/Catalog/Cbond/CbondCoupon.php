@@ -72,8 +72,7 @@ class CbondCoupon extends BaseCatalog implements CouponInterface
         $percent = $this->valueprc;
         $couponfrequency = $this->item->couponfrequency;
 
-        if($couponfrequency > 0)
-        {
+        if ($couponfrequency > 0) {
             return $this->item->facevalue * $percent / $couponfrequency / 100;
         }
 
@@ -81,38 +80,43 @@ class CbondCoupon extends BaseCatalog implements CouponInterface
     }
 
     /**
+     * @param Currency $currency
+     *
      * @return float|null
      */
     public function getCouponValue(Currency $currency): ?float
     {
-        $bondCode = json_decode($this->item->faceunit);
-
+        $bondCodes = json_decode($this->item->faceunit);
         $percent = $this->valueprc;
-        $couponfrequency = $this->item->couponfrequency;
+        $couponFrequency = $this->item->couponfrequency;
 
-        if($couponfrequency > 0)
-        {
-            $value = $this->item->facevalue * $percent / $couponfrequency / 100;
-
-            if(isset($bondCode[0]))
-            {
-                $couponCurrency = Currency::getByCode($bondCode[0]);
-
-                if($currency->id === $couponCurrency->id)
-                {
-                    return $value;
-                }else{
-                    //если валюты отличаются то конвертим
-                    return $currency->convert(
-                        $value,
-                        $couponCurrency->id,
-                        $this->getCouponDate()
-                    );
-                }
-            }
+        if ($couponFrequency <= 0) {
+            return 0.0;
         }
 
-        return 0;
+        $faceValue = $this->item->facevalue;
+        $couponValue = $faceValue * $percent / $couponFrequency / 100;
+
+        if (empty($bondCodes) || !isset($bondCodes[0])) {
+            return 0.0;
+        }
+
+        $couponCurrency = Currency::getByCode($bondCodes[0]);
+
+        if (!$couponCurrency) {
+            return 0.0;
+        }
+
+        if ($currency->id === $couponCurrency->id) {
+            return $couponValue;
+        }
+
+        // Если валюты отличаются, конвертируем
+        return $currency->convert(
+            $couponValue,
+            $couponCurrency->id,
+            $this->getCouponDate(),
+        );
     }
 
     /**
