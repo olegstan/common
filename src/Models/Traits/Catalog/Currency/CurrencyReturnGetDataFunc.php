@@ -41,6 +41,11 @@ trait CurrencyReturnGetDataFunc
         return $this->char_code;
     }
 
+    public function getSecondSymbol()
+    {
+        return $this->char_code;
+    }
+
     public function getCodeCurrency()
     {
         return $this->char_code;

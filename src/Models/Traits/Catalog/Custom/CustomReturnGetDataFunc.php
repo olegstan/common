@@ -55,6 +55,14 @@ trait CustomReturnGetDataFunc
     }
 
     /**
+     * @return string
+     */
+    public function getSecondSymbol():string
+    {
+        return $this->name ?? $this->symbol;
+    }
+
+    /**
      * @return int
      */
     public function getType(): int

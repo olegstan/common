@@ -191,6 +191,11 @@ trait CbondReturnGetDataFunc
         return $this->isin ?? '';
     }
 
+    public function getSecondSymbol(): string
+    {
+        return $this->secid ?? '';
+    }
+
     public function getLotSize(): int
     {
         return $this->lotsize ?: 1;

@@ -70,6 +70,11 @@ trait YahooReturnGetDataFunc
         return $this->symbol;
     }
 
+    public function getSecondSymbol(): string
+    {
+        return $this->symbol;
+    }
+
     public function getLotSize(): int
     {
         return 1;
