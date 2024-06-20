@@ -201,6 +201,11 @@ trait MoexReturnGetDataFunc
         return $this->secid;
     }
 
+    public function getSecondSymbol(): string
+    {
+        return $this->isin;
+    }
+
     public function getLotSize(): int
     {
         return $this->lotsize ?: 1;

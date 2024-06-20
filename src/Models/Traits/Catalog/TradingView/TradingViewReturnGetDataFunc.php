@@ -33,6 +33,14 @@ trait TradingViewReturnGetDataFunc
     /**
      * @return string
      */
+    public function getSecondSymbol(): string
+    {
+        return $this->symbol;
+    }
+
+    /**
+     * @return string
+     */
     public function getIsinField(): string
     {
         return 'symbol';
