@@ -362,6 +362,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
     }
 
     /**
+     * @param Currency $currency
      * @param null $date
      * @return float
      */
@@ -371,13 +372,11 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             /**
              * @var FinexHistory $history
              */
-            $query = $this->finexHistory();
-
-            if ($date) {
-                $query->whereDate($this->getDateField(), '<=', $date);
-            }
-
-            $history = $query->where('close', '>', 0)
+            $history = $this->finexHistory()
+                ->when($date, function ($query) use ($date){
+                    $query->whereDate($this->getDateField(), '<=', $date);
+                })
+                ->where('close', '>', 0)
                 ->orderByDesc($this->getDateField())
                 ->first();
 
@@ -393,13 +392,11 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
             /**
              * @var MoscowExchangeHistory $history
              */
-            $query = $this->history();
-
-            if ($date) {
-                $query->whereDate($this->getDateField(), '<=', $date);
-            }
-
-            $history = $query->where('close', '>', 0)
+            $history = $this->history()
+                ->when($date, function ($query) use ($date){
+                    $query->whereDate($this->getDateField(), '<=', $date);
+                })
+                ->where('close', '>', 0)
                 ->orderByDesc($this->getDateField())
                 ->first();
 

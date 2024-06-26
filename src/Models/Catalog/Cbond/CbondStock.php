@@ -432,13 +432,11 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
             /**
              * @var CbondHistory $history
              */
-            $query = $this->history();
-            if($date)
-            {
-                $query->whereDate($this->getDateField(), '<=', $date);
-            }
-
-            $history = $query->where('close', '>', 0)
+            $history = $this->history()
+                ->when($date, function ($query) use ($date){
+                    $query->whereDate($this->getDateField(), '<=', $date);
+                })
+                ->where('close', '>', 0)
                 ->orderByDesc($this->getDateField())
                 ->first();
 

@@ -277,14 +277,11 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
             /**
              * @var YahooHistory $history
              */
-            $query = $this->history();
-
-            if($date)
-            {
-                $query->whereDate($this->getDateField(), '<=', $date);
-            }
-
-            $history = $query->orderByDesc($this->getDateField())
+            $history = $this->history()
+                ->when($date, function ($query) use ($date){
+                    $query->whereDate($this->getDateField(), '<=', $date);
+                })
+                ->orderByDesc($this->getDateField())
                 ->first();
 
             if($history)
