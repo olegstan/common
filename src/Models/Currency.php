@@ -85,10 +85,20 @@ class Currency extends BaseCatalog
             if ($this->code === self::RUB) {
                 $course = $this->getRubCourseByDate($convertCurrency, $date);
 
+                if(!$course)
+                {
+                    return $sum;
+                }
+
                 return $sum * $course->value / $course->nominal;
             }
 
             $course = $this->getRubCourseByDate($this, $date);
+
+            if(!$course)
+            {
+                return $sum;
+            }
 
             if ($convertCurrency->code === self::RUB) {
                 return $sum * (1 / $course->value / $course->nominal);
@@ -130,10 +140,20 @@ class Currency extends BaseCatalog
 
                 $course = $this->getRubCourseByDate($convertCurrency, $date);
 
+                if(!$course)
+                {
+                    return 1;
+                }
+
                 return floor($course->value / $course->nominal * 1000) / 1000;
             }
 
             $course = $this->getRubCourseByDate($this, $date);
+
+            if(!$course)
+            {
+                return 1;
+            }
 
             if ($convertCurrency->code === self::RUB) {
                 return floor((1 / $course->value / $course->nominal) * 1000) / 1000;
@@ -159,7 +179,7 @@ class Currency extends BaseCatalog
     {
         //Если к примеру передали золото, его не будет в базе курсов, поэтому возвращаем 1
         if (!isset($currency->cb_currency)) {
-            return 1;
+            return null;
         }
 
         //нельзя кешировать навсегда, так как мы пробуем получить курс из будущего, а в итоге
