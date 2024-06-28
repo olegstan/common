@@ -516,7 +516,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                     ->where('tv_tickers.exchange', '=', 'MOEX');
             })
             ->search($original, $text, $translitText)
-            ->whereNotIn('moscow_exchange_stocks', ['option', 'option_on_currency', 'option_on_shares'])
+            ->whereNotIn('moscow_exchange_stocks.type', ['option', 'option_on_currency', 'option_on_shares'])
             //->where('is_traded', '=', 1)//пусть все инструменты будут находиться чтобы не возникало коллизий
             ->orderByRaw('`tv_tickers`.`average_volume` DESC')
             ->orderByRaw(
