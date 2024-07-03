@@ -7,8 +7,8 @@ use Carbon\Carbon;
 use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\Base\CreateJobs;
-use Common\Jobs\MoscowExchangeDataJob;
-use Common\Jobs\MoscowExchangeJob;
+use Common\Jobs\Exchanges\MoscowExchangeDataJob;
+use Common\Jobs\Exchanges\MoscowExchangeJob;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Catalog\Finex\FinexHistory;
 use Common\Models\Currency;
@@ -20,10 +20,10 @@ use Common\Models\Traits\Catalog\MoscowExchange\MoexRelationshipsTrait;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexReturnGetDataFunc;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexScopeTrait;
 use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
-use Exception;
 
 /**
  * Class MoscowExchangeStock

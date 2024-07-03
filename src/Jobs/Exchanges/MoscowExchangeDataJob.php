@@ -1,6 +1,6 @@
 <?php
 
-namespace Common\Jobs;
+namespace Common\Jobs\Exchanges;
 
 use Carbon\Carbon;
 use Common\Helpers\Curls\TradingView\TradingViewCurl;

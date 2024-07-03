@@ -1,16 +1,16 @@
 <?php
 
-namespace Common\Jobs;
+namespace Common\Jobs\Exchanges;
 
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\Base\CreateJobs;
 use Common\Jobs\Base\Job;
+use Common\Jobs\TradingViewJob;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Exception;
 use Illuminate\Queue\Jobs\RedisJob;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Queue;
 use Throwable;
 
 

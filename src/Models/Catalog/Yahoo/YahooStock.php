@@ -7,8 +7,8 @@ use Carbon\Carbon;
 use Common\Helpers\Curls\Yahoo\YahooCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\Base\CreateJobs;
-use Common\Jobs\YahooDataJob;
-use Common\Jobs\YahooJob;
+use Common\Jobs\Exchanges\YahooDataJob;
+use Common\Jobs\Exchanges\YahooJob;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
@@ -20,7 +20,6 @@ use Common\Models\Traits\Catalog\Yahoo\YahooRelationshipsTrait;
 use Common\Models\Traits\Catalog\Yahoo\YahooReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Yahoo\YahooScopeTrait;
 use Exception;
-use Illuminate\Support\Facades\Queue;
 use Throwable;
 
 /**
