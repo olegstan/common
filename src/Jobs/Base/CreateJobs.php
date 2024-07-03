@@ -23,15 +23,6 @@ class CreateJobs
     private string $job_class;
 
     /**
-     * Тип джобы
-     * Указывается, если вызывается джоба из другого проекта
-     * И не можем определить фактический тип из файла
-     *
-     * @var int
-     */
-    private int $job_type;
-
-    /**
      * Переданные данные
      *
      * @var
@@ -130,14 +121,11 @@ class CreateJobs
             $self = new self($jobClass, $data, $connection);
             // Установить приоритет
             $self->setPriority($priority);
-            // Установите тип вызываемой джобы
-            $self->setJobType();
             // Установите ключ кэша
             $self->setCacheKeyQueue();
 
-            // Проверьте, существует ли тип задания
             // Поместите задание в очередь и верните результат
-            return $self->existsTypeJob() ? $self->push() : false;
+            return $self->push();
         } catch (Exception $e) {
             LoggerHelper::getLogger('create-jobs-' . __FUNCTION__)->error($e);
             return false;
@@ -184,29 +172,6 @@ class CreateJobs
         $data['cache_key'] = $this->getCacheKeyQueue();
 
         return $data;
-    }
-
-    /**
-     * Проверьте, существует ли тип задания.
-     *
-     * Этот метод проверяет, определен ли тип задания для данного класса заданий.
-     * Если тип задания не определен, оно регистрирует сообщение об ошибке и возвращает false.
-     * В противном случае он возвращает true.
-     *
-     * @return bool Возвращает true, если тип задания существует, в противном случае — false.
-     */
-    public function existsTypeJob(): bool
-    {
-        // Проверьте, определен ли тип задания
-        if ($this->getJobType() === 0) {
-            // Зарегистрировать сообщение об ошибке
-            LoggerHelper::getLogger('add-queue-' . $this->getPriority())
-                ->error('Для класса такой очереди не определен тип (' . $this->getJobClass() . ')');
-
-            return false;
-        }
-
-        return true;
     }
 
     /**
