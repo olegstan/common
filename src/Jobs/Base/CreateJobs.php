@@ -3,6 +3,7 @@
 namespace Common\Jobs\Base;
 
 use Common\Helpers\LoggerHelper;
+use Common\Jobs\JobsEvent;
 use Common\Jobs\LogJob\LogJobParser;
 use Common\Jobs\Traits\CreateJobs\CreateJobsGetTrait;
 use Common\Jobs\Traits\CreateJobs\CreateJobsSetTrait;
@@ -116,9 +117,10 @@ class CreateJobs
      */
     public static function create(string $jobClass, $data, string $priority = 'default', string $connection = '')
     {
+        // Создайте новый экземпляр задания
+        $self = new self($jobClass, $data, $connection);
+
         try {
-            // Создайте новый экземпляр задания
-            $self = new self($jobClass, $data, $connection);
             // Установить приоритет
             $self->setPriority($priority);
             // Установите ключ кэша
@@ -128,7 +130,7 @@ class CreateJobs
             return $self->push();
         } catch (Exception $e) {
             LoggerHelper::getLogger('create-jobs-' . __FUNCTION__)->error($e);
-            return false;
+            return $self->createEvent();
         }
     }
 
@@ -146,10 +148,33 @@ class CreateJobs
         // Если задание было успешно отправлено, создайте запись в журнале и верните UUID.
         if ($queue) {
             $this->createLogParse();
-            return $this->getUuid();
+            return $this->createEvent($queue);
         }
 
         // Если задание не удалось отправить, верните false
+        return $this->createEvent();
+    }
+
+    /**
+     * @param string|null $jobId
+     *
+     * @return false|string
+     */
+    public function createEvent(?string $jobId = null)
+    {
+        $data = $this->getData();
+
+        if (isset($data['job_type'])) {
+            $event = JobsEvent::create($this->getUserId(), $jobId, $data['job_type']);
+            $event->pending();
+        }
+
+        if ($jobId) {
+            isset($event) ? $event->pending() : false;
+            return $this->getUuid();
+        }
+
+        isset($event) ? $event->fail() : false;
         return false;
     }
 

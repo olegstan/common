@@ -51,13 +51,23 @@ class JobsEvent
     }
 
     /**
-     * Запустите задание и инициализируйте кэш.
+     * Оповестите, что задание находится в очереди и инициализируйте кэш
+     *
+     * @return void
+     */
+    public function pending(): void
+    {
+        Cache::tags(config('cache.tags'))->forever('job_id.' . $this->jobId, 0);
+        $this->updateJobStatus(self::PENDING);
+    }
+
+    /**
+     * Запустите задание.
      *
      * @return void
      */
     public function start(): void
     {
-        Cache::tags(config('cache.tags'))->forever('job_id.' . $this->jobId, 0);
         $this->updateJobStatus(self::STARTED);
     }
 
@@ -98,7 +108,7 @@ class JobsEvent
      */
     public function processing(int $done, int $counts): void
     {
-        $round = round($done / $counts * 100, 1);
+        $round = round($counts * 100 / $done, 1);
         Cache::tags(config('cache.tags'))->forever('job_id.' . $this->jobId, $round);
         $this->updateJobStatus(self::PROCESSING, time());
     }
