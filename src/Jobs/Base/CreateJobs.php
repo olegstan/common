@@ -166,7 +166,6 @@ class CreateJobs
 
         if (isset($data['job_type'])) {
             $event = JobsEvent::create($this->getUserId(), $jobId, $data['job_type']);
-            $event->pending();
         }
 
         if ($jobId) {
