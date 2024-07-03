@@ -127,8 +127,16 @@ class JobsEvent
             $percent = Cache::tags(config('cache.tags'))->get('job_id.' . $this->jobId);
 
             try {
-                event(new JobsStatus($this->userId, 'client', $this->jobType, $percent, $status));
-                event(new JobsStatus($this->userId, 'manager', $this->jobType, $percent, $status));
+                $data = [
+                    'user_id' => $this->userId,
+                    'job_type' => $this->jobType,
+                    'percent' => $percent,
+                    'status' => $status,
+                    'job_id' => $this->jobId,
+                ];
+
+                event(new JobsStatus($data, 'client'));
+                event(new JobsStatus($data, 'manager'));
             } catch (Exception $e) {
                 LoggerHelper::getLogger('jobsevent')->error($e);
             }
