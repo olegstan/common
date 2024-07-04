@@ -16,16 +16,6 @@ trait CreateJobsGetTrait
     }
 
     /**
-     * Получить тип джобы
-     *
-     * @return int
-     */
-    public function getJobType(): int
-    {
-        return $this->job_type;
-    }
-
-    /**
      * Получите данные джобы.
      *
      * @return mixed The data.

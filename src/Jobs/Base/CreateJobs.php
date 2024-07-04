@@ -1,8 +1,10 @@
 <?php
 
+
 namespace Common\Jobs\Base;
 
 use Common\Helpers\LoggerHelper;
+use Common\Jobs\JobsEvent;
 use Common\Jobs\LogJob\LogJobParser;
 use Common\Jobs\Traits\CreateJobs\CreateJobsGetTrait;
 use Common\Jobs\Traits\CreateJobs\CreateJobsSetTrait;
@@ -21,15 +23,6 @@ class CreateJobs
      * @var string
      */
     private string $job_class;
-
-    /**
-     * Тип джобы
-     * Указывается, если вызывается джоба из другого проекта
-     * И не можем определить фактический тип из файла
-     *
-     * @var int
-     */
-    private int $job_type;
 
     /**
      * Переданные данные
@@ -125,22 +118,20 @@ class CreateJobs
      */
     public static function create(string $jobClass, $data, string $priority = 'default', string $connection = '')
     {
+        // Создайте новый экземпляр задания
+        $self = new self($jobClass, $data, $connection);
+
         try {
-            // Создайте новый экземпляр задания
-            $self = new self($jobClass, $data, $connection);
             // Установить приоритет
             $self->setPriority($priority);
-            // Установите тип вызываемой джобы
-            $self->setJobType();
             // Установите ключ кэша
             $self->setCacheKeyQueue();
 
-            // Проверьте, существует ли тип задания
             // Поместите задание в очередь и верните результат
-            return $self->existsTypeJob() ? $self->push() : false;
+            return $self->push();
         } catch (Exception $e) {
             LoggerHelper::getLogger('create-jobs-' . __FUNCTION__)->error($e);
-            return false;
+            return $self->createEvent();
         }
     }
 
@@ -158,10 +149,32 @@ class CreateJobs
         // Если задание было успешно отправлено, создайте запись в журнале и верните UUID.
         if ($queue) {
             $this->createLogParse();
-            return $this->getUuid();
+            return $this->createEvent($queue);
         }
 
         // Если задание не удалось отправить, верните false
+        return $this->createEvent();
+    }
+
+    /**
+     * @param string|null $jobId
+     *
+     * @return false|string
+     */
+    public function createEvent(?string $jobId = null)
+    {
+        $data = $this->getData();
+
+        if (isset($data['job_type'])) {
+            $event = JobsEvent::create($this->getUserId(), $jobId, $data['job_type']);
+        }
+
+        if ($jobId) {
+            isset($event) ? $event->pending() : false;
+            return $this->getUuid();
+        }
+
+        isset($event) ? $event->fail() : false;
         return false;
     }
 
@@ -184,29 +197,6 @@ class CreateJobs
         $data['cache_key'] = $this->getCacheKeyQueue();
 
         return $data;
-    }
-
-    /**
-     * Проверьте, существует ли тип задания.
-     *
-     * Этот метод проверяет, определен ли тип задания для данного класса заданий.
-     * Если тип задания не определен, оно регистрирует сообщение об ошибке и возвращает false.
-     * В противном случае он возвращает true.
-     *
-     * @return bool Возвращает true, если тип задания существует, в противном случае — false.
-     */
-    public function existsTypeJob(): bool
-    {
-        // Проверьте, определен ли тип задания
-        if ($this->getJobType() === 0) {
-            // Зарегистрировать сообщение об ошибке
-            LoggerHelper::getLogger('add-queue-' . $this->getPriority())
-                ->error('Для класса такой очереди не определен тип (' . $this->getJobClass() . ')');
-
-            return false;
-        }
-
-        return true;
     }
 
     /**
