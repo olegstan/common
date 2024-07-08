@@ -21,6 +21,7 @@ class JobsEvent
     private int $userId;
     private string $jobId;
     private int $jobType;
+    private int $accountId;
 
     /**
      * Конструктор JobsEvent.
@@ -103,12 +104,15 @@ class JobsEvent
      *
      * @param int $done
      * @param int $counts
+     * @param ?int $accountId
      *
      * @return void
      */
-    public function processing(int $done, int $counts): void
+    public function processing(int $done, int $counts, ?int $accountId = null): void
     {
         $round = round($counts * 100 / $done, 1);
+        $this->accountId = $accountId;
+
         Cache::tags(config('cache.tags'))->forever('job_id.' . $this->jobId, $round);
         $this->updateJobStatus(self::PROCESSING, time());
     }
@@ -133,6 +137,7 @@ class JobsEvent
                     'percent' => $percent,
                     'status' => $status,
                     'job_id' => $this->jobId,
+                    'account_id' => $this->accountId,
                 ];
 
                 event(new JobsStatus($data, 'client'));

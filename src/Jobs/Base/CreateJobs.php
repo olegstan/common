@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Common\Jobs\Base;
 
 use Common\Helpers\LoggerHelper;
