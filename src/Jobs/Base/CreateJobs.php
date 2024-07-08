@@ -171,7 +171,7 @@ class CreateJobs
 
         if ($jobId) {
             isset($event) ? $event->pending() : false;
-            return $this->getUuid();
+            return $jobId;
         }
 
         isset($event) ? $event->fail() : false;
