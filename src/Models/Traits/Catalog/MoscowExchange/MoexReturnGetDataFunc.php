@@ -299,7 +299,7 @@ trait MoexReturnGetDataFunc
 
     public function getSymbolName(): string
     {
-        return trim($this->name . ' ' . $this->secid);
+        return trim($this->name . ' ' . $this->secid . ' ' . $this->isin);
     }
 
     public function getUserId(): string
