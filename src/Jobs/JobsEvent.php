@@ -21,7 +21,7 @@ class JobsEvent
     private int $userId;
     private string $jobId;
     private int $jobType;
-    private int $accountId;
+    private int $accountId = null;
 
     /**
      * Конструктор JobsEvent.
