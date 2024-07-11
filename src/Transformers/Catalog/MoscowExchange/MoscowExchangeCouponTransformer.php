@@ -4,6 +4,7 @@ namespace Common\Transformers\Catalog\MoscowExchange;
 
 use Cache;
 use Carbon\Carbon;
+use Common\Helpers\CatalogCache;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeCoupon;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use LaravelRest\Http\Transformers\BaseTransformer;
@@ -19,10 +20,7 @@ class MoscowExchangeCouponTransformer extends BaseTransformer
         /**
          * @var MoscowExchangeStock $parent
          */
-        $parent = Cache::tags([config('cache.tags')])->remember('moex.' . $model->moex_stock_id, Carbon::now()->addDay(), function () use ($model)
-        {
-            return MoscowExchangeStock::firstWhere('id', $model->moex_stock_id);
-        });
+        $parent = CatalogCache::getMoexItem($model);
 
         $currencyId = null;
         if($parent)

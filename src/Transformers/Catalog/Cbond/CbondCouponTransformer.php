@@ -4,6 +4,7 @@ namespace Common\Transformers\Catalog\Cbond;
 
 use Cache;
 use Carbon\Carbon;
+use Common\Helpers\CatalogCache;
 use Common\Models\Catalog\Cbond\CbondCoupon;
 use Common\Models\Catalog\Cbond\CbondStock;
 use LaravelRest\Http\Transformers\BaseTransformer;
@@ -19,10 +20,7 @@ class CbondCouponTransformer extends BaseTransformer
         /**
          * @var CbondStock $parent
          */
-        $parent = Cache::tags([config('cache.tags')])->remember('cbond.' . $model->cbond_stock_id, Carbon::now()->addDay(), function () use ($model)
-        {
-            return CbondStock::firstWhere('id', $model->cbond_stock_id);
-        });
+        $parent = CatalogCache::getCbondItem($model);
 
         $currencyId = null;
         if($parent)

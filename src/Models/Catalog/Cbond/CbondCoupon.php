@@ -3,6 +3,7 @@
 namespace Common\Models\Catalog\Cbond;
 
 use Carbon\Carbon;
+use Common\Helpers\CatalogCache;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CouponInterface;
@@ -69,11 +70,13 @@ class CbondCoupon extends BaseCatalog implements CouponInterface
      */
     public function getValue(): ?float
     {
+        $item = CatalogCache::getCbondItem($this);
+
         $percent = $this->valueprc;
-        $couponfrequency = $this->item->couponfrequency;
+        $couponfrequency = $item->couponfrequency;
 
         if ($couponfrequency > 0) {
-            return $this->item->facevalue * $percent / $couponfrequency / 100;
+            return $item->facevalue * $percent / $couponfrequency / 100;
         }
 
         return 0;
