@@ -4,29 +4,41 @@ namespace Common\Helpers;
 use Cache;
 use Carbon\Carbon;
 use Common\Models\Catalog\Cbond\CbondStock;
+use Common\Models\Catalog\Currency\CbCurrency;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 
 class CatalogCache
 {
     /**
-     * @var CbondStock $parent
+     * @var $id
      */
-   public static function getCbondItem($model)
+   public static function getCbondItem($id)
    {
-       return Cache::tags([config('cache.tags')])->remember('catalog.cbond.' . $model->cbond_stock_id, Carbon::now()->addDay(), function () use ($model)
+       return Cache::tags([config('cache.tags')])->remember('catalog.cbond.' . $id, Carbon::now()->addDay(), function () use ($id)
        {
-           return CbondStock::firstWhere('id', $model->cbond_stock_id);
+           return CbondStock::firstWhere('id', $id);
        });
    }
 
     /**
-     * @var MoscowExchangeStock $parent
+     * @var $id
      */
-   public static function getMoexItem($model)
+   public static function getMoexItem($id)
    {
-       return Cache::tags([config('cache.tags')])->remember('catalog.moex.' . $model->moex_stock_id, Carbon::now()->addDay(), function () use ($model)
+       return Cache::tags([config('cache.tags')])->remember('catalog.moex.' . $id, Carbon::now()->addDay(), function () use ($id)
        {
-           return MoscowExchangeStock::firstWhere('id', $model->moex_stock_id);
+           return MoscowExchangeStock::firstWhere('id', $id);
+       });
+   }
+
+    /**
+     * @var $code
+     */
+   public static function getCbCurrency($code)
+   {
+       return Cache::tags([config('cache.tags')])->remember('catalog.cb.' . $code, Carbon::now()->addDay(), function () use ($code)
+       {
+           return CbCurrency::firstWhere('char_code', $code);
        });
    }
 }

@@ -4,6 +4,7 @@ namespace Common\Models;
 
 use Cache;
 use Carbon\Carbon;
+use Common\Helpers\CatalogCache;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Catalog\Currency\CbCurrency;
@@ -178,20 +179,24 @@ class Currency extends BaseCatalog
     public function getRubCourseByDate($currency, Carbon $date)
     {
         //Если к примеру передали золото, его не будет в базе курсов, поэтому возвращаем 1
-        if (!isset($currency->cb_currency)) {
+        //плохо проверять $currency->cb_currency так как будет подзапрос к БД
+
+        $cbCurrency = CatalogCache::getCbCurrency($currency->code);
+
+        if (!$cbCurrency) {
             return null;
         }
 
         //нельзя кешировать навсегда, так как мы пробуем получить курс из будущего, а в итоге
         //возвращаем самый последний, если кэш будет бессрочным, то курс устареет и будет показывать
         //неправильные данные
-        $cacheString = 'cb_currency.' . $currency->cb_currency->id . ':date.' . $date->format('Y-m-d');
+        $cacheString = 'cb_currency.' . $cbCurrency->id . ':date.' . $date->format('Y-m-d');
 
         return Cache::tags([config('cache.tags')])->remember(
             $cacheString,
             Carbon::now()->addDay(),
-            static function () use ($currency, $date) {
-                return CbHistoryCurrencyCourse::where('currency_id', $currency->cb_currency->id)
+            static function () use ($currency, $cbCurrency, $date) {
+                return CbHistoryCurrencyCourse::where('currency_id', $cbCurrency->id)
                     ->where('date', '<', $date->format('Y-m-d'))
                     ->orderBy('date', 'DESC')
                     ->first();
