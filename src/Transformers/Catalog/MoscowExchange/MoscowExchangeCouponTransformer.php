@@ -20,7 +20,7 @@ class MoscowExchangeCouponTransformer extends BaseTransformer
         /**
          * @var MoscowExchangeStock $parent
          */
-        $parent = CatalogCache::getMoexItem($model);
+        $parent = CatalogCache::getMoexItem($model->moex_stock_id);
 
         $currencyId = null;
         if($parent)

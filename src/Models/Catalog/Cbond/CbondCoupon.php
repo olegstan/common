@@ -70,7 +70,7 @@ class CbondCoupon extends BaseCatalog implements CouponInterface
      */
     public function getValue(): ?float
     {
-        $item = CatalogCache::getCbondItem($this);
+        $item = CatalogCache::getCbondItem($this->cbond_stock_id);
 
         $percent = $this->valueprc;
         $couponfrequency = $item->couponfrequency;

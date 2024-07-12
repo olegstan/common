@@ -20,7 +20,7 @@ class CbondCouponTransformer extends BaseTransformer
         /**
          * @var CbondStock $parent
          */
-        $parent = CatalogCache::getCbondItem($model);
+        $parent = CatalogCache::getCbondItem($model->cbond_stock_id);
 
         $currencyId = null;
         if($parent)
