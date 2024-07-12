@@ -764,8 +764,8 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                 ->get();
 
             foreach ($data as $datum) {
-                $coupon = $coupons->where('coupondate', '=', $datum['coupondate'])
-                    ->first();
+                $date = Carbon::createFromFormat('Y-m-d H:i:s', $datum['coupondate'] . '00:00:00');
+                $coupon = $coupons->where('coupondate', $date);
 
                 if (!$coupon) {
                     $datum['moex_stock_id'] = $stock->id;
