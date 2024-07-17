@@ -47,10 +47,10 @@ trait CreateJobsSetTrait
         // Проверяем, существует ли ключ 'user_id' в данных джобы
         if (is_array($data) && array_key_exists('user_id', $data)) {
             $userId = $data['user_id'];
-        } elseif (is_array($data) && is_numeric($data[0])) {
+        } elseif (is_array($data) && is_numeric($data[array_key_first($data)])) {
             // Если ключ user_id не существует, проверьте, является ли первое значение числовым.
             // По старой логике первое значение всегда было идентификатором пользователя
-            $userId = $data[0];
+            $userId = $data[array_key_first($data)];
         } elseif (is_numeric($data)) {
             $userId = $data;
         } else {
@@ -124,7 +124,7 @@ trait CreateJobsSetTrait
     {
         $this->cache_key_queue = 'queue_' . $this->getPriority() .
             '_' . $this->getUserId() .
-            '_' . $this->getJobClass();
+            '_' . class_basename($this->getJobClass());
 
         return $this;
     }
