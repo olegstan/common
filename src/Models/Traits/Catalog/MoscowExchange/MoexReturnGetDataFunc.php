@@ -297,11 +297,22 @@ trait MoexReturnGetDataFunc
         return $this->id;
     }
 
+    /**
+     * @return string
+     */
     public function getSymbolName(): string
     {
-        return trim($this->name . ' ' . $this->secid . ' ' . $this->isin);
+        if($this->secid !== $this->isin)
+        {
+            return trim($this->name . ' ' . $this->secid . ' ' . $this->isin);
+        }
+
+        return trim($this->name . ' ' . $this->secid);
     }
 
+    /**
+     * @return string
+     */
     public function getUserId(): string
     {
         return '';
