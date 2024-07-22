@@ -87,7 +87,6 @@ class BaseRabbitMQJob extends RabbitMQJob
     {
         parent::delete();
         $this->clearCache();
-//        $this->resetStaticValues();
     }
 
     /**
@@ -100,7 +99,6 @@ class BaseRabbitMQJob extends RabbitMQJob
     {
         parent::fail($e);
         $this->clearCache();
-//        $this->resetStaticValues();
     }
 
     /**
@@ -111,23 +109,6 @@ class BaseRabbitMQJob extends RabbitMQJob
         $data = json_decode($this->getRawBody(), true);
         if (isset($data['data']['cache_key'])) {
             Cache::tags([config('cache.tags')])->forget($data['data']['cache_key']);
-        }
-    }
-
-    /**
-     * Возвращает статическим переменным их дефолтные значения.
-     */
-    protected function resetStaticValues(): void
-    {
-        foreach (BaseJob::$allStaticValues as $path => $statics) {
-            try {
-                $class = new $path();
-                foreach ($statics as $key => $value) {
-                    $class::$$key = $value;
-                }
-            } catch (Exception $e) {
-                LoggerHelper::getLogger('job-reset')->error($e);
-            }
         }
     }
 }
