@@ -118,10 +118,10 @@ class CreateJobs
      */
     public static function create(string $jobClass, $data, string $priority = 'default', string $connection = '')
     {
-        // Создайте новый экземпляр задания
-        $self = new self($jobClass, $data, $connection);
-
         try {
+            // Создайте новый экземпляр задания
+            $self = new self($jobClass, $data, $connection);
+
             // Установить приоритет
             $self->setPriority($priority);
             // Установите ключ кэша
@@ -131,7 +131,6 @@ class CreateJobs
             return $self->push();
         } catch (Exception $e) {
             LoggerHelper::getLogger('create-jobs-' . __FUNCTION__)->error($e);
-            return $self->createEvent();
         }
     }
 
@@ -165,16 +164,13 @@ class CreateJobs
     {
         $data = $this->getData();
 
-        if (isset($data['job_type'])) {
+        if (isset($data['job_type']) && $jobId) {
             $event = JobsEvent::create($this->getUserId(), $jobId, $data['job_type']);
-        }
+            $event->pending();
 
-        if ($jobId) {
-            isset($event) ? $event->pending() : false;
             return $jobId;
         }
 
-        isset($event) ? $event->fail() : false;
         return false;
     }
 
