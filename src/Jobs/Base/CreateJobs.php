@@ -131,6 +131,7 @@ class CreateJobs
             return $self->push();
         } catch (Exception $e) {
             LoggerHelper::getLogger('create-jobs-' . __FUNCTION__)->error($e);
+            return false;
         }
     }
 
