@@ -9,7 +9,6 @@ use App\Models\Crm\Contact\CrmContact;
 use App\Models\Crm\CrmApplication;
 use Carbon\Carbon;
 use Common\Models\Traits\Users\Roles\Client\DividendTrait;
-use Common\Models\Traits\Users\Roles\Client\TacticsTrait;
 use Common\Models\Traits\Users\Roles\Client\TransactionTrait;
 use Common\Models\Traits\Users\Roles\Client\ValueTrait;
 use Common\Models\Traits\Users\Roles\UserRelationsTrait;
@@ -32,7 +31,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Client extends User
 {
     use StrategyTrait;
-    use TacticsTrait;
     use TransactionTrait;
     use ValueTrait;
     use DividendTrait;
