@@ -159,9 +159,9 @@ class CreateJobs
     /**
      * @param string|null $jobId
      *
-     * @return false|string
+     * @return string
      */
-    public function createEvent(?string $jobId = null)
+    public function createEvent(?string $jobId = null): ?string
     {
         $data = $this->getData();
 
@@ -172,7 +172,7 @@ class CreateJobs
             return $jobId;
         }
 
-        return false;
+        return $jobId;
     }
 
     /**
