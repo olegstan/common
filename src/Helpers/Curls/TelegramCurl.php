@@ -34,7 +34,7 @@ class TelegramCurl extends Curl
      *
      * @var string
      */
-    public const FIN_ERROR_CHAT_ID = '-2245845350';
+    public const FIN_ERROR_CHAT_ID = '-1002245845350';
 
     /**
      * @param $text
