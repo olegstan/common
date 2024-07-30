@@ -143,7 +143,7 @@ class JobsEvent
                 event(new JobsStatus($data, 'client'));
                 event(new JobsStatus($data, 'manager'));
             } catch (Exception $e) {
-                LoggerHelper::getLogger('jobsevent')->error($e);
+                LoggerHelper::getLogger('jobsevent')->error($e->getMessage());
             }
 
             $this->time = $time;
