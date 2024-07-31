@@ -131,17 +131,21 @@ class JobsEvent
             $percent = Cache::tags(config('cache.tags'))->get('job_id.' . $this->jobId);
 
             try {
-                $data = [
-                    'user_id' => $this->userId,
-                    'job_type' => $this->jobType,
-                    'percent' => $percent,
-                    'status' => $status,
-                    'job_id' => $this->jobId,
-                    'account_id' => $this->accountId,
-                ];
+                //для каталога это логика не нужна, там и класса этого нет
+                if(class_exists(JobsStatus::class))
+                {
+                    $data = [
+                        'user_id' => $this->userId,
+                        'job_type' => $this->jobType,
+                        'percent' => $percent,
+                        'status' => $status,
+                        'job_id' => $this->jobId,
+                        'account_id' => $this->accountId,
+                    ];
 
-                event(new JobsStatus($data, 'client'));
-                event(new JobsStatus($data, 'manager'));
+                    event(new JobsStatus($data, 'client'));
+                    event(new JobsStatus($data, 'manager'));
+                }
             } catch (Exception $e) {
                 LoggerHelper::getLogger('jobsevent')->error($e->getMessage());
             }
