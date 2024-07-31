@@ -2,7 +2,6 @@
 
 namespace Common\Jobs;
 
-use App\Events\JobsStatus;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
@@ -132,7 +131,7 @@ class JobsEvent
 
             try {
                 //для каталога это логика не нужна, там и класса этого нет
-                if(class_exists(JobsStatus::class))
+                if(class_exists(App\Events\JobsStatus::class))
                 {
                     $data = [
                         'user_id' => $this->userId,
@@ -143,8 +142,8 @@ class JobsEvent
                         'account_id' => $this->accountId,
                     ];
 
-                    event(new JobsStatus($data, 'client'));
-                    event(new JobsStatus($data, 'manager'));
+                    event(new App\Events\JobsStatus($data, 'client'));
+                    event(new App\Events\JobsStatus($data, 'manager'));
                 }
             } catch (Exception $e) {
                 LoggerHelper::getLogger('jobsevent')->error($e->getMessage());
