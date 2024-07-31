@@ -266,13 +266,26 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         if (in_array($this->type, DefinitionMoexConst::BOND_VALUES)) {
             $bondCurrencyId = $this->getCurrency();
 
+            $matDate = null;
+
+            if($this->matdate)
+            {
+                $matDateCarbon = Carbon::createFromFormat('Y-m-d', $this->matdate)->startOfDay();
+                $oldDateCarbon = Carbon::createFromFormat('Y-m-d', '1000-01-01');//очень старая дата для сравнения, если дата погашения больше чем она, значит дата валидна
+
+                if($matDateCarbon->isValid() && $matDateCarbon->greaterThan($oldDateCarbon))
+                {
+                    $matDate = $matDateCarbon;
+                }
+            }
+
             return $classes['obligation']::create([
                 'user_id' => $userId,
                 'group_type_id' => DefinitionActiveConst::OBLIGATION_GROUP_TYPE,
                 'buy_sum' => $this->facevalue,
                 'buy_currency_id' => $bondCurrencyId,
                 'buy_account_id' => $accountId,
-                'sell_at' => $this->matdate ? Carbon::createFromFormat('Y-m-d', $this->matdate)->startOfDay() : null,
+                'sell_at' => $matDate,
                 'rate_period_type_id' => $this->getCouponFrequency(),
                 'rate' => $this->couponpercent,
                 'item_type' => $this->getMorphClass(),

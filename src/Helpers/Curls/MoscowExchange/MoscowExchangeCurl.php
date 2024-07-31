@@ -322,6 +322,7 @@ class MoscowExchangeCurl
             //https://iss.moex.com/iss/securities/RU000A100ZP9.json?limit=1
             //https://iss.moex.com/iss/securities/RU000A105WJ8.json?limit=1
             //https://iss.moex.com/iss/securities/RU000A0ZZCD8.json?limit=1
+            //https://iss.moex.com/iss/securities/RU000A108YZ4.json?limit=1//бессрочная облигация без даты matdate
 
             $response = Curl::get(self::API_URL . 'securities/' . $code . '.json', [
                 'lang' => $lang,
@@ -496,6 +497,7 @@ class MoscowExchangeCurl
     {
         try {
             //example https://iss.moex.com/iss/securities/RU000A102G01/bondization.xml
+            //example https://iss.moex.com/iss/securities/XS2393688598/bondization.xml
             $response = Curl::get(self::API_URL . 'securities/' . $code . '/bondization.json', [
                 'lang' => $lang,
                 'iss.meta' => 'off',
