@@ -2,13 +2,14 @@
 
 namespace Common\Models\Users\Roles;
 
+use Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class PermissionUser
  * @package Common\Models\Users\Roles
  */
-class PermissionUser extends Model
+class PermissionUser extends BaseModel
 {
     /**
      * @var string 
