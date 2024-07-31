@@ -51,7 +51,6 @@ trait UserPlanTrait
                      */
                     $salary = UserPlan::create([
                         'user_id' => $this->id,
-                        'payment_type_id' => Active::PERIOD,
                         'income' => 0,
                         'income_neutral' => 0,
                         'income_negative' => 0,
@@ -274,7 +273,6 @@ trait UserPlanTrait
                     if (!$salary) {
                         $salary = UserPlan::create([
                             'user_id' => $this->id,
-                            'payment_type_id' => Active::PERIOD,
                             'income' => 0,
                             'income_neutral' => $incomeNeutral,
                             'income_negative' => $incomeNegative,
