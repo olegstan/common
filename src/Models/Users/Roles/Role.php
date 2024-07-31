@@ -12,6 +12,11 @@ class Role extends BaseModel
     use Slugable, RoleHasRelations;
 
     /**
+     * @var string
+     */
+    public $table = 'roles';
+
+    /**
      * В методе getRoles() как-то криво сделано, что в дальнейших методах ищется айдишник, а из-за fillable он не создается,
      * так что id должен присутствовать
      *

@@ -18,6 +18,11 @@ class Permission extends BaseModel
     use Slugable, PermissionHasRelations;
 
     /**
+     * @var string
+     */
+    public $table = 'permissions';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
