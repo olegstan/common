@@ -2,6 +2,7 @@
 
 namespace Common\Models\Users\Roles;
 
+use Common\Models\BaseModel;
 use Common\Models\Traits\Users\Roles\PermissionHasRelations;
 use Common\Models\Traits\Users\Roles\Slugable;
 use Illuminate\Database\Eloquent\Model;
@@ -12,9 +13,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property $description
  * @property $model
  */
-class Permission extends Model
+class Permission extends BaseModel
 {
     use Slugable, PermissionHasRelations;
+
+    /**
+     * @var string
+     */
+    public $table = 'permissions';
 
     /**
      * The attributes that are mass assignable.
