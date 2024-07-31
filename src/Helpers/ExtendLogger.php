@@ -27,7 +27,7 @@ class ExtendLogger extends Logger
                 ];
             }
 
-            TelegramCurl::postMessage(TelegramCurl::captionForFile($arrayMess), TelegramCurl::FIN_ERROR_CHAT_ID);
+            TelegramCurl::postMessage(TelegramCurl::captionForFile($arrayMess) . "\n" . config('app.url'), TelegramCurl::FIN_ERROR_CHAT_ID);
         }
     }
 }
