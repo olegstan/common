@@ -2,12 +2,12 @@
 namespace Common\Models\Traits\Users;
 
 use App\Helpers\Active\ActiveHelper;
-use App\Helpers\JobsEvent;
 use App\Models\Accounts\UserAccountCurrency;
 use App\Models\Actives\Active;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
+use Common\Jobs\JobsEvent;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Users\Roles\Types\Client;
 use Exception;
@@ -143,6 +143,7 @@ trait StrategyTrait
             {
 
             }
+
             /**
              * @var Active[] $actives
              */
