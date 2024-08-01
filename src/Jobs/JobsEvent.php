@@ -109,11 +109,14 @@ class JobsEvent
      */
     public function processing(int $done, int $counts, ?int $accountId = null): void
     {
-        $round = round($counts * 100 / $done, 1);
-        $this->accountId = $accountId;
+        if($done > 0)
+        {
+            $round = round($counts * 100 / $done, 1);
+            $this->accountId = $accountId;
 
-        Cache::tags(config('cache.tags'))->forever('job_id.' . $this->jobId, $round);
-        $this->updateJobStatus(self::PROCESSING, time());
+            Cache::tags(config('cache.tags'))->forever('job_id.' . $this->jobId, $round);
+            $this->updateJobStatus(self::PROCESSING, time());
+        }
     }
 
     /**
