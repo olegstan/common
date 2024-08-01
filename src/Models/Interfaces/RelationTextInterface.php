@@ -73,6 +73,16 @@ interface RelationTextInterface
         self::BCS_COMMISSION,
     ];
 
+    public const TRADES = [
+        self::ACTIVE_TRADE,
+        self::ACTIVE_TRADE_COMMISSION,
+    ];
+
+    public const TRANSFERS = [
+        self::TRANSFER,
+        self::TRANSFER_COMMISSION,
+    ];
+
     public const ACTIVE = 'active';
     public const ACTIVE_PAYMENT = 'active.payment';
     public const ACTIVE_INVEST = 'active.invest';
