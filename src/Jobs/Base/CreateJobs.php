@@ -138,9 +138,9 @@ class CreateJobs
     /**
      * Помещает задание в очередь.
      *
-     * @return false|string UUID отправленного задания в случае успеха, в противном случае — false.
+     * @return string UUID отправленного задания в случае успеха, в противном случае — false.
      */
-    public function push()
+    public function push(): ?string
     {
         // Поместите задание в очередь с указанным приоритетом и данными.
         $queue = Queue::connection($this->getConnectionName())

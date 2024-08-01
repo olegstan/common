@@ -34,8 +34,9 @@ class RabbitMQQueue extends BaseQueue
     }
 
     /**
-     * Проверьте, является ли задание экземпляром SendQueuedMailable (Отправка письма на почту).
-     * Или является ли задание экземпляром BroadcastEvent (вебсокета для процентовки выполнения очереди).
+     * Проверьте, является ли задание экземпляром SendQueuedMailable (Отправка письма на почту),
+     * является ли задание экземпляром BroadcastEvent (вебсокета для процентовки выполнения очереди)
+     * или задача принадлежит к сервису Каталога (где не надо проверять на кэш)
      *
      * @param mixed $job
      *
@@ -43,7 +44,9 @@ class RabbitMQQueue extends BaseQueue
      */
     protected function isImmediateJob($job): bool
     {
-        return in_array(class_basename($job), ['SendQueuedMailable', 'BroadcastEvent']);
+        return in_array(class_basename($job), ['SendQueuedMailable', 'BroadcastEvent'])
+            ||
+            str_contains($job, DIRECTORY_SEPARATOR . 'Catalog' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -64,7 +67,7 @@ class RabbitMQQueue extends BaseQueue
             return true;
         }
 
-        if (Cache::tags(['job'])->has($data['cache_key'])) {
+        if ($data['is_check_cache'] && Cache::tags(['job'])->has($data['cache_key'])) {
             $this->logError(__FUNCTION__, 'Такой ключ уже существует', $data);
             return true;
         }
