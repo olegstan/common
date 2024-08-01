@@ -4,6 +4,7 @@ namespace Common\Jobs;
 
 use Cache;
 use Carbon\Carbon;
+use Common\Events\JobsStatus;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Users\Notification\UserNotification;
 use Exception;
@@ -134,7 +135,7 @@ class JobsEvent
 
             try {
                 //для каталога это логика не нужна, там и класса этого нет
-                if(class_exists(App\Events\JobsStatus::class))
+                if(config('app.name') === 'Whiteswan' || config('app.name') === 'Blackswan')
                 {
                     $data = [
                         'user_id' => $this->userId,
@@ -145,8 +146,8 @@ class JobsEvent
                         'account_id' => $this->accountId,
                     ];
 
-                    event(new App\Events\JobsStatus($data, 'client'));
-                    event(new App\Events\JobsStatus($data, 'manager'));
+                    event(new JobsStatus($data, 'client'));
+                    event(new JobsStatus($data, 'manager'));
                 }
             } catch (Exception $e) {
                 LoggerHelper::getLogger('jobsevent')->error($e->getMessage());
