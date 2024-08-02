@@ -68,8 +68,7 @@ interface DefinitionActiveConst
     public const FINEX_HISTORY = 37;
     public const MOEX_COURSE = 38;
     public const YAHOO_COURSE = 39;
-
-
+    
     public const ATON_CRM_PARSE = 11;
     public const ATON_FILE_UPLOADER = 7;
     public const ATON_FILE_PARSE = 8;
@@ -80,6 +79,8 @@ interface DefinitionActiveConst
     public const ATON_FILE_HISTORY = 23;
     public const ATON_CREATE_ACTION = 24;
     public const ATON_PSM_VALUATION = 25;
+    public const ATON_GET_CRM_CLIENTS = 26;
+
     public const PHONE_CALL = 40;
     public const CHAT_MESSAGE = 41;
     public const CRM_ATON_SEND_FINBACK = 42;
