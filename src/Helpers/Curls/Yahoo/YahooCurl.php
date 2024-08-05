@@ -53,26 +53,9 @@ class YahooCurl
 
             $words = preg_split("/[\-\+\<\>\@\(\)\~*\ ']/", $text);
 
-            $responses = self::newSearchFunc($words);
-//            $responses = self::oldSearchFunc($words);
-//
-//            $allData = [];
-//            foreach ($responses as $response) {
-//                $data = YahooDecoder::transformSearchResult($response);
-//
-//                if (is_array($data)) {
-//                    $allData = array_merge($allData, $data);
-//                }
-//            }
+//            $arr = self::oldSearchFunc($words);
+            $arr = self::newSearchFunc($words);
 
-            $newArr = [];
-            foreach ($responses as $val) {
-                if (isset($val['symbol'])) {
-                    $newArr[$val['symbol']] = $val;
-                }
-            }
-
-            $arr = array_values($newArr);
             Cache::tags([config('cache.tags')])->put('yahoo' . $searchText, $arr, Carbon::now()->addDay());
 
             return $arr;
@@ -86,6 +69,7 @@ class YahooCurl
      * @param $words
      *
      * @return array
+     * @throws Exception
      */
     public static function oldSearchFunc($words): array
     {
@@ -112,7 +96,25 @@ class YahooCurl
             ];
         }
 
-        return Curl::multiGet($urls);
+        $responses = Curl::multiGet($urls);
+
+        $allData = [];
+        foreach ($responses as $response) {
+            $data = YahooDecoder::transformSearchResult($response);
+
+            if (is_array($data)) {
+                $allData = array_merge($allData, $data);
+            }
+        }
+
+        $arr = [];
+        foreach ($allData as $val) {
+            if (isset($val['symbol'])) {
+                $arr[] = $val;
+            }
+        }
+
+        return $arr;
     }
 
     /**
@@ -124,7 +126,20 @@ class YahooCurl
     public static function newSearchFunc($words): array
     {
         // Returns an array of Scheb\YahooFinanceApi\Results\SearchResult
-        return ApiClientFactory::createApiClient()->search($words);
+        $responses = ApiClientFactory::createApiClient()->search($words);
+
+        $arr = [];
+        foreach ($responses as $response) {
+            $arr[] = [
+                'symbol' => $response->getSymbol(),
+                'exch' => $response->getExch(),
+                'type' => $response->getType(),
+                'exch_disp' => $response->getExchDisp(),
+                'type_disp' => $response->getTypeDisp(),
+            ];
+        }
+
+        return $arr;
     }
 
     /**
