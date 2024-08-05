@@ -16,7 +16,8 @@
     "php": ">=7.4.0,<8",
     "ext-json": "*",
     "behat/transliterator": "^1.0@dev",
-    "umpirsky/transliterator": "dev-master"
+    "umpirsky/transliterator": "dev-master",
+    "scheb/yahoo-finance-api": "4.x-dev"
   },
   "require-dev": {
     "laravel/framework": "^8.0",
