@@ -1,7 +1,6 @@
 <?php
 namespace Common\Models\Traits\Users\Roles;
 
-use App\Models\ZenMoney\ZenMoneyUser;
 use Cache;
 
 trait UserAttributeTrait
@@ -76,7 +75,7 @@ trait UserAttributeTrait
             {
                 foreach ($array as $token)
                 {
-                    if(isset($token['user_id']))
+                    if(isset($token['user_id']) && class_exists('App\Models\ZenMoney\ZenMoneyUser'))
                     {
                         $cacheKey = 'zenmoeney_user.' . $token['user_id'];
                         $zenUserLogin = Cache::tags([config('cache.tags')])->rememberForever($cacheKey, function () use ($token)
