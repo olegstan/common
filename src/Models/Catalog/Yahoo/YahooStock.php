@@ -114,6 +114,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
      * @param $items
      * @param $condition
      * @param bool $async
+     *
      * @return void
      * @throws Throwable
      */
@@ -182,7 +183,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                     MATCH (`yahoo_stocks`.`symbol`, `yahoo_stocks`.`name`) AGAINST (?) as relevance,
                     `tv_tickers`.`average_volume`
                 ',
-                [implode(' ', $splitedWords)]
+                [implode(' ', $splitedWords)],
             )
             ->leftJoin('tv_tickers', function ($query) {
                 $query->on('tv_tickers.symbol', '=', 'yahoo_stocks.symbol')
@@ -214,6 +215,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
      * @param $currencyId
      * @param $accountId
      * @param $classes
+     *
      * @return mixed
      */
     public function createBindActive($userId, $currencyId, $accountId, $classes)
@@ -268,6 +270,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
     /**
      * @param Currency $currency
      * @param null $date
+     *
      * @return mixed
      */
     public function getLastPriceByDate($currency, $date = null)
@@ -277,17 +280,15 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
              * @var YahooHistory $history
              */
             $history = $this->history()
-                ->when($date, function ($query) use ($date){
+                ->when($date, function ($query) use ($date) {
                     $query->whereDate($this->getDateField(), '<=', $date);
                 })
                 ->orderByDesc($this->getDateField())
                 ->first();
 
-            if($history)
-            {
+            if ($history) {
                 $historyCurrency = Currency::getByCode($this->currency);
-                if($historyCurrency)
-                {
+                if ($historyCurrency) {
                     return $currency->convert($history->getValue(), $historyCurrency->id, $date);
                 }
 
@@ -295,7 +296,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
             }
 
             return 0;
-        }catch (Exception $e){
+        } catch (Exception $e) {
             LoggerHelper::getLogger('convert')->error($e);
             LoggerHelper::getLogger('convert')->error('currency ID' . $currency->id);
 
@@ -306,6 +307,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
     /**
      * @param Carbon $startDate
      * @param Carbon $endDate
+     *
      * @return false
      */
     public function getPriceHistory(Carbon $startDate, Carbon $endDate)
@@ -325,6 +327,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
      * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate
+     *
      * @return bool
      */
     public static function loadHistory($stock, Carbon $startDate, Carbon $endDate)
@@ -370,21 +373,53 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
     /**
      * @param $stock
+     *
      * @return void
      * polymorhic method
      */
     public static function loadCoupons($stock): void
     {
-
     }
+
     /**
      * @param $stock
+     *
      * @return void
-     * polymorhic method
      */
     public static function loadDividends($stock): void
     {
+        $data = YahooCurl::getDividends($stock->symbol);
 
+        foreach ($data as $datum) {
+            YahooDividend::whereDate('date', $datum['date'])
+                ->where('yahoo_stock_id', $stock->id)
+                ->firstOrCreate([
+                    'yahoo_stock_id' => $stock->id,
+                    'date' => $datum['date'],
+                    'value' => $datum['value'],
+                ]);
+        }
+    }
+
+    /**
+     * @param $stock
+     *
+     * @return void
+     */
+    public static function loadSplits($stock): void
+    {
+        $data = YahooCurl::getSplits($stock->symbol);
+
+        foreach ($data as $datum) {
+            YahooSplit::whereDate('date', $datum['date'])
+                ->where('yahoo_stock_id', $stock->id)
+                ->firstOrCreate([
+                    'yahoo_stock_id' => $stock->id,
+                    'date' => $datum['date'],
+                    'before' => $datum['before'],
+                    'after' => $datum['after'],
+                ]);
+        }
     }
 }
 

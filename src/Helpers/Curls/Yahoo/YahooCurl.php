@@ -260,4 +260,79 @@ class YahooCurl
             return false;
         }
     }
+
+    /**
+     * @param string $symbol
+     * @param string $lang
+     *
+     * @return array
+     */
+    public static function getDividends(string $symbol, string $lang = 'ru'): array
+    {
+        $arr = [];
+
+        try {
+            $client = ApiClientFactory::createApiClient();
+            $dividendData = $client->getHistoricalDividendData(
+                $symbol,
+                Carbon::now()->subYears(50),
+                Carbon::now(),
+            );
+
+            if (empty($dividendData)) {
+                return $arr;
+            }
+
+            foreach ($dividendData as $dividendDatum) {
+                $arr[] = [
+                    'date' => $dividendDatum->getDate()->format('Y-m-d'),
+                    'value' => $dividendDatum->getDividends(),
+                ];
+            }
+
+            return $arr;
+        } catch (Exception $e) {
+            LoggerHelper::getLogger('yahoo-getDividends')->error($e, ['symbol' => $symbol]);
+            return $arr;
+        }
+    }
+
+    /**
+     * @param string $symbol
+     *
+     * @return array
+     */
+    public static function getSplits(string $symbol): array
+    {
+        $arr = [];
+
+        try {
+            $client = ApiClientFactory::createApiClient();
+
+            $splitData = $client->getHistoricalSplitData(
+                $symbol,
+                Carbon::now()->subYears(50),
+                Carbon::now(),
+            );
+
+            if (empty($splitData)) {
+                return $arr;
+            }
+
+            foreach ($splitData as $splitDatum) {
+                $explode = explode(':', $splitDatum->getStockSplits());
+
+                $arr[] = [
+                    'date' => $splitDatum->getDate()->format('Y-m-d'),
+                    'before' => $explode[0],
+                    'after' => $explode[1],
+                ];
+            }
+
+            return $arr;
+        } catch (Exception $e) {
+            LoggerHelper::getLogger('yahoo-getSplits')->error($e, ['symbol' => $symbol]);
+            return $arr;
+        }
+    }
 }
