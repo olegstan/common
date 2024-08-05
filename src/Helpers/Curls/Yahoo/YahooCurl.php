@@ -164,17 +164,17 @@ class YahooCurl
      * @param Carbon $startDate
      * @param Carbon $endDate
      *
-     * @return array|false
+     * @return array
      */
-    public static function getHistoricalData($symbol, $interval, Carbon $startDate, Carbon $endDate)
+    public static function getHistoricalData($symbol, $interval, Carbon $startDate, Carbon $endDate): array
     {
         try {
-//            $data = self::oldHistoryData($symbol, $interval, $startDate, $endDate);
-            $data = self::newHistoryData($symbol, $interval, $startDate, $endDate);
+//            return self::oldHistoryData($symbol, $interval, $startDate, $endDate);
+            return self::newHistoryData($symbol, $interval, $startDate, $endDate);
         } catch (Exception $e) {
             LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb');
 
-            return false;
+            return [];
         }
     }
 
@@ -209,20 +209,33 @@ class YahooCurl
      * @param Carbon $startDate
      * @param Carbon $endDate
      *
-     * @return void
+     * @return array
      * @throws ApiException
      */
-    public static function newHistoryData($symbol, $interval, Carbon $startDate, Carbon $endDate)
+    public static function newHistoryData($symbol, $interval, Carbon $startDate, Carbon $endDate): array
     {
         $client = ApiClientFactory::createApiClient();
         $historicalData = $client->getHistoricalQuoteData(
             $symbol,
             $interval,
             $startDate,
-            $endDate
+            $endDate,
         );
 
-        dd($historicalData);
+        $arr = [];
+        foreach ($historicalData as $historicalDatum) {
+            $arr[] = [
+                'date' => $historicalDatum->getDate(),
+                'open' => $historicalDatum->getOpen(),
+                'high' => $historicalDatum->getHigh(),
+                'low' => $historicalDatum->getLow(),
+                'close' => $historicalDatum->getClose(),
+                'adj_close' => $historicalDatum->getAdjClose(),
+                'volume' => $historicalDatum->getVolume(),
+            ];
+        }
+
+        return $arr;
     }
 
     /**
