@@ -8,6 +8,7 @@ use Common\Helpers\Curls\Curl;
 use Common\Helpers\LoggerHelper;
 use Common\Helpers\Translit;
 use Exception;
+use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\SearchResult;
@@ -54,7 +55,7 @@ class YahooCurl
             $words = preg_split("/[\-\+\<\>\@\(\)\~*\ ']/", $text);
 
 //            $arr = self::oldSearchFunc($words);
-            $arr = self::newSearchFunc($words);
+            $arr = self::newSearchFunc($text);
 
             Cache::tags([config('cache.tags')])->put('yahoo' . $searchText, $arr, Carbon::now()->addDay());
 
@@ -66,12 +67,12 @@ class YahooCurl
     }
 
     /**
-     * @param $words
+     * @param array $words
      *
      * @return array
      * @throws Exception
      */
-    public static function oldSearchFunc($words): array
+    public static function oldSearchFunc(array $words): array
     {
         $urls = [];
 
@@ -168,23 +169,60 @@ class YahooCurl
     public static function getHistoricalData($symbol, $interval, Carbon $startDate, Carbon $endDate)
     {
         try {
-            $url = 'https://query1.finance.yahoo.com/v7/finance/download/' . urlencode($symbol);
-
-            $response = Curl::get($url, [
-                'period1' => $startDate->timestamp,
-                'period2' => $endDate->timestamp,
-                'interval' => $interval,
-                'events' => 'history',
-            ], [
-
-            ], 'yahoo', self::$cookies);
-
-            return YahooDecoder::transformHistoricalDataResult($response);
+//            $data = self::oldHistoryData($symbol, $interval, $startDate, $endDate);
+            $data = self::newHistoryData($symbol, $interval, $startDate, $endDate);
         } catch (Exception $e) {
             LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb');
 
             return false;
         }
+    }
+
+    /**
+     * @param $symbol
+     * @param $interval
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     *
+     * @return array
+     * @throws Exception
+     */
+    public static function oldHistoryData($symbol, $interval, Carbon $startDate, Carbon $endDate): array
+    {
+        $url = 'https://query1.finance.yahoo.com/v7/finance/download/' . urlencode($symbol);
+
+        $response = Curl::get($url, [
+            'period1' => $startDate->timestamp,
+            'period2' => $endDate->timestamp,
+            'interval' => $interval,
+            'events' => 'history',
+        ], [
+
+        ], 'yahoo', self::$cookies);
+
+        return YahooDecoder::transformHistoricalDataResult($response);
+    }
+
+    /**
+     * @param $symbol
+     * @param $interval
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     *
+     * @return void
+     * @throws ApiException
+     */
+    public static function newHistoryData($symbol, $interval, Carbon $startDate, Carbon $endDate)
+    {
+        $client = ApiClientFactory::createApiClient();
+        $historicalData = $client->getHistoricalQuoteData(
+            $symbol,
+            $interval,
+            $startDate,
+            $endDate
+        );
+
+        dd($historicalData);
     }
 
     /**
