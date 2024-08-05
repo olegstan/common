@@ -7,6 +7,7 @@ use App\Models\Actives\ActiveGoal;
 use App\Models\Actives\ActiveIncomeExpensesMonth;
 use App\Models\UserPlan;
 use Carbon\Carbon;
+use Common\Models\Users\Plan\UserUpdatePlan;
 use Common\Models\Users\User;
 use DB;
 
@@ -114,13 +115,12 @@ trait UserPlanTrait
         }
 
 
-        DB::table('user_update_plans')
-            ->insert([
-                'created_at' => Carbon::now(),
-                'user_id' => $this->id,
-                'data' => json_encode($updatePlan),
-                'type_id' => ActiveGoal::CRT,
-            ]);
+        UserUpdatePlan::create([
+            'created_at' => Carbon::now(),
+            'user_id' => $this->id,
+            'data' => json_encode($updatePlan),
+            'type_id' => ActiveGoal::CRT,
+        ]);
     }
 
 
@@ -371,13 +371,12 @@ trait UserPlanTrait
                 $updatePlan['deleted_plan'] = $deletedData;
             }
 
-            DB::table('user_update_plans')
-                ->insert([
-                    'created_at' => Carbon::now(),
-                    'user_id' => $this->id,
-                    'data' => json_encode($updatePlan),
-                    'type_id' => ActiveGoal::CRT,
-                ]);
+            UserUpdatePlan::create([
+                'created_at' => Carbon::now(),
+                'user_id' => $this->id,
+                'data' => json_encode($updatePlan),
+                'type_id' => ActiveGoal::CRT,
+            ]);
         }
     }
 }
