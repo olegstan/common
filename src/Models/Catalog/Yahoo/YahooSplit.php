@@ -1,32 +1,36 @@
 <?php
 
-namespace Common\Models\Catalog\MoscowExchange;
+namespace Common\Models\Catalog\Yahoo;
 
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * Class MoscowExchangeSplit
- * @package Common\Models\Catalog\MoscowExchange
+ * @property $yahoo_stock_id
+ * @property $before
+ * @property $after
+ * @property $date
  */
-class MoscowExchangeSplit extends BaseCatalog
+class YahooSplit extends BaseCatalog
 {
     /**
      * @var string
      */
-    protected $table = 'moscow_exchange_splits';
+    protected $table = 'yahoo_splits';
 
     /**
      * @var string[]
      */
     protected $fillable = [
-        'moex_stock_id',
+        'yahoo_stock_id',
         'before',
         'after',
         'date',
     ];
 
     protected $casts = [
+        'yahoo_stock_id' => 'integer',
         'before' => 'double',
         'after' => 'double',
         'date' => 'date',
@@ -37,6 +41,6 @@ class MoscowExchangeSplit extends BaseCatalog
      */
     public function item(): HasOne
     {
-        return $this->hasOne(MoscowExchangeStock::class, 'id', 'moex_stock_id');
+        return $this->hasOne(YahooStock::class, 'id', 'yahoo_stock_id');
     }
 }

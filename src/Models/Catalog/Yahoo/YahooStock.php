@@ -335,40 +335,37 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
             return $result;
         }
 
-        /**
-         * @var YahooStock $stock
-         */
         $data = YahooCurl::getHistoricalData($stock->symbol, YahooCurl::INTERVAL_1_DAY, $startDate, $endDate);
 
-        if ($data) {
-            Cache::tags([config('cache.tags')])->add($result, true, Carbon::now()->addDay());
+        if (empty($data)) {
+            Cache::tags([config('cache.tags')])->add($result, false, Carbon::now()->addDay());
+            LoggerHelper::getLogger()->info('No any history for ' . $stock->symbol);
 
-            foreach ($data as $datum) {
-                $history = YahooHistory::where('date', '=', $datum['date']->format('Y-m-d'))
-                    ->where('yahoo_stock_id', $stock->id)
-                    ->first();
-
-                if (!$history) {
-                    YahooHistory::create([
-                        'date' => $datum['date']->format('Y-m-d'),
-                        'open' => $datum['open'],
-                        'high' => $datum['high'],
-                        'low' => $datum['low'],
-                        'close' => $datum['close'],
-                        'adj_close' => $datum['adj_close'],
-                        'volume' => $datum['volume'],
-                        'yahoo_stock_id' => $stock->id,
-                    ]);
-                }
-            }
-
-            return true;
+            return false;
         }
 
-        Cache::tags([config('cache.tags')])->add($result, false, Carbon::now()->addDay());
-        LoggerHelper::getLogger()->info('No any history for ' . $stock->symbol);
+        Cache::tags([config('cache.tags')])->add($result, true, Carbon::now()->addDay());
 
-        return false;
+        foreach ($data as $datum) {
+            $history = YahooHistory::where('date', '=', $datum['date']->format('Y-m-d'))
+                ->where('yahoo_stock_id', $stock->id)
+                ->first();
+
+            if (!$history) {
+                YahooHistory::create([
+                    'date' => $datum['date']->format('Y-m-d'),
+                    'open' => $datum['open'],
+                    'high' => $datum['high'],
+                    'low' => $datum['low'],
+                    'close' => $datum['close'],
+                    'adj_close' => $datum['adj_close'],
+                    'volume' => $datum['volume'],
+                    'yahoo_stock_id' => $stock->id,
+                ]);
+            }
+        }
+
+        return true;
     }
 
     /**
