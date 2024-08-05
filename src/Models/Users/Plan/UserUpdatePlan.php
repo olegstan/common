@@ -8,15 +8,10 @@ use Common\Models\Interfaces\CommonRemoveActiveInterface;
 
 /**
  * Class UserUpdatePlan
- *
- * @property $user_id
- * @property $data
- * @property $type_id
- *
+ * @package Common\Models\Users\Plan
  */
-class UserUpdatePlan extends BaseModel implements CommonRemoveActiveInterface
+class UserUpdatePlan extends BaseModel
 {
-    use RemoveActiveByUserId;
 
     /**
      * @var string
