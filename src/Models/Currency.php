@@ -113,6 +113,8 @@ class Currency extends BaseCatalog
                 'sum' => $sum,
                 'currency_id' => $currencyId,
                 'date' => $date,
+                'course' => $course ?? null,
+                'this' => $this->toArray(),
             ]);
             return $sum;
         }
@@ -195,7 +197,7 @@ class Currency extends BaseCatalog
         return Cache::tags([config('cache.tags')])->remember(
             $cacheString,
             Carbon::now()->addDay(),
-            static function () use ($currency, $cbCurrency, $date) {
+            static function () use ($cbCurrency, $date) {
                 return CbHistoryCurrencyCourse::where('currency_id', $cbCurrency->id)
                     ->where('date', '<', $date->format('Y-m-d'))
                     ->orderBy('date', 'DESC')
