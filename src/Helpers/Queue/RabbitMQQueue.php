@@ -58,32 +58,22 @@ class RabbitMQQueue extends BaseQueue
     protected function isInvalidData($data): bool
     {
         if (!is_array($data)) {
-            $this->logError(__FUNCTION__, 'Значение очереди, должно быть массивом', $data);
+            LoggerHelper::getLogger(class_basename($this) . '-' . __FUNCTION__)
+                ->error('Значение очереди, должно быть массивом', [$data]);
             return true;
         }
 
         if (!isset($data['cache_key'])) {
-            $this->logError(__FUNCTION__, 'В значении очереди не определен ключ для кэширования', $data);
+            LoggerHelper::getLogger(class_basename($this) . '-' . __FUNCTION__)
+                ->error('В значении очереди не определен ключ для кэширования', $data);
             return true;
         }
 
         if (Cache::tags(['job'])->has($data['cache_key'])) {
-            $this->logError(__FUNCTION__, 'Такой ключ уже существует', $data);
+//            LoggerHelper::getLogger(class_basename($this) . '-' . __FUNCTION__)->info('Такой ключ уже существует', [$data]);
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * Логирует ошибки.
-     *
-     * @param string $method
-     * @param string $message
-     * @param mixed $data
-     */
-    protected function logError(string $method, string $message, $data): void
-    {
-        LoggerHelper::getLogger(class_basename($this) . '-' . $method)->error($message, [$data]);
     }
 }
