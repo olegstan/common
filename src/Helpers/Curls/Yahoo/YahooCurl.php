@@ -292,7 +292,8 @@ class YahooCurl
 
             return $arr;
         } catch (Exception $e) {
-            LoggerHelper::getLogger('yahoo-getDividends')->error($e, ['symbol' => $symbol]);
+            //Если упало в ошибку, скорее всего просто нет данных
+//            LoggerHelper::getLogger('yahoo-getDividends')->error($e, ['symbol' => $symbol]);
             return $arr;
         }
     }
@@ -331,7 +332,8 @@ class YahooCurl
 
             return $arr;
         } catch (Exception $e) {
-            LoggerHelper::getLogger('yahoo-getSplits')->error($e, ['symbol' => $symbol]);
+            //Если упало в ошибку, скорее всего просто нет данных
+//            LoggerHelper::getLogger('yahoo-getSplits')->error($e, ['symbol' => $symbol]);
             return $arr;
         }
     }
