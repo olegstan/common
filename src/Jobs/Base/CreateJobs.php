@@ -136,6 +136,24 @@ class CreateJobs
     }
 
     /**
+     * @param string $jobClass
+     * @param $data
+     * @param string $priority
+     * @param string $connection
+     *
+     * @return false|string
+     */
+    public static function createNotUniq(string $jobClass, $data, string $priority = 'default', string $connection = '')
+    {
+        if (!is_array($data)) {
+            $data = [$data];
+        }
+
+        $data['options']['cache_check'] = false;
+        return self::create($jobClass, $data, $priority, $connection);
+    }
+
+    /**
      * Помещает задание в очередь.
      *
      * @return string UUID отправленного задания в случае успеха, в противном случае — false.
