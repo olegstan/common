@@ -69,6 +69,10 @@ class RabbitMQQueue extends BaseQueue
             return true;
         }
 
+        if (isset($data['cache_check']) && !$data['cache_check']) {
+            return false;
+        }
+
         if (Cache::tags(['job'])->has($data['cache_key'])) {
 //            LoggerHelper::getLogger(class_basename($this) . '-' . __FUNCTION__)->info('Такой ключ уже существует', [$data]);
             return true;
