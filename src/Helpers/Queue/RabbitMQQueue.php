@@ -69,7 +69,7 @@ class RabbitMQQueue extends BaseQueue
             return true;
         }
 
-        if (isset($data['cache_check']) && $data['cache_check']) {
+        if (isset($data['cache_check']) && !$data['cache_check']) {
             return false;
         }
 
