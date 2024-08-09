@@ -187,13 +187,49 @@ class CreateJobs
      */
     public function addDataParams(): array
     {
-        // Если данные джобы это массив, сбросим ключи
-        // В противном случае, нам надо сделать массив, что бы дальше дополнить данными
-        $data = is_array($this->getData()) ? array_values($this->getData()) : [$this->getData()];
-        // Добавьте параметр uuid
-        $data[] = $this->getUuid();
-        // Добавьте параметр «cache_key»
-        $data['cache_key'] = $this->getCacheKeyQueue();
+        $data = $this->getData();
+
+        // Если данные это массив, то обработаем их
+        if (is_array($data)) {
+            $newData = [];
+
+            // Сохранить только ключи, которые находится в массиве с ключем options
+            foreach ($data as $key => $value) {
+                if (is_array($value) && $key == 'options') {
+                    $newData[$key] = $value;
+                } else {
+                    $newData[] = $value; // Сбрасываем ключи для остальных данных
+                }
+            }
+
+            $data = $newData;
+        } else {
+            // Если данные не массив, конвертируем их в массив
+            $data = [$data];
+        }
+
+        return $this->addOptionsDataParams($data);
+    }
+
+    /**
+     * Добавление необходимых опций для массива джобы
+     * и перемещение в конец массива, если уже что-то было записано
+     *
+     * @param $data
+     *
+     * @return array
+     */
+    public function addOptionsDataParams($data): array
+    {
+        // Добавляем параметры в 'options'
+        $data['options']['uuid'] = $this->getUuid();
+        $data['options']['cache_key'] = $this->getCacheKeyQueue();
+        $data['options']['cache_check'] = $data['options']['cache_check'] ?? true;
+
+        // Перемещаем 'options' в конец массива
+        $options = $data['options'];
+        unset($data['options']);
+        $data['options'] = $options;
 
         return $data;
     }

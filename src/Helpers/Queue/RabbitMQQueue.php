@@ -28,7 +28,7 @@ class RabbitMQQueue extends BaseQueue
             return false;
         }
 
-        Cache::tags(['job'])->add($data['cache_key'], true, 1440);
+        Cache::tags(['job'])->add($data['options']['cache_key'], true, 1440);
 
         return $this->pushRaw($this->createPayload($job, $queue, $data), $queue);
     }
@@ -63,17 +63,17 @@ class RabbitMQQueue extends BaseQueue
             return true;
         }
 
-        if (!isset($data['cache_key'])) {
+        if (!isset($data['options']['cache_key'])) {
             LoggerHelper::getLogger(class_basename($this) . '-' . __FUNCTION__)
                 ->error('В значении очереди не определен ключ для кэширования', $data);
             return true;
         }
 
-        if (isset($data['cache_check']) && !$data['cache_check']) {
+        if (isset($data['options']['cache_check']) && !$data['options']['cache_check']) {
             return false;
         }
 
-        if (Cache::tags(['job'])->has($data['cache_key'])) {
+        if (Cache::tags(['job'])->has($data['options']['cache_key'])) {
 //            LoggerHelper::getLogger(class_basename($this) . '-' . __FUNCTION__)->info('Такой ключ уже существует', [$data]);
             return true;
         }
