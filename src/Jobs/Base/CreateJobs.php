@@ -157,6 +157,8 @@ class CreateJobs
     }
 
     /**
+     * Создает евент, что бы дальше по сокеты можно было кинуть fail, если потребуется
+     *
      * @param string|null $jobId
      *
      * @return string
