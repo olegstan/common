@@ -7,6 +7,7 @@ use Common\Models\Users\User;
 
 /**
  * Class UserConfig
+ *
  * @package Common\Models\Users\Crm
  */
 class UserConfig extends BaseModel
@@ -41,11 +42,11 @@ class UserConfig extends BaseModel
     const C_CALENDAR_SLOT_MAX_TIME = 'CALENDAR_SLOT_MAX_TIME';
 
     //ATON CONFIG
-    const C_ATON_LOGIN = 'ATON_LOGIN';
-    const C_ATON_PASS = 'ATON_PASS';
-    const C_ATON_GROUP = 'ATON_GROUP';
-    const C_ATON_ACCOUNT = 'ATON_ACCOUNT';
-    const C_ATON_PATH_TO_2FA = 'ATON_PATH_TO_2FA';
+    public const C_ATON_LOGIN = 'ATON_LOGIN';
+    public const C_ATON_PASS = 'ATON_PASS';
+    public const C_ATON_GROUP = 'ATON_GROUP';
+    public const C_ATON_ACCOUNT = 'ATON_ACCOUNT';
+    public const C_ATON_PATH_TO_2FA = 'ATON_PATH_TO_2FA';
 
     const MANAGER_PHONE_NUMBER = 'MANAGER_PHONE_NUMBER';
     const MANAGER_PHONE_TOKEN = 'MANAGER_PHONE_TOKEN';
@@ -53,7 +54,15 @@ class UserConfig extends BaseModel
 
     const HIERARCHY_NODE_POSITIONS = 'HIERARCHY_NODE_POSITIONS';
 
-    const  UserDefaultConfigConstants = [
+    public const C_ATON_CONFIGS = [
+        'aton_login' => self::C_ATON_LOGIN,
+        'aton_pass' => self::C_ATON_PASS,
+        'aton_group' => self::C_ATON_GROUP,
+        'aton_account' => self::C_ATON_ACCOUNT,
+        'aton_path_to_2fa' => self::C_ATON_PATH_TO_2FA,
+    ];
+
+    const UserDefaultConfigConstants = [
         self::C_NOTIFICATION_DELETE_AFTER_VALUE => 1001,
         self::C_APPLICATION_MAX_DELAY_DAYS => 0,
         self::C_WEEK_HOLIDAYS => [
@@ -63,7 +72,7 @@ class UserConfig extends BaseModel
             4 => false,
             5 => false,
             6 => true,
-            7 => true
+            7 => true,
         ],
         self::C_CALENDAR_SLOT_DURATION => 30,
         self::C_CALENDAR_SLOT_MIN_TIME => '09:00',

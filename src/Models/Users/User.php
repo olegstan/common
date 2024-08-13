@@ -137,6 +137,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     /**
      * @param int|string $role
+     *
      * @return bool
      */
     public function hasRole($role)
@@ -152,10 +153,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getRole()
     {
         $roles = Role::all();
-        foreach ($roles as $role)
-        {
-            if ($this->is($role->slug))
-            {
+        foreach ($roles as $role) {
+            if ($this->is($role->slug)) {
                 return $role->slug;
             }
         }
@@ -320,7 +319,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      * @var array
      */
     protected $hidden = [
-        'password'
+        'password',
     ];
 
     /**
@@ -333,7 +332,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'updated_at',
         'deleted_at',
         'birth_at',
-        'start_enter_at'
+        'start_enter_at',
     ];
 
     /**
@@ -369,24 +368,46 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     * Получает значение конфигурации пользователя по ключу.
+     *
      * @param string $key
-     * @return HigherOrderBuilderProxy|int|mixed
-     * TODO тупость передавать дефолтный ключ, но уберу потом как нибудь (Олег)
+     * @return mixed
      */
     public function getConfigByKey(string $key = UserConfig::C_WEEK_HOLIDAYS)
     {
         $defaultConfig = UserConfig::UserDefaultConfigConstants[$key];
-        $conf = $this->configs()->where('key', '=', $key)->first();
+        $conf = $this->configs()->where('key', $key)->value('value');
+
         if (!$conf) {
             return $defaultConfig;
         }
+
         if (is_array($defaultConfig)) {
-            return json_decode($conf->value);
+            // Добавил true, чтобы вернуть массив, а не объект
+            return json_decode($conf, true);
         }
+
         if (is_numeric($defaultConfig)) {
-            return (int)$conf->value;
+            return (int)$conf;
         }
-        return $conf->value;
+
+        return $conf;
+    }
+
+    /**
+     * Возвращает все данные конфигурации пользователя для атона.
+     *
+     * @return array {
+     *      aton_login: mixed,
+     *      aton_pass: mixed,
+     *      aton_group: mixed,
+     *      aton_account: mixed,
+     *      aton_path_to_2fa: mixed,
+     * }
+     */
+    public function getAtonConfigs(): array
+    {
+        return array_map([$this, 'getConfigByKey'], UserConfig::C_ATON_CONFIGS);
     }
 
     /**
@@ -394,11 +415,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function getClientIds()
     {
-        switch ($this->getRole())
-        {
+        switch ($this->getRole()) {
             case User::MANAGER:
-                return Client::where(function($query)
-                {
+                return Client::where(function ($query) {
                     $query->where('manager_id', $this->id);
                 })
                     ->pluck('id')
@@ -408,7 +427,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->pluck('union_user_id')
                     ->toArray();
 
-                return Client::where(function($query) use ($managerIds){
+                return Client::where(function ($query) use ($managerIds) {
                     $query->where('manager_id', $this->id)
                         ->orWhereIn('manager_id', $managerIds);
                 })
@@ -443,11 +462,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function getContactIds()
     {
-        switch ($this->getRole())
-        {
+        switch ($this->getRole()) {
             case User::MANAGER:
-                return CrmContact::where(function($query)
-                {
+                return CrmContact::where(function ($query) {
                     $query->where('user_id', $this->id);
                 })
                     ->pluck('id')
@@ -457,7 +474,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->pluck('union_user_id')
                     ->toArray();
 
-                return CrmContact::where(function($query) use ($managerIds){
+                return CrmContact::where(function ($query) use ($managerIds) {
                     $query->where('user_id', $this->id)
                         ->orWhereIn('user_id', $managerIds);
                 })
@@ -490,6 +507,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * @param string $key
      * @param $value
+     *
      * @return void
      */
     public function setConfigByKey(string $key = UserConfig::C_WEEK_HOLIDAYS, $value)
@@ -509,13 +527,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     'user_id' => $this->id,
                     'key' => $key,
                     'value' => $newValue,
-                ]
+                ],
             );
         }
     }
 
     /**
      * @param array $attributes
+     *
      * @return static
      * @throws Exception
      */
@@ -536,6 +555,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     /**
      * @param $password
+     *
      * @return bool
      */
     public function checkPassword($password)
@@ -590,6 +610,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      * @param $query
      * @param $slug
      * @param bool $reverse
+     *
      * @return mixed
      * @throws Exception
      */
@@ -641,7 +662,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 ->with('requisite_bank')
                 ->with('files')
                 ->orderBy('id', 'DESC')
-                ->get()
+                ->get(),
         ];
     }
 
@@ -681,27 +702,28 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'account_id' => $cash->id,
             'currency_id' => $currencyRub->id,
             'sum' => 0,
-            'name' => 'Наличные RUB'
+            'name' => 'Наличные RUB',
         ]);
 
         UserAccountCurrency::create([
             'account_id' => $cash->id,
             'currency_id' => $currencyUsd->id,
             'sum' => 0,
-            'name' => 'Наличные USD'
+            'name' => 'Наличные USD',
         ]);
 
         UserAccountCurrency::create([
             'account_id' => $cash->id,
             'currency_id' => $currencyEur->id,
             'sum' => 0,
-            'name' => 'Наличные EUR'
+            'name' => 'Наличные EUR',
         ]);
     }
 
 
     /**
      * @param $currency
+     *
      * @return void
      * @throws Throwable
      */
@@ -741,35 +763,35 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                 $data[$k]['sum'] = $currency->convert(
                                     $data[$k]['sum'],
                                     $goal->currency_id,
-                                    Carbon::now()
+                                    Carbon::now(),
                                 );
                             }
                             if (isset($item['payment_per_period'])) {
                                 $data[$k]['payment_per_period'] = $currency->convert(
                                     $data[$k]['payment_per_period'],
                                     $goal->currency_id,
-                                    Carbon::now()
+                                    Carbon::now(),
                                 );
                             }
                             if (isset($item['payment_per_period_first'])) {
                                 $data[$k]['payment_per_period_first'] = $currency->convert(
                                     $data[$k]['payment_per_period_first'],
                                     $goal->currency_id,
-                                    Carbon::now()
+                                    Carbon::now(),
                                 );
                             }
                             if (isset($item['payment_per_period_last'])) {
                                 $data[$k]['payment_per_period_last'] = $currency->convert(
                                     $data[$k]['payment_per_period_last'],
                                     $goal->currency_id,
-                                    Carbon::now()
+                                    Carbon::now(),
                                 );
                             }
                             if (isset($item['future_sum'])) {
                                 $data[$k]['future_sum'] = $currency->convert(
                                     $data[$k]['future_sum'],
                                     $goal->currency_id,
-                                    Carbon::now()
+                                    Carbon::now(),
                                 );
                             }
                         }
@@ -789,7 +811,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
                     foreach ($goal->items as $item) {
                         $item->updateQuietly([
-                            'sum' => round($currency->convert($item->sum, $goal->currency_id, Carbon::now()), 2)
+                            'sum' => round($currency->convert($item->sum, $goal->currency_id, Carbon::now()), 2),
                         ]);
                     }
 
@@ -800,19 +822,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     $goal->updateQuietly([
                         'spending_per_period' => round(
                             $currency->convert($goal->spending_per_period, $goal->currency_id, Carbon::now()),
-                            2
+                            2,
                         ),
                         'spending_per_period_future' => round(
                             $currency->convert($goal->spending_per_period_future, $goal->currency_id, Carbon::now()),
-                            2
+                            2,
                         ),
                         'future_sum' => round(
                             $currency->convert($goal->future_sum, $goal->currency_id, Carbon::now()),
-                            2
+                            2,
                         ),
                         'start_sum' => round($currency->convert($alreadyPaid, $goal->currency_id, Carbon::now()), 2),
                         'data' => json_encode($data),
-                        'currency_id' => $currency->id
+                        'currency_id' => $currency->id,
                     ]);
 
 
@@ -842,7 +864,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                             $paymentsIndex,
                             $salaries,
                             $firstYear,
-                            $retiredYear
+                            $retiredYear,
                         );
 
                         $data = $goal->prepareCalcData($this, $firstYear, $retiredYear, $paymentsDays, $startDate);
@@ -861,7 +883,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                             ]);
                         }
                     }
-                }
+                },
             );
         }
 
