@@ -124,6 +124,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public static $avatarPath = '/images/avatar/';
     public static $documentPath = '/storage/document/';
 
+    private array $aton_configs = [];
+
     public const DEFAULT_RETIRE_AGE = 60;
     public const DEFAULT_DEAD_AGE = 25;
 
@@ -371,6 +373,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      * Получает значение конфигурации пользователя по ключу.
      *
      * @param string $key
+     *
      * @return mixed
      */
     public function getConfigByKey(string $key = UserConfig::C_WEEK_HOLIDAYS)
@@ -395,7 +398,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * Возвращает все данные конфигурации пользователя для атона.
+     * Возвращает все данные конфигурации Атон.
      *
      * @return array {
      *      aton_login: mixed,
@@ -407,7 +410,27 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function getAtonConfigs(): array
     {
-        return array_map([$this, 'getConfigByKey'], UserConfig::C_ATON_CONFIGS);
+        $atonConfigs = $this->aton_configs;
+
+        if (empty($atonConfigs)) {
+            $this->setAtonConfigs();
+        }
+
+        return $atonConfigs;
+    }
+
+    /**
+     * Записывает конфигурацию Атон
+     *
+     * @return $this
+     */
+    public function setAtonConfigs(): User
+    {
+        if (empty($this->aton_configs)) {
+            $this->aton_configs = array_map([$this, 'getConfigByKey'], UserConfig::C_ATON_CONFIGS);
+        }
+
+        return $this;
     }
 
     /**
