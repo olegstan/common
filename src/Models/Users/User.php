@@ -415,6 +415,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         if (empty($atonConfigs)) {
             $this->setAtonConfigs();
+            return $this->getAtonConfigs();
         }
 
         return $atonConfigs;
