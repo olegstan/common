@@ -80,6 +80,7 @@ interface DefinitionActiveConst
     public const ATON_CREATE_ACTION = 24;
     public const ATON_PSM_VALUATION = 25;
     public const ATON_GET_CRM_CLIENTS = 26;
+    public const ATON_PSM_PORTFOLIO = 45;
 
     public const PHONE_CALL = 40;
     public const CHAT_MESSAGE = 41;
