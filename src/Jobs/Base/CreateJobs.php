@@ -3,6 +3,7 @@
 
 namespace Common\Jobs\Base;
 
+use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\JobsEvent;
 use Common\Jobs\LogJob\LogJobParser;
@@ -241,6 +242,7 @@ class CreateJobs
     {
         // Добавляем параметры в 'options'
         $data['options']['uuid'] = $this->getUuid();
+        $data['options']['create_at'] = Carbon::now()->format('Y-m-d H:i:s');
         $data['options']['cache_key'] = $this->getCacheKeyQueue();
         $data['options']['cache_check'] = $data['options']['cache_check'] ?? true;
 
