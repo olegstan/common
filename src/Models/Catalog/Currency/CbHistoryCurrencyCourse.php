@@ -132,8 +132,9 @@ class CbHistoryCurrencyCourse extends BaseCatalog implements CommonsFuncCatalogH
     /**
      * @param $priceKey
      * @param $dateKey
+     * @param $catalog
      */
-    public function setPrice($priceKey, $dateKey)
+    public function setPrice($priceKey, $dateKey, $catalog)
     {
 
     }

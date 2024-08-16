@@ -71,9 +71,10 @@ class CustomHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInte
     /**
      * @param $priceKey
      * @param $dateKey
+     * @param $catalog
      * @return void
      */
-    public function setPrice($priceKey, $dateKey)
+    public function setPrice($priceKey, $dateKey, $catalog)
     {
         //TODO
     }

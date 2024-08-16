@@ -91,9 +91,10 @@ class YahooHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
     /**
      * @param $priceKey
      * @param $dateKey
+     * @param $catalog
      * @return array
      */
-    public function setPrice($priceKey, $dateKey): array
+    public function setPrice($priceKey, $dateKey, $catalog)
     {
         $price = $this->close;
         $date = $this->date;

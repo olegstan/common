@@ -100,11 +100,13 @@ class MoscowExchangeHistory extends BaseCatalog implements CommonsFuncCatalogHis
     }
 
     /**
+     * все вернет цену в рублях
      * @param $priceKey
      * @param $dateKey
+     * @param $catalog
      * @return array
      */
-    public function setPrice($priceKey, $dateKey)
+    public function setPrice($priceKey, $dateKey, $catalog)
     {
         if ($this->faceunit === Cur::RUB) {
             $price = $this->close;

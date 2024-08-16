@@ -87,6 +87,8 @@ class CbondHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
      */
     public function getValue(): float
     {
+
+
         return $this->close;
     }
 
@@ -175,9 +177,10 @@ class CbondHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
     /**
      * @param $priceKey
      * @param $dateKey
+     * @param $catalog
      * @return array
      */
-    public function setPrice($priceKey, $dateKey)
+    public function setPrice($priceKey, $dateKey, $catalog)
     {
         $cbondCurrencyCode = $this->faceunit;
 
