@@ -80,7 +80,9 @@ class CbHistoryCurrencyCourse extends BaseCatalog implements CommonsFuncCatalogH
      */
     public static function loadHistory(CbCurrency $stock, Carbon $startDate, Carbon $endDate)
     {
-        [$bool, $result, $cacheKey] = self::cacheHistory($stock, $startDate, $endDate);
+        $cacheKey = self::getCacheKey($stock, $startDate, $endDate);
+
+        [$bool, $result] = self::cacheHistory($cacheKey);
 
         if ($bool) {
             return $result;

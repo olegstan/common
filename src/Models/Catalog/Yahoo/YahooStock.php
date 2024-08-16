@@ -332,7 +332,9 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
      */
     public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
     {
-        [$bool, $result, $cacheKey] = self::cacheHistory($stock, $startDate, $endDate);
+        $cacheKey = self::getCacheKey($stock, $startDate, $endDate);
+
+        [$bool, $result] = self::cacheHistory($cacheKey);
 
         if ($bool) {
             return $result;

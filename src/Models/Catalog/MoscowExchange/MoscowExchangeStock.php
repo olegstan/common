@@ -712,9 +712,10 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      */
     public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
     {
-        [$bool, $result, $cacheKey] = self::cacheHistory($stock, $startDate, $endDate);
+        $cacheKey = self::getCacheKey($stock, $startDate, $endDate);
 
-        //если хотим загрузить несмотря на то есть данные в кеше или нет
+        [$bool, $result] = self::cacheHistory($cacheKey);
+
         if ($bool && !$forceSkipCache) {
             return $result;
         }
@@ -722,48 +723,65 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         /**
          * @var MoscowExchangeStock $stock
          */
-        $data = MoscowExchangeCurl::getHistory($stock, $startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+        $startDateClone = $startDate->copy();
 
-        if ($data) {
-            Cache::tags([config('cache.tags')])->add($cacheKey, true, Carbon::now()->addDay());
-
-            foreach ($data as $datum) {
-                $history = MoscowExchangeHistory::where('tradedate', '=', $datum['tradedate'])
-                    ->where('moex_stock_id', $stock->id)
-                    ->first();
-
-                if (!$history &&
-                    isset($datum['open'], $datum['low'], $datum['close'], $datum['high']) &&
-                    $datum['open'] !== '' &&
-                    $datum['low'] !== '' &&
-                    $datum['close'] !== '' &&
-                    $datum['high'] !== '') {
-                    if ($stock->market === 'bonds') {
-                        $datum['open'] = $stock->facevalue * $datum['open'] / 100;
-                        $datum['low'] = $stock->facevalue * $datum['low'] / 100;
-                        $datum['close'] = $stock->facevalue * $datum['close'] / 100;
-                        $datum['high'] = $stock->facevalue * $datum['high'] / 100;
-
-                        if (isset($datum['marketprice2']) && is_numeric($datum['marketprice2'])) {
-                            $datum['marketprice2'] = $stock->facevalue * $datum['marketprice2'] / 100;
-                        }
-                        if (isset($datum['marketprice3']) && is_numeric($datum['marketprice3'])) {
-                            $datum['marketprice3'] = $stock->facevalue * $datum['marketprice3'] / 100;
-                        }
-                    }
-
-                    $datum['moex_stock_id'] = $stock->id;
-                    MoscowExchangeHistory::create($datum);
-                }
+        while ($startDateClone <= $endDate) {
+            $iterationEndDate = $startDateClone->copy()->addDays(99);
+            if ($iterationEndDate > $endDate) {
+                $iterationEndDate = $endDate;
             }
 
-            return true;
+            // Проверка кэша для текущего промежутка времени
+            $iterationCacheKey = self::getCacheKey($stock, $startDateClone, $iterationEndDate);
+            if (Cache::tags([config('cache.tags')])->has($iterationCacheKey) && !$forceSkipCache) {
+                $startDateClone = (clone $iterationEndDate)->addDay();
+                continue;
+            }
+
+            $data = MoscowExchangeCurl::getHistory($stock, $startDateClone->format('Y-m-d'), $iterationEndDate->format('Y-m-d'));
+
+            if ($data) {
+                Cache::tags([config('cache.tags')])->put($iterationCacheKey, true, Carbon::now()->addDay());
+
+                foreach ($data as $datum) {
+                    $history = MoscowExchangeHistory::where('tradedate', '=', $datum['tradedate'])
+                        ->where('moex_stock_id', $stock->id)
+                        ->first();
+
+                    if (!$history &&
+                        isset($datum['open'], $datum['low'], $datum['close'], $datum['high']) &&
+                        $datum['open'] !== '' &&
+                        $datum['low'] !== '' &&
+                        $datum['close'] !== '' &&
+                        $datum['high'] !== '') {
+                        if ($stock->market === 'bonds') {
+                            $datum['open'] = $stock->facevalue * $datum['open'] / 100;
+                            $datum['low'] = $stock->facevalue * $datum['low'] / 100;
+                            $datum['close'] = $stock->facevalue * $datum['close'] / 100;
+                            $datum['high'] = $stock->facevalue * $datum['high'] / 100;
+
+                            if (isset($datum['marketprice2']) && is_numeric($datum['marketprice2'])) {
+                                $datum['marketprice2'] = $stock->facevalue * $datum['marketprice2'] / 100;
+                            }
+                            if (isset($datum['marketprice3']) && is_numeric($datum['marketprice3'])) {
+                                $datum['marketprice3'] = $stock->facevalue * $datum['marketprice3'] / 100;
+                            }
+                        }
+
+                        $datum['moex_stock_id'] = $stock->id;
+                        MoscowExchangeHistory::create($datum);
+                    }
+                }
+            } else {
+                Cache::tags([config('cache.tags')])->put($iterationCacheKey, false, Carbon::now()->addDay());
+                LoggerHelper::getLogger()->info('No any history for ' . $stock->secid . ' between ' . $startDateClone->format('Y-m-d') . ' and ' . $iterationEndDate->format('Y-m-d'));
+            }
+
+            // Переход к следующей итерации
+            $startDateClone = $iterationEndDate->copy()->addDay();
         }
 
-        Cache::tags([config('cache.tags')])->add($cacheKey, false, Carbon::now()->addDay());
-        LoggerHelper::getLogger()->info('No any history for ' . $stock->secid);
-
-        return false;
+        return true;
     }
 
     /**

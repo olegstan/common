@@ -28,17 +28,24 @@ class BaseCatalog extends BaseModel
      * @param $stock
      * @param $startDate
      * @param $endDate
+     * @return string
+     */
+    public static function getCacheKey($stock, $startDate, $endDate)
+    {
+        return $stock->getMorphClass() . '.' . $stock->id . '.' . $startDate->format('Y-m-d') . '/' . $endDate->format('Y-m-d');
+    }
+
+    /**
+     * @param $key
      * @return array
      */
-    public static function cacheHistory($stock, $startDate, $endDate): array
+    public static function cacheHistory($key): array
     {
-        $key = $stock->getMorphClass() . '.' . $stock->id . '.' . $startDate->format('Y-m-d') . '/' . $endDate->format('Y-m-d');
-
         if (Cache::tags([config('cache.tags')])->has($key)) {
-            return [true, Cache::tags([config('cache.tags')])->get($key), $key];
+            return [true, Cache::tags([config('cache.tags')])->get($key)];
         }
 
-        return [false, [], $key];
+        return [false, []];
     }
 
     /**
