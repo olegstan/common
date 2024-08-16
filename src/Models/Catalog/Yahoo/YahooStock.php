@@ -332,7 +332,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
      */
     public static function loadHistory($stock, Carbon $startDate, Carbon $endDate)
     {
-        [$bool, $result] = self::cacheHistory($stock, $startDate, $endDate);
+        [$bool, $result, $cacheKey] = self::cacheHistory($stock, $startDate, $endDate);
 
         if ($bool) {
             return $result;
@@ -341,13 +341,13 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
         $data = YahooCurl::getHistoricalData($stock->symbol, YahooCurl::INTERVAL_1_DAY, $startDate, $endDate);
 
         if (empty($data)) {
-            Cache::tags([config('cache.tags')])->add($result, false, Carbon::now()->addDay());
+            Cache::tags([config('cache.tags')])->add($cacheKey, false, Carbon::now()->addDay());
             LoggerHelper::getLogger()->info('No any history for ' . $stock->symbol);
 
             return false;
         }
 
-        Cache::tags([config('cache.tags')])->add($result, true, Carbon::now()->addDay());
+        Cache::tags([config('cache.tags')])->add($cacheKey, true, Carbon::now()->addDay());
 
         foreach ($data as $datum) {
             $history = YahooHistory::where('date', '=', $datum['date']->format('Y-m-d'))

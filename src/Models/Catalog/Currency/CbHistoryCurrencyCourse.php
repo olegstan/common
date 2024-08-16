@@ -80,7 +80,7 @@ class CbHistoryCurrencyCourse extends BaseCatalog implements CommonsFuncCatalogH
      */
     public static function loadHistory(CbCurrency $stock, Carbon $startDate, Carbon $endDate)
     {
-        [$bool, $result] = self::cacheHistory($stock, $startDate, $endDate);
+        [$bool, $result, $cacheKey] = self::cacheHistory($stock, $startDate, $endDate);
 
         if ($bool) {
             return $result;
@@ -89,7 +89,7 @@ class CbHistoryCurrencyCourse extends BaseCatalog implements CommonsFuncCatalogH
         $dataRows = CbCurl::getCourses($stock->cb_id, $startDate, $endDate);
 
         if (count($dataRows)) {
-            Cache::tags([config('cache.tags')])->add($result, true, Carbon::now()->addDay());
+            Cache::tags([config('cache.tags')])->add($cacheKey, true, Carbon::now()->addDay());
 
             foreach ($dataRows as $row) {
                 $date = Carbon::createFromFormat('d.m.Y', (string)$row->attributes()->Date[0]);
@@ -111,7 +111,7 @@ class CbHistoryCurrencyCourse extends BaseCatalog implements CommonsFuncCatalogH
             return true;
         }
 
-        Cache::tags([config('cache.tags')])->add($result, false, Carbon::now()->addDay());
+        Cache::tags([config('cache.tags')])->add($cacheKey, false, Carbon::now()->addDay());
         LoggerHelper::getLogger()->info('No any history for ' . $stock->char_code);
 
         return false;
