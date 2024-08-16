@@ -352,7 +352,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
      * @return bool
      * polymorhic method
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate)
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
     {
         //тк заранее все спаршено, будет заглушкой
     }

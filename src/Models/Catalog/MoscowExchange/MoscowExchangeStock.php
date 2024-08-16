@@ -707,13 +707,15 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate
+     * @param bool $forceSkipCache
      * @return bool
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate)
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
     {
         [$bool, $result, $cacheKey] = self::cacheHistory($stock, $startDate, $endDate);
 
-        if ($bool) {
+        //если хотим загрузить несмотря на то есть данные в кеше или нет
+        if ($bool && !$forceSkipCache) {
             return $result;
         }
 

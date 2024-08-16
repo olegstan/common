@@ -141,7 +141,7 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
      * @param Carbon $endDate
      * @return void
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate)
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
     {
         CbHistoryCurrencyCourse::loadHistory($stock, $startDate, $endDate);
     }
