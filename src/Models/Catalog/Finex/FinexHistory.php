@@ -117,9 +117,9 @@ class FinexHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
      */
     public function setPrice($priceKey, $dateKey, $catalog)
     {
+        $price = $this->close;
+        $date = $this->tradedate;
         if ($this->faceunit === Cur::RUB) {
-            $price = $this->close;
-            $date = $this->tradedate;
             Cache::tags([config('cache.tags')])->forever($priceKey, $price);
             Cache::tags([config('cache.tags')])->forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
             return [$priceKey, $price, $date, null, 'finex'];
@@ -131,8 +131,6 @@ class FinexHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
         $convertCurrency = Cur::getById(Cur::RUB_ID);
 
         if ($convertCurrency) {
-            $price = $this->close;
-            $date = $this->tradedate;
             $convertedPrice = $convertCurrency->convert(
                 $price,
                 Cur::getByCode($this->faceunit)->id,

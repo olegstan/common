@@ -182,11 +182,12 @@ class CbondHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
      */
     public function setPrice($priceKey, $dateKey, $catalog)
     {
+        //close уже чистая цена, а не процент от номинала, поэтому делать ничего не нужно
         $cbondCurrencyCode = $this->faceunit;
+        $price = $this->close;
+        $date = $this->tradedate;
 
         if ($cbondCurrencyCode === Cur::RUB) {
-            $price = $this->close;
-            $date = $this->tradedate;
 
             Cache::tags([config('cache.tags')])->forever($priceKey, $price);
             Cache::tags([config('cache.tags')])->forever($dateKey, $date && $date instanceof Carbon ? $date->format('Y-m-d') : null);
@@ -199,9 +200,6 @@ class CbondHistory extends BaseCatalog implements CommonsFuncCatalogHistoryInter
         $convertCurrency = Cur::getById(Cur::RUB_ID);
 
         if ($convertCurrency) {
-            $price = $this->close;
-            $date = $this->tradedate;
-
             $convertedPrice = $convertCurrency->convert(
                 $price,
                 Cur::getByCode($cbondCurrencyCode)->id,
