@@ -748,6 +748,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                         ->where('moex_stock_id', $stock->id)
                         ->first();
 
+                    //для всех
                     if (isset($datum['open'], $datum['low'], $datum['close'], $datum['high']) &&
                         $datum['open'] !== '' &&
                         $datum['low'] !== '' &&
@@ -766,6 +767,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                         continue;
                     }
 
+                    //для облигаций
                     if($stock->market === 'bonds')
                     {
                         $priceFound = false;
@@ -783,7 +785,11 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                             $datum['high'] = $facevalue * $datum['high'] / 100;
                             $priceFound = true;
                         }else if(isset($datum['legalcloseprice']) && $datum['legalcloseprice'] !== ''){
-                            $datum['close'] = $facevalue * $datum['legalcloseprice'] / 100;
+                            $close = $facevalue * $datum['legalcloseprice'] / 100;
+                            $datum['open'] = $close;
+                            $datum['low'] = $close;
+                            $datum['close'] = $close;
+                            $datum['high'] = $close;
                             $priceFound = true;
                         }
 
