@@ -748,28 +748,62 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                         ->where('moex_stock_id', $stock->id)
                         ->first();
 
-                    if (!$history &&
-                        isset($datum['open'], $datum['low'], $datum['close'], $datum['high']) &&
+                    if (isset($datum['open'], $datum['low'], $datum['close'], $datum['high']) &&
                         $datum['open'] !== '' &&
                         $datum['low'] !== '' &&
                         $datum['close'] !== '' &&
-                        $datum['high'] !== '') {
-                        if ($stock->market === 'bonds') {
-                            $datum['open'] = $stock->facevalue * $datum['open'] / 100;
-                            $datum['low'] = $stock->facevalue * $datum['low'] / 100;
-                            $datum['close'] = $stock->facevalue * $datum['close'] / 100;
-                            $datum['high'] = $stock->facevalue * $datum['high'] / 100;
-
-                            if (isset($datum['marketprice2']) && is_numeric($datum['marketprice2'])) {
-                                $datum['marketprice2'] = $stock->facevalue * $datum['marketprice2'] / 100;
-                            }
-                            if (isset($datum['marketprice3']) && is_numeric($datum['marketprice3'])) {
-                                $datum['marketprice3'] = $stock->facevalue * $datum['marketprice3'] / 100;
-                            }
+                        $datum['high'] !== '' &&
+                        $stock->market !== 'bonds')
+                    {
+                        if(!$history)
+                        {
+                            $datum['moex_stock_id'] = $stock->id;
+                            MoscowExchangeHistory::create($datum);
+                        }else{
+                            $history->update($datum);
                         }
 
-                        $datum['moex_stock_id'] = $stock->id;
-                        MoscowExchangeHistory::create($datum);
+                        continue;
+                    }
+
+                    if($stock->market === 'bonds')
+                    {
+                        $priceFound = false;
+                        $facevalue = $datum['facevalue'] ?? $stock->facevalue;
+
+                        if(isset($datum['open'], $datum['low'], $datum['close'], $datum['high']) &&
+                            $datum['open'] !== '' &&
+                            $datum['low'] !== '' &&
+                            $datum['close'] !== '' &&
+                            $datum['high'] !== '')
+                        {
+                            $datum['open'] = $facevalue * $datum['open'] / 100;
+                            $datum['low'] = $facevalue * $datum['low'] / 100;
+                            $datum['close'] = $facevalue * $datum['close'] / 100;
+                            $datum['high'] = $facevalue * $datum['high'] / 100;
+                            $priceFound = true;
+                        }else if(isset($datum['legalcloseprice']) && $datum['legalcloseprice'] !== ''){
+                            $datum['close'] = $facevalue * $datum['legalcloseprice'] / 100;
+                            $priceFound = true;
+                        }
+
+                        if (isset($datum['marketprice2']) && is_numeric($datum['marketprice2'])) {
+                            $datum['marketprice2'] = $facevalue * $datum['marketprice2'] / 100;
+                        }
+                        if (isset($datum['marketprice3']) && is_numeric($datum['marketprice3'])) {
+                            $datum['marketprice3'] = $facevalue * $datum['marketprice3'] / 100;
+                        }
+
+                        if($priceFound)
+                        {
+                            if(!$history)
+                            {
+                                $datum['moex_stock_id'] = $stock->id;
+                                MoscowExchangeHistory::create($datum);
+                            }else{
+                                $history->update($datum);
+                            }
+                        }
                     }
                 }
             } else {

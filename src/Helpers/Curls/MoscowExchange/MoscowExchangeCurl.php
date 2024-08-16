@@ -269,6 +269,7 @@ class MoscowExchangeCurl
             //example https://iss.moex.com/iss/history/engines/stock/markets/bonds/boards/TQBR/securities/RU000A105A95.xml?from=2018-12-19
             //example https://iss.moex.com/iss/history/engines/stock/markets/bonds/boards/TQBR/securities/XS2346922755.xml?from=2018-12-19
             //example https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQBR/securities/SBERP.xml?from=2018-12-19
+            //example https://iss.moex.com/iss/history/engines/stock/markets/bonds/boards/TQOD/securities/XS0114288789.xml?from=2024-07-15
             $response = Curl::get(
                 self::API_URL . 'history/engines/' . $stock->engine . '/markets/' . $stock->market . '/boards/' . $stock->primary_boardid . '/securities/' . $stock->secid . '.json',
                 [
