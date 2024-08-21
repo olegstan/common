@@ -442,10 +442,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function getClientIds(): array
     {
-        $clientIds = $this->aton_configs;
+        $clientIds = $this->client_ids;
 
         if (empty($clientIds)) {
-            $this->setAtonConfigs();
+            $this->setClientIds();
+            return $this->getClientIds();
         }
 
         return $clientIds;
