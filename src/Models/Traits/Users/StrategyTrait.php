@@ -23,11 +23,12 @@ trait StrategyTrait
 {
     /**
      * @param $typeIds
-     * @param $jobId
+     * @param JobsEvent|null $event
+     *
      * @return array
      * @throws Exception
      */
-    public function getChartStrategy($typeIds, $jobId)
+    public function getChartStrategy($typeIds, ?JobsEvent $event = null): array
     {
         $incomeCategory = 1;
         $investCategory = 2;
@@ -132,16 +133,10 @@ trait StrategyTrait
             $i++;
         }
 
-        for ($n = 0 ; $n < $sizeActives; $n++)
-        {
-            $start_time = microtime(TRUE);
-
-            try {
-                Cache::tags([config('cache.tags')])->forever('job_id.' . $jobId, round($count / $size * 100, 1));
-                JobsEvent::percentJob($this->id, 'job_id.' . $jobId, DefinitionActiveConst::STRATEGY, JobsEvent::PROCESSING, time());
-            }catch (Exception $e)
-            {
-
+        for ($n = 0; $n < $sizeActives; $n++) {
+            $start_time = microtime(true);
+            if ($event) {
+                $event->processing($count, $size);
             }
 
             /**
@@ -149,7 +144,7 @@ trait StrategyTrait
              */
             $activesCacheData[$n] = $actives[$n]->cacheStrategy($startDate->copy(), $endDate->copy(), $datesIndex);
 
-            $end_time = microtime(TRUE);
+            $end_time = microtime(true);
 
             LoggerHelper::getLogger('debug')->info('---------------active');
             LoggerHelper::getLogger('debug')->info($actives[$n]->id);
@@ -160,12 +155,8 @@ trait StrategyTrait
         $accountCacheData = [];
         foreach ($userAccounts as $key => $userAccount)
         {
-            try {
-                Cache::tags([config('cache.tags')])->forever('job_id.' . $jobId, round($count / $size * 100, 1));
-                JobsEvent::percentJob($this->id, 'job_id.' . $jobId, DefinitionActiveConst::STRATEGY, JobsEvent::PROCESSING, time());
-            }catch (Exception $e)
-            {
-
+            if ($event) {
+                $event->processing($count, $size);
             }
 
             $start_time = microtime(TRUE);
@@ -194,12 +185,8 @@ trait StrategyTrait
         $i = 0;
         while ($startDate->lessThan($endDate))
         {
-            try {
-                Cache::tags([config('cache.tags')])->forever('job_id.' . $jobId, round($count / $size * 100, 1));
-                JobsEvent::percentJob($this->id, 'job_id.' . $jobId, DefinitionActiveConst::STRATEGY, JobsEvent::PROCESSING, time());
-            }catch (Exception $e)
-            {
-
+            if ($event) {
+                $event->processing($count, $size);
             }
 
             $start_time = microtime(TRUE);
