@@ -63,41 +63,6 @@ class Client extends User
     }
 
     /**
-     * @param array $data
-     * @return false|void
-     */
-    public function createApplicationAndContactFromClient(array $data = [])
-    {
-        if (!$this->email || trim($this->email) === '') {
-            return false;
-        }
-
-        $contact = CrmContact::create(array_merge(
-            $this->attributes, [
-            'user_id' => $this->manager_id,//должен быть id менеджера
-            'attitude' => ($data['attitude'] ?? ''),
-            'aton_id' => ($data['aton_id'] ?? ''),
-        ]));
-
-        if ($contact) {
-            $this->contact_id = $contact->id;
-            $this->save();
-            CrmApplication::add([
-                'responsible_user_id' => $this->manager_id,
-                'status_id' => CrmApplication::CONTRACT_CONFIRMED,
-                'source_id' => CrmApplication::SOURCE_CHANNEL,
-                'duration' => Carbon::now(),
-                'contacts' => [
-                    [
-                        'is_beneficiary' => 1,
-                        'id' => $contact->id,
-                    ]
-                ]
-            ]);
-        }
-    }
-
-    /**
      * @param $query
      */
     public function scopeTasksOrder($query)
