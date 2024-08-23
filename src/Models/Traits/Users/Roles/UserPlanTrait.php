@@ -1,7 +1,7 @@
 <?php
 namespace Common\Models\Traits\Users\Roles;
 
-use App\Models\Accounts\UserAccountCurrency;
+use App\Models\Accounts\UserSubaccount;
 use App\Models\Actives\Active;
 use App\Models\Actives\ActiveGoal;
 use App\Models\Actives\ActiveIncomeExpensesMonth;
@@ -37,7 +37,7 @@ trait UserPlanTrait
 
             $helpDate = $startDate->copy()->month($startMonth)->startOfMonth();
 
-            $account = UserSubaccounts::generateMainTempAccount($this->id, $this->currency_id);
+            $account = UserSubaccount::generateMainTempAccount($this->id, $this->currency_id);
 
             for($n = 0; $n <= $diffYears; $n++)
             {
@@ -132,7 +132,7 @@ trait UserPlanTrait
     {
         //TODO сохранить прошлые значения в user_update_plans
 
-        $account = UserSubaccounts::generateMainTempAccount($this->id, $this->currency_id);
+        $account = UserSubaccount::generateMainTempAccount($this->id, $this->currency_id);
 
         $salaries = UserPlan::where('user_id', $this->id)
             ->get();
@@ -182,7 +182,7 @@ trait UserPlanTrait
                 $diffYears = $startDate->diffInYears($deadDate);
                 $helpDate = $startDate->copy()->month($startMonth)->startOfMonth();
 
-                $account = UserSubaccounts::generateMainTempAccount($this->id, $this->currency_id);
+                $account = UserSubaccount::generateMainTempAccount($this->id, $this->currency_id);
 
                 $firstSalary = UserPlan::where('user_id', $this->id)
                     ->orderBy('buy_at')

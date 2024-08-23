@@ -3,13 +3,13 @@
 namespace Common\Models\Users;
 
 use App\Models\Accounts\Types\Cash;
-use App\Models\Accounts\UserAccountCurrency;
+use App\Models\Accounts\UserSubaccount;
 use App\Models\Actives\ActiveGoal;
 use App\Models\Actives\ActiveGoalPayment;
 use App\Models\Aton\AtonUser;
 use App\Models\Crm\Contact\CrmContact;
 use App\Models\Crm\CrmApplication;
-use App\Models\Accounts\UserSubaccounts;
+use App\Models\Accounts\UserSubaccount;
 use Carbon\Carbon;
 use Common\Casts\BoolCast;
 use Common\Casts\IntegerCast;
@@ -722,21 +722,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'name' => 'Кошелек',
         ]);
 
-        UserSubaccounts::create([
+        UserSubaccount::create([
             'account_id' => $cash->id,
             'currency_id' => $currencyRub->id,
             'sum' => 0,
             'name' => 'Наличные RUB',
         ]);
 
-        UserSubaccounts::create([
+        UserSubaccount::create([
             'account_id' => $cash->id,
             'currency_id' => $currencyUsd->id,
             'sum' => 0,
             'name' => 'Наличные USD',
         ]);
 
-        UserSubaccounts::create([
+        UserSubaccount::create([
             'account_id' => $cash->id,
             'currency_id' => $currencyEur->id,
             'sum' => 0,

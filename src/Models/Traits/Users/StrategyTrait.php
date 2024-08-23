@@ -2,7 +2,7 @@
 namespace Common\Models\Traits\Users;
 
 use App\Helpers\Active\ActiveHelper;
-use App\Models\Accounts\UserAccountCurrency;
+use App\Models\Accounts\UserSubaccount;
 use App\Models\Actives\Active;
 use Cache;
 use Carbon\Carbon;
@@ -166,7 +166,7 @@ trait StrategyTrait
             if($accounts->count())
             {
                 /**
-                 * @var UserAccountCurrency $account
+                 * @var UserSubaccount $account
                  */
                 foreach ($accounts as $subKey => $account)
                 {
@@ -236,12 +236,12 @@ trait StrategyTrait
                 if($accounts->count())
                 {
                     /**
-                     * @var UserAccountCurrency $account
+                     * @var UserSubaccount $account
                      */
                     foreach ($accounts as $subKey => $account)
                     {
                         /**
-                         * @var UserAccountCurrency $account
+                         * @var UserSubaccount $account
                          */
                         if(in_array($incomeCategory, $typeIds) && isset($accountCacheData[$key][$subKey][$i]['income']))
                         {
