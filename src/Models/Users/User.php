@@ -721,21 +721,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'name' => 'Кошелек',
         ]);
 
-        UserAccountCurrency::create([
+        UserSubaccounts::create([
             'account_id' => $cash->id,
             'currency_id' => $currencyRub->id,
             'sum' => 0,
             'name' => 'Наличные RUB',
         ]);
 
-        UserAccountCurrency::create([
+        UserSubaccounts::create([
             'account_id' => $cash->id,
             'currency_id' => $currencyUsd->id,
             'sum' => 0,
             'name' => 'Наличные USD',
         ]);
 
-        UserAccountCurrency::create([
+        UserSubaccounts::create([
             'account_id' => $cash->id,
             'currency_id' => $currencyEur->id,
             'sum' => 0,

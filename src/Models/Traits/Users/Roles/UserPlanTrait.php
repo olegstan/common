@@ -37,7 +37,7 @@ trait UserPlanTrait
 
             $helpDate = $startDate->copy()->month($startMonth)->startOfMonth();
 
-            $account = UserAccountCurrency::generateMainTempAccount($this->id, $this->currency_id);
+            $account = UserSubaccounts::generateMainTempAccount($this->id, $this->currency_id);
 
             for($n = 0; $n <= $diffYears; $n++)
             {
@@ -132,7 +132,7 @@ trait UserPlanTrait
     {
         //TODO сохранить прошлые значения в user_update_plans
 
-        $account = UserAccountCurrency::generateMainTempAccount($this->id, $this->currency_id);
+        $account = UserSubaccounts::generateMainTempAccount($this->id, $this->currency_id);
 
         $salaries = UserPlan::where('user_id', $this->id)
             ->get();
@@ -182,7 +182,7 @@ trait UserPlanTrait
                 $diffYears = $startDate->diffInYears($deadDate);
                 $helpDate = $startDate->copy()->month($startMonth)->startOfMonth();
 
-                $account = UserAccountCurrency::generateMainTempAccount($this->id, $this->currency_id);
+                $account = UserSubaccounts::generateMainTempAccount($this->id, $this->currency_id);
 
                 $firstSalary = UserPlan::where('user_id', $this->id)
                     ->orderBy('buy_at')

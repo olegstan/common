@@ -344,14 +344,14 @@ trait TransactionTrait
      */
     public function getTransactionsChartIncomeInvest($nowDate, Currency $currency, $accountIds)
     {
-        $brokerAccountIds = UserAccountCurrency::whereHas('user_account', function ($query)
+        $brokerAccountIds = UserSubaccounts::whereHas('user_account', function ($query)
         {
             $query->where('type_id', UserAccount::BROKER_ACCOUNT)
                 ->where('user_id', $this->id);
         })
             ->pluck('id');
 
-        $anotherAccountIds = UserAccountCurrency::whereHas('user_account', function ($query)
+        $anotherAccountIds = UserSubaccounts::whereHas('user_account', function ($query)
         {
             $query->where('type_id', '!=', UserAccount::BROKER_ACCOUNT)
                 ->where('user_id', $this->id);
@@ -507,14 +507,14 @@ trait TransactionTrait
      */
     public function getTransactionsChartOutcomeInvest($nowDate, Currency $currency, $accountIds)
     {
-        $brokerAccountIds = UserAccountCurrency::whereHas('user_account', function ($query)
+        $brokerAccountIds = UserSubaccounts::whereHas('user_account', function ($query)
         {
             $query->where('type_id', UserAccount::BROKER_ACCOUNT)
                 ->where('user_id', $this->id);
         })
             ->pluck('id');
 
-        $anotherAccountIds = UserAccountCurrency::whereHas('user_account', function ($query)
+        $anotherAccountIds = UserSubaccounts::whereHas('user_account', function ($query)
         {
             $query->where('type_id', '!=', UserAccount::BROKER_ACCOUNT)
                 ->where('user_id', $this->id);
