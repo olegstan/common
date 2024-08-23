@@ -9,7 +9,6 @@ use App\Models\Actives\ActiveGoalPayment;
 use App\Models\Aton\AtonUser;
 use App\Models\Crm\Contact\CrmContact;
 use App\Models\Crm\CrmApplication;
-use App\Models\Accounts\UserSubaccount;
 use Carbon\Carbon;
 use Common\Casts\BoolCast;
 use Common\Casts\IntegerCast;
