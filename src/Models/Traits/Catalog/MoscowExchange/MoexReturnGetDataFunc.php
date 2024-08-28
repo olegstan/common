@@ -221,10 +221,11 @@ trait MoexReturnGetDataFunc
         if($date)
         {
             //найти сплиты до даты
-            $cacheKey = "moex_last_split_{$this->id}_{$date}";
+            $moexId = $this->id;
+            $cacheKey = "moex_last_split_{$moexId}_{$date}";
 
-            $split = Cache::remember($cacheKey, 60 * 60, static function () use ($date) {
-                return MoscowExchangeSplit::where('moex_stock_id', $this->id)
+            $split = Cache::remember($cacheKey, 60 * 60, static function () use ($date, $moexId) {
+                return MoscowExchangeSplit::where('moex_stock_id', $moexId)
                     ->where('date', '<=', $date)
                     ->orderByDesc('date')
                     ->first();
