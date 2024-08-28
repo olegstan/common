@@ -2,6 +2,7 @@
 
 namespace Common\Models\Traits\Catalog\TradingView;
 
+use Carbon\Carbon;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 trait TradingViewReturnGetDataFunc
@@ -17,7 +18,7 @@ trait TradingViewReturnGetDataFunc
     /**
      * @return int
      */
-    public function getLotSize(): int
+    public function getLotSize(Carbon $date = null): int
     {
         return 1;
     }

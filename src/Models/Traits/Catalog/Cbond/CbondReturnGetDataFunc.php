@@ -2,6 +2,7 @@
 
 namespace Common\Models\Traits\Catalog\Cbond;
 
+use Carbon\Carbon;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 trait CbondReturnGetDataFunc
@@ -196,7 +197,7 @@ trait CbondReturnGetDataFunc
         return $this->secid ?? '';
     }
 
-    public function getLotSize(): int
+    public function getLotSize(Carbon $date = null): int
     {
         return $this->lotsize ?: 1;
     }

@@ -2,6 +2,7 @@
 
 namespace Common\Transformers\Catalog\Cbond;
 
+use Carbon\Carbon;
 use Common\Models\Catalog\Cbond\CbondStock;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
@@ -31,7 +32,7 @@ class CbondStockTransformer extends BaseTransformer
             'group' => $model->group,
             'primary_boardid' => $model->primary_boardid,
             'marketprice_boardid' => $model->marketprice_boardid,
-            'lotsize' => $model->getLotSize(),
+            'lotsize' => $model->getLotSize(Carbon::now()),
             'icon' => $model->getIcon(),
             'expiration' => $model->expiration,
             'boardid' => $model->boardid,

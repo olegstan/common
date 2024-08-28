@@ -2,8 +2,18 @@
 
 namespace Common\Models\Traits\Catalog\MoscowExchange;
 
+use Carbon\Carbon;
+use Common\Models\Catalog\MoscowExchange\MoscowExchangeSplit;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
+use Cache;
 
+/**
+ * Trait MoexReturnGetDataFunc
+ *
+ * @mixin \Common\Models\Catalog\MoscowExchange\MoscowExchangeStock
+ *
+ * @package Common\Models\Traits\Catalog\MoscowExchange
+ */
 trait MoexReturnGetDataFunc
 {
     /**
@@ -206,8 +216,26 @@ trait MoexReturnGetDataFunc
         return $this->isin;
     }
 
-    public function getLotSize(): int
+    public function getLotSize(Carbon $date = null): int
     {
+        if($date)
+        {
+            //найти сплиты до даты
+            $cacheKey = "moex_last_split_{$this->id}_{$date}";
+
+            $split = Cache::remember($cacheKey, 60 * 60, static function () use ($date) {
+                return MoscowExchangeSplit::where('moex_stock_id', $this->id)
+                    ->where('date', '<=', $date)
+                    ->orderByDesc('date')
+                    ->first();
+            });
+
+            if($split)
+            {
+                return $split->after;
+            }
+        }
+
         return $this->lotsize ?: 1;
     }
 

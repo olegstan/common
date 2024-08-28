@@ -2,6 +2,8 @@
 
 namespace Common\Models\Traits\Catalog;
 
+use Carbon\Carbon;
+
 trait SearchActiveCatalogTrait
 {
     /**
@@ -22,7 +24,7 @@ trait SearchActiveCatalogTrait
             'couponpercent' => $this->getCouponPercent(),
             'couponvalue' => $this->getCouponValue(),
             'decimals' => $this->getDecimals(),
-            'lotsize' => $this->getLotSize(),
+            'lotsize' => $this->getLotSize(Carbon::now()),
             'symbol' => $this->getSymbol(),
             'country' => $this->getCountry(),
             'industry' => $this->getIndustry(),

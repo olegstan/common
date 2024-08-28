@@ -118,7 +118,7 @@ trait DividendTrait
                             {
                                 if ($trade && $trade->trade_at && $dividend->getDividendDate() && $dividend->getDividendDate()->greaterThan($trade->trade_at))
                                 {
-                                    $sum = $trade->count * $active->item->getLotSize() * $dividend->getDividendValue();
+                                    $sum = $trade->count * $active->item->getLotSize($trade->trade_at) * $dividend->getDividendValue();
                                     $data[$i]['dividend'] += $sum;
                                     $active->dividends_sum += $sum;
                                 }

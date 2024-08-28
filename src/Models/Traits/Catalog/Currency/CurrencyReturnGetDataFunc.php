@@ -2,6 +2,7 @@
 
 namespace Common\Models\Traits\Catalog\Currency;
 
+use Carbon\Carbon;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 trait CurrencyReturnGetDataFunc
@@ -51,7 +52,7 @@ trait CurrencyReturnGetDataFunc
         return $this->char_code;
     }
 
-    public function getLotSize(): int
+    public function getLotSize(Carbon $date = null): int
     {
         return 1;
     }

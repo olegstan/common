@@ -2,6 +2,7 @@
 
 namespace Common\Models\Traits\Catalog\Custom;
 
+use Carbon\Carbon;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 trait CustomReturnGetDataFunc
@@ -41,7 +42,7 @@ trait CustomReturnGetDataFunc
     /**
      * @return int
      */
-    public function getLotSize(): int
+    public function getLotSize(Carbon $date = null): int
     {
         return 1;
     }

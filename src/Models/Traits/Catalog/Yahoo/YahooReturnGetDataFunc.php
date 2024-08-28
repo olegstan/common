@@ -2,6 +2,7 @@
 
 namespace Common\Models\Traits\Catalog\Yahoo;
 
+use Carbon\Carbon;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 trait YahooReturnGetDataFunc
@@ -75,7 +76,7 @@ trait YahooReturnGetDataFunc
         return $this->symbol;
     }
 
-    public function getLotSize(): int
+    public function getLotSize(Carbon $date = null): int
     {
         return 1;
     }

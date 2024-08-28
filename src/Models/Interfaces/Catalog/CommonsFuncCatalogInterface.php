@@ -10,7 +10,7 @@ interface CommonsFuncCatalogInterface
 
     public function getTypeText();
 
-    public function getLotSize();
+    public function getLotSize(Carbon $date = null): int;//стало понятно что данное поле должно быть привязано к дате, так как лотность может меняться, в зависимости от даты
 
     public function getSymbol();
 
@@ -71,6 +71,7 @@ interface CommonsFuncCatalogInterface
     public function getSector();
 
     public function getCapitalization();
+
     public function getUserId();
 
 }

@@ -2,6 +2,7 @@
 
 namespace Common\Transformers\Catalog\Custom;
 
+use Carbon\Carbon;
 use Common\Models\Catalog\Custom\CustomStock;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
@@ -24,7 +25,7 @@ class CustomStockTransformer extends BaseTransformer
             'matdate' => $model->matdate,
             'rate_period_type_id' => $model->rate_period_type_id,
             'rate' => $model->rate,
-            'lotsize' => $model->getLotSize(),
+            'lotsize' => $model->getLotSize(Carbon::now()),
             'ticker' => $model->getMorphClass(),
         ];
 

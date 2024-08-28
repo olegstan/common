@@ -2,6 +2,7 @@
 
 namespace Common\Transformers\Catalog\MoscowExchange;
 
+use Carbon\Carbon;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
@@ -31,7 +32,7 @@ class MoscowExchangeStockTransformer extends BaseTransformer
             'group' => $model->group,
             'primary_boardid' => $model->primary_boardid,
             'marketprice_boardid' => $model->marketprice_boardid,
-            'lotsize' => $model->getLotSize(),
+            'lotsize' => $model->getLotSize(Carbon::now()),
             'icon' => $model->getIcon(),
             'expiration' => $model->expiration,
             'boardid' => $model->boardid,
