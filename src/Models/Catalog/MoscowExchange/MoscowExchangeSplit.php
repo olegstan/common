@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Class MoscowExchangeSplit
+ *
+ * @property $moex_stock_id
+ * @property $before
+ * @property $after
+ * @property $date
+ *
  * @package Common\Models\Catalog\MoscowExchange
  */
 class MoscowExchangeSplit extends BaseCatalog
