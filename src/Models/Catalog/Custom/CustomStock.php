@@ -66,6 +66,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         'matdate',
         'rate_period_type_id',
         'rate',
+        'lotsize',
     ];
 
     /**
@@ -81,6 +82,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         'matdate' => 'datetime',
         'rate_period_type_id' => 'integer',
         'rate' => 'integer',
+        'lotsize' => 'integer',
     ];
 
 

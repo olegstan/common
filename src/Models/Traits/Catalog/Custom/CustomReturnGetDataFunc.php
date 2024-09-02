@@ -43,7 +43,7 @@ trait CustomReturnGetDataFunc
      */
     public function getLotSize(): int
     {
-        return 1;
+        return $this->lotsize ?: 1;
     }
 
     /**
