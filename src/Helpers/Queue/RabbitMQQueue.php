@@ -44,9 +44,10 @@ class RabbitMQQueue extends BaseQueue
      */
     protected function isImmediateJob($job): bool
     {
+        $path = str_replace('\\', '/', $job);
         return in_array(class_basename($job), ['SendQueuedMailable', 'BroadcastEvent'])
             ||
-            str_contains($job, DIRECTORY_SEPARATOR . 'Catalog' . DIRECTORY_SEPARATOR);
+            str_contains($path, '/Catalog/');
     }
 
     /**
