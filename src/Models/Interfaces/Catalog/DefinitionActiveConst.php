@@ -68,6 +68,7 @@ interface DefinitionActiveConst
     public const FINEX_HISTORY = 37;
     public const MOEX_COURSE = 38;
     public const YAHOO_COURSE = 39;
+    public const MOEX_SPLIT_CREATE = 46;
 
     public const ATON_CRM_PARSE = 11;
     public const ATON_FILE_UPLOADER = 7;
