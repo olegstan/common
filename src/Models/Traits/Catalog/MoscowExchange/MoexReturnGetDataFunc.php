@@ -216,29 +216,41 @@ trait MoexReturnGetDataFunc
         return $this->isin;
     }
 
+    /**
+     * Возвращает лотность бумаги
+     *
+     * @param Carbon|null $date
+     *
+     * @return int
+     */
     public function getLotSize(Carbon $date = null): int
     {
-        if($date)
-        {
-            //найти сплиты до даты
-            $moexId = $this->id;
-            $cacheKey = "moex_last_split_{$moexId}_{$date}";
+        $lotsize = $this->lotsize ?: 1;
 
-            $split = Cache::remember($cacheKey, 60 * 60, static function () use ($date, $moexId) {
-                return MoscowExchangeSplit::where('moex_stock_id', $moexId)
+        // Проверка сплитов до заданной даты
+        if ($date) {
+            $cacheKey = "moex_last_split_{$this->id}_$date";
+
+            $split = Cache::remember($cacheKey, 60 * 60, function () use ($date) {
+                return MoscowExchangeSplit::where('moex_stock_id', $this->id)
                     ->where('date', '<=', $date)
                     ->orderByDesc('date')
                     ->first();
             });
 
-            if($split)
-            {
-                return $split->after;
+            if ($split) {
+                $lotsize = $split->after;
             }
         }
 
-        return $this->lotsize ?: 1;
+        // Фьючерсы всегда возвращают 1
+        if ($this->engine === 'futures') {
+            $lotsize = 1;
+        }
+
+        return $lotsize;
     }
+
 
     public function getStockName()
     {

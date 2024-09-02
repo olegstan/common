@@ -197,6 +197,13 @@ trait CbondReturnGetDataFunc
         return $this->secid ?? '';
     }
 
+    /**
+     * Возвращает лотность бумаги
+     *
+     * @param Carbon|null $date
+     *
+     * @return int
+     */
     public function getLotSize(Carbon $date = null): int
     {
         return $this->lotsize ?: 1;

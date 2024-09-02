@@ -16,6 +16,10 @@ trait TradingViewReturnGetDataFunc
     }
 
     /**
+     * Возвращает лотность бумаги
+     *
+     * @param Carbon|null $date
+     *
      * @return int
      */
     public function getLotSize(Carbon $date = null): int
