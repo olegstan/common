@@ -35,7 +35,8 @@ class RabbitMQQueue extends BaseQueue
 
     /**
      * Проверьте, является ли задание экземпляром SendQueuedMailable (Отправка письма на почту),
-     * является ли задание экземпляром BroadcastEvent (вебсокета для процентовки выполнения очереди)
+     * является ли задание экземпляром BroadcastEvent (вебсокета для процентовки выполнения очереди),
+     * является ли задание экземпляром MakeSearchable (Laravel scout)
      * или задача принадлежит к сервису Каталога (где не надо проверять на кэш)
      *
      * @param mixed $job
@@ -45,7 +46,7 @@ class RabbitMQQueue extends BaseQueue
     protected function isImmediateJob($job): bool
     {
         $path = str_replace('\\', '/', $job);
-        return in_array(class_basename($job), ['SendQueuedMailable', 'BroadcastEvent'])
+        return in_array(class_basename($job), ['SendQueuedMailable', 'BroadcastEvent', 'MakeSearchable'])
             ||
             str_contains($path, '/Catalog/');
     }
