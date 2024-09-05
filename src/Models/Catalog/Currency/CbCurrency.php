@@ -56,7 +56,11 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
      * @var array
      */
     protected $casts = [
-
+        'cb_id' => 'string',
+        'num_code' => 'string',
+        'char_code' => 'string',
+        'nominal' => 'string',
+        'name' => 'string',
     ];
 
     public $timestamps = false;
