@@ -1,0 +1,673 @@
+<?php
+
+namespace Common\Helpers\Catalog;
+
+use Common\Helpers\LoggerHelper;
+use Common\Helpers\Translit;
+use Common\Models\Catalog\Cbond\CbondStock;
+use Common\Models\Catalog\Currency\CbCurrency;
+use Common\Models\Catalog\Custom\CustomStock;
+use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
+use Common\Models\Catalog\Yahoo\YahooStock;
+use Elasticsearch\ClientBuilder;
+use Exception;
+use stdClass;
+
+class CatalogSearch
+{
+    // Поля для поиска с весовыми коэффициентами для 'moscow_exchange_stocks'
+    protected const MOSCOW_STOCKS_FIELDS = [
+        'secid^5',
+        'isin^5',
+        'name^10',
+        'shortname^8',
+        'latname^2',
+    ];
+
+    // Поля для поиска по 'cb_currencies'
+    protected const CB_CURRENCIES_FIELDS = ['name', 'cb_id', 'char_code'];
+
+    // Поля для поиска по 'custom_stocks'
+    protected const CUSTOM_STOCKS_FIELDS = ['name', 'symbol'];
+
+    // Поля для поиска по 'yahoo_stocks'
+    protected const YAHOO_STOCKS_FIELDS = ['name', 'symbol', 'sector', 'industry'];
+
+    // Поля для поиска по 'cbond_stocks'
+    protected const CBOND_STOCKS_FIELDS = ['name', 'symbol', 'isin'];
+
+    // Типы бондов
+    protected const BOND_TYPES = [
+        'cb_bond',
+        'subfederal_bond',
+        'municipal_bond',
+        'euro_bond',
+        'state_bond',
+        'ifi_bond',
+        'exchange_bond',
+        'corporate_bond',
+        'ofz_bond',
+        'non_exchange_bond',
+        'exchange_ppif',
+        'private_ppif',
+        'public_ppif',
+        'interval_ppif',
+    ];
+
+    /**
+     * Клиент Elasticsearch
+     */
+    protected $client;
+
+    /**
+     * Конструктор: инициализирует клиент Elasticsearch
+     */
+    public function __construct()
+    {
+        $this->client = ClientBuilder::create()
+            ->setHosts(config('elasticsearch.config.hosts'))
+            ->build();
+    }
+
+    /**
+     * Индексация записи в Elasticsearch
+     *
+     * @param $record
+     * @param string $indexName
+     */
+    public static function indexRecordInElasticsearch($record, string $indexName): void
+    {
+        $self = new self();
+        
+        try {
+            $params = [
+                'index' => "catalog.$indexName",  // Укажи имя индекса
+                'id' => $record->id,  // ID записи
+                'body' => $record->toArray(),  // Преобразуем запись в массив
+            ];
+
+            $self->client->index($params);
+        } catch (Exception $e) {
+            LoggerHelper::getLogger(class_basename($self))
+                ->error(
+                    "Ошибка индексации записи в Elasticsearch: " . $e->getMessage(),
+                    $record->toArray()
+                );
+        }
+    }
+
+    /**
+     * Возвращает найденные записи по тексту
+     *
+     * @param string $searchTerm
+     * @param string|int|null $userId
+     *
+     * @return array
+     */
+    public static function search(string $searchTerm, $userId = null): array
+    {
+        return (new self())->performSearch($searchTerm, $userId);
+    }
+
+    /**
+     * Возвращает все проиндексированные записи
+     *
+     * @param array $indices
+     * @param int $size
+     *
+     * @return array
+     */
+    public static function getAllDocuments(array $indices, int $size = 1000): array
+    {
+        $self = new self();
+
+        $params = [
+            'index' => implode(',', $indices),  // Передаем индексы через запятую
+            'scroll' => '1m',  // Устанавливаем время жизни скролла
+            'size' => $size,  // Количество документов на одну страницу
+            'body' => [
+                'query' => [
+                    'match_all' => new stdClass(),  // Получаем все документы
+                ],
+            ],
+        ];
+
+        // Выполняем начальный запрос
+        $response = $self->client->search($params);
+
+        $scrollId = $response['_scroll_id'];
+        $allDocuments = [];
+
+        // Собираем все документы в один массив
+        $documentsBatch = $response['hits']['hits'];
+        while (count($documentsBatch) > 0) {
+            // Добавляем текущую партию документов в массив
+            $allDocuments[] = $documentsBatch;
+
+            // Получаем следующую партию данных с помощью Scroll API
+            $scrollParams = [
+                'scroll_id' => $scrollId,
+                'scroll' => '1m',  // Продлеваем время жизни скролла
+            ];
+
+            $response = $self->client->scroll($scrollParams);
+            $documentsBatch = $response['hits']['hits'];
+        }
+
+        // Объединяем все партии данных вне цикла
+        return array_merge(...$allDocuments);
+    }
+
+    /**
+     * Метод для выполнения поиска
+     *
+     * @param string $searchTerm
+     * @param string|int|null $userId
+     *
+     * @return array
+     */
+    protected function performSearch(string $searchTerm, $userId = null): array
+    {
+        // Получаем оригинальный текст и его варианты с транслитерацией
+        [$original, $translitLat, $translitCyr] = Translit::make($searchTerm);
+
+        // Строим запросы для поиска по оригинальному тексту и вариантам транслитерации
+        $queries = $this->buildQueries($original, $translitLat, $translitCyr, $userId);
+
+        // Выполняем мультипоиск
+        $response = $this->client->msearch(['body' => $queries]);
+
+        // Обрабатываем и возвращаем результаты
+        return $this->handleResponse($response);
+    }
+
+    /**
+     * Строим запросы для поиска по нескольким индексам
+     *
+     * @param string $original
+     * @param string $translitLat
+     * @param string $translitCyr
+     * @param string|int|null $userId
+     *
+     * @return array
+     */
+    protected function buildQueries(string $original, string $translitLat, string $translitCyr, $userId = null): array
+    {
+        // Общие параметры для запросов
+        $queries = [];
+
+        // Добавляем запросы для каждого индекса
+        $queries = array_merge($queries, $this->buildMoscowStocksQuery($original, $translitLat, $translitCyr));
+        $queries = array_merge($queries, $this->buildCbCurrenciesQuery($original, $translitLat, $translitCyr));
+        $queries = array_merge($queries, $this->buildCustomStocksQuery($original, $translitLat, $translitCyr, $userId));
+        $queries = array_merge($queries, $this->buildYahooStocksQuery($original, $translitLat, $translitCyr));
+        $queries = array_merge($queries, $this->buildCbondStocksQuery($original, $translitLat, $translitCyr));
+
+        return $queries;
+    }
+
+    /**
+     * Создание запроса для индекса 'moscow_exchange_stocks'
+     *
+     * @param string $original
+     * @param string $translitLat
+     * @param string $translitCyr
+     *
+     * @return array
+     */
+    protected function buildMoscowStocksQuery(string $original, string $translitLat, string $translitCyr): array
+    {
+        return [
+            ['index' => 'catalog.moscow_exchange_stocks'],
+            [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'multi_match' => [
+                                    'query' => $original,
+                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                    'operator' => 'and',
+                                    'analyzer' => 'custom_analyzer',  // Используем кастомный анализатор с edge_ngram
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'query' => $translitLat,
+                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                    'operator' => 'and',
+                                    'analyzer' => 'custom_analyzer',  // Используем кастомный анализатор с edge_ngram
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'query' => $translitCyr,
+                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                    'operator' => 'and',
+                                    'analyzer' => 'custom_analyzer',  // Используем кастомный анализатор с edge_ngram
+                                ],
+                            ],
+                        ],
+                        'should' => [
+                            [
+                                'wildcard' => [
+                                    'name' => [
+                                        'value' => "*$original*",
+                                        'boost' => 2.0,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'secid' => [
+                                        'value' => "*$original*",
+                                        'boost' => 1.5,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'isin' => [
+                                        'value' => "*$original*",
+                                        'boost' => 1.5,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'shortname' => [
+                                        'value' => "*$original*",
+                                        'boost' => 1.5,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'name' => [
+                                        'value' => "*$translitLat*",
+                                        'boost' => 2.0,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'secid' => [
+                                        'value' => "*$translitLat*",
+                                        'boost' => 1.5,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'isin' => [
+                                        'value' => "*$translitLat*",
+                                        'boost' => 1.5,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'shortname' => [
+                                        'value' => "*$translitLat*",
+                                        'boost' => 1.5,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'name' => [
+                                        'value' => "*$translitCyr*",
+                                        'boost' => 2.0,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'secid' => [
+                                        'value' => "*$translitCyr*",
+                                        'boost' => 1.5,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'isin' => [
+                                        'value' => "*$translitCyr*",
+                                        'boost' => 1.5,
+                                    ],
+                                ],
+                            ],
+                            [
+                                'wildcard' => [
+                                    'shortname' => [
+                                        'value' => "*$translitCyr*",
+                                        'boost' => 1.5,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'size' => 1000,  // Увеличиваем количество возвращаемых записей
+            ],
+        ];
+    }
+
+    /**
+     * Создание скрипта сортировки для 'moscow_exchange_stocks'
+     *
+     * Эта сортировка обрезает почти все, так что она не нужна
+     *
+     * @return string
+     */
+    protected function buildMoscowStocksScript(): string
+    {
+        $bondTypes = json_encode(self::BOND_TYPES); // Преобразуем массив в строку для скрипта
+        return "
+        int score = 0;
+        List bondTypes = $bondTypes;
+
+        if (doc.containsKey('listlevel') && doc['listlevel'].size() != 0 && 
+            doc.containsKey('type') && doc['type'].size() != 0) {
+
+            String type = doc['type'].value;
+
+            if (doc['listlevel'].value == 1 && type == 'common_share') { score = 1000; }
+            else if (doc['listlevel'].value == 1 && type == 'preferred_share') { score = 999; }
+            else if (doc['listlevel'].value == 1 && type == 'stock_dr') { score = 998; }
+            else if (doc['listlevel'].value == 2 && type == 'common_share') { score = 997; }
+            else if (doc['listlevel'].value == 2 && type == 'preferred_share') { score = 996; }
+            else if (doc['listlevel'].value == 2 && type == 'stock_dr') { score = 995; }
+            else if (doc['listlevel'].value == 3 && type == 'common_share') { score = 994; }
+            else if (doc['listlevel'].value == 3 && type == 'preferred_share') { score = 993; }
+            else if (doc['listlevel'].value == 3 && type == 'stock_dr') { score = 992; }
+            else if (doc['listlevel'].value == 1) { score = 100; }
+            else if (doc['listlevel'].value == 2) { score = 99; }
+            else if (doc['listlevel'].value == 3) { score = 98; }
+            else if (type == 'common_share') { score = 10; }
+            else if (type == 'preferred_share') { score = 9; }
+            else if (type == 'stock_dr') { score = 8; }
+            else if (type == 'futures') { score = 1; }
+            else if (bondTypes.contains(type)) { score = 2; }
+            else if (type == 'option') { score = 1; }
+            else if (type == 'depositary_receipt') { score = 1; }
+        }
+        return score;
+    ";
+    }
+
+
+    /**
+     * Создание запроса для индекса 'cb_currencies'
+     *
+     * @param string $original
+     * @param string $translitLat
+     * @param string $translitCyr
+     *
+     * @return array
+     */
+    protected function buildCbCurrenciesQuery(string $original, string $translitLat, string $translitCyr): array
+    {
+        return [
+            ['index' => 'catalog.cb_currencies'],
+            [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $original,
+                                    'fields' => self::CB_CURRENCIES_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $translitLat,
+                                    'fields' => self::CB_CURRENCIES_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $translitCyr,
+                                    'fields' => self::CB_CURRENCIES_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Создание запроса для индекса 'custom_stocks' с фильтром по user_id
+     *
+     * @param string $original
+     * @param string $translitLat
+     * @param string $translitCyr
+     * @param string|int|null $userId
+     *
+     * @return array
+     */
+    protected function buildCustomStocksQuery(
+        string $original,
+        string $translitLat,
+        string $translitCyr,
+        $userId = null
+    ): array {
+        // Если $userId является целым числом, конвертируем его в строку с префиксом окружения
+        if (is_int($userId)) {
+            $userId = config('app.env') . '-' . $userId;
+        }
+
+        return [
+            ['index' => 'catalog.custom_stocks'],
+            [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $original,
+                                    'fields' => self::CUSTOM_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $translitLat,
+                                    'fields' => self::CUSTOM_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $translitCyr,
+                                    'fields' => self::CUSTOM_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                        ],
+                        'filter' => $userId ? [
+                            [
+                                'term' => [
+                                    'user_id' => $userId,
+                                ],
+                            ],
+                        ] : [],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Создание запроса для индекса 'yahoo_stocks'
+     *
+     * @param string $original
+     * @param string $translitLat
+     * @param string $translitCyr
+     *
+     * @return array
+     */
+    protected function buildYahooStocksQuery(string $original, string $translitLat, string $translitCyr): array
+    {
+        return [
+            ['index' => 'catalog.yahoo_stocks'],
+            [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $original,
+                                    'fields' => self::YAHOO_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $translitLat,
+                                    'fields' => self::YAHOO_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $translitCyr,
+                                    'fields' => self::YAHOO_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Создание запроса для индекса 'cbond_stocks'
+     *
+     * @param string $original
+     * @param string $translitLat
+     * @param string $translitCyr
+     *
+     * @return array
+     */
+    protected function buildCbondStocksQuery(string $original, string $translitLat, string $translitCyr): array
+    {
+        return [
+            ['index' => 'catalog.cbond_stocks'],
+            [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $original,
+                                    'fields' => self::CBOND_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $translitLat,
+                                    'fields' => self::CBOND_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'analyzer' => 'custom_analyzer',
+                                    'query' => $translitCyr,
+                                    'fields' => self::CBOND_STOCKS_FIELDS,
+                                    'type' => 'cross_fields',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array $hit
+     *
+     * @return array
+     * @throws Exception
+     */
+    public static function getItemDataFromHit(array $hit): array
+    {
+        // Определяем маппинг индексов к моделям
+        $indexToModelMap = [
+            'catalog.moscow_exchange_stocks' => MoscowExchangeStock::class,
+            'catalog.cbond_stocks' => CbondStock::class,
+            'catalog.cb_currencies' => CbCurrency::class,
+            'catalog.custom_stocks' => CustomStock::class,
+            'catalog.yahoo_stocks' => YahooStock::class,
+        ];
+
+        // Получаем название индекса из хита
+        $index = $hit['_index'];
+
+        // Проверяем, есть ли соответствующая модель
+        if (!isset($indexToModelMap[$index])) {
+            throw new Exception("Модель для индекса $index не найдена");
+        }
+
+        // Инициализируем соответствующую модель
+        $modelClass = $indexToModelMap[$index];
+        // Инициализируем модель данными из документа
+        $model = new $modelClass($hit['_source']);
+
+        // Возвращаем данные, вызвав метод getItemData
+        return $model->getItemData();
+    }
+
+
+    /**
+     * Обрабатываем и возвращаем результаты
+     *
+     * @param array $response
+     *
+     * @return array
+     */
+    protected function handleResponse(array $response): array
+    {
+        // Обрабатываем результаты из всех индексов
+        $results = [];
+        foreach ($response['responses'] as $resp) {
+            if (isset($resp['hits']['hits'])) {
+                // Если есть результаты поиска, добавляем их
+                $results[] = $resp['hits']['hits'];
+            } elseif (isset($resp['error'])) {
+                // Если произошла ошибка, добавляем информацию об ошибке
+                LoggerHelper::getLogger(class_basename($this))->error(
+                    'Elasticsearch error: ' . json_encode($resp['error']),
+                );
+            }
+        }
+
+        // Возвращаем плоский массив результатов
+        return !empty($results) ? array_merge(...$results) : [];
+    }
+}

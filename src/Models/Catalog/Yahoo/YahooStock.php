@@ -4,6 +4,7 @@ namespace Common\Models\Catalog\Yahoo;
 
 use Cache;
 use Carbon\Carbon;
+use Common\Helpers\Catalog\CatalogSearch;
 use Common\Helpers\Curls\Yahoo\YahooCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\Base\CreateJobs;
@@ -146,6 +147,9 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                         $createdStock = self::create($foundStock);
 
                         if ($createdStock) {
+                            // Индексируем созданную запись в Elasticsearch
+                            CatalogSearch::indexRecordInElasticsearch($createdStock, 'yahoo_stocks');
+
                             $descriptionData = YahooCurl::getQuotes([$createdStock->symbol]);
 
                             if (is_array($descriptionData)) {

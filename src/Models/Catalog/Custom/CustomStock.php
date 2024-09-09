@@ -6,6 +6,7 @@ use App\Models\Actives\ActiveTrade;
 use App\Models\Aton\AtonOperation;
 use Cache;
 use Carbon\Carbon;
+use Common\Helpers\Catalog\CatalogSearch;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
@@ -127,6 +128,8 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                     'currency_id' => $data->getCurrency(),
                     'type_id' => $data->getCustomStockType(),
                 ]);
+
+                CatalogSearch::indexRecordInElasticsearch($custom, 'custom_stocks');
 
                 LoggerHelper::getLogger('create-custom')
                     ->info('Добавлена новая запись', [

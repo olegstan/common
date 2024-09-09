@@ -4,6 +4,7 @@ namespace Common\Models\Catalog\MoscowExchange;
 
 use Cache;
 use Carbon\Carbon;
+use Common\Helpers\Catalog\CatalogSearch;
 use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\Base\CreateJobs;
@@ -466,6 +467,8 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                         $createdStock = self::create($foundStock);
 
                         if ($createdStock) {
+                            CatalogSearch::indexRecordInElasticsearch($createdStock, 'moscow_exchange_stocks');
+
                             $createdStock->saveData();
 
                             $queueIds[] = $createdStock->id;
