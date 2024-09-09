@@ -86,8 +86,7 @@ class Currency extends BaseCatalog
             if ($this->code === self::RUB) {
                 $course = $this->getRubCourseByDate($convertCurrency, $date);
 
-                if(!$course)
-                {
+                if (!$course) {
                     return $sum;
                 }
 
@@ -96,8 +95,7 @@ class Currency extends BaseCatalog
 
             $course = $this->getRubCourseByDate($this, $date);
 
-            if(!$course)
-            {
+            if (!$course) {
                 return $sum;
             }
 
@@ -143,8 +141,7 @@ class Currency extends BaseCatalog
 
                 $course = $this->getRubCourseByDate($convertCurrency, $date);
 
-                if(!$course)
-                {
+                if (!$course) {
                     return 1;
                 }
 
@@ -153,8 +150,7 @@ class Currency extends BaseCatalog
 
             $course = $this->getRubCourseByDate($this, $date);
 
-            if(!$course)
-            {
+            if (!$course) {
                 return 1;
             }
 
@@ -228,7 +224,8 @@ class Currency extends BaseCatalog
                     ->first();
 
                 if (!$cuurency) {
-                    throw new Exception('Currency not found by code ' . $code);
+                    LoggerHelper::getLogger()->error('Currency not found by code ' . $code);
+                    return null;
                 }
 
                 return $cuurency;

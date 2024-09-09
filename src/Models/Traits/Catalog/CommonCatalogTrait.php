@@ -16,12 +16,12 @@ trait CommonCatalogTrait
         $codeCur = $this->getCodeCurrency();
 
         if (empty($codeCur)) {
-            return false;
+            return null;
         }
 
         if (!is_array(json_decode($codeCur))) {
             $currency = Currency::getByCode($codeCur);
-            return $currency->id ?? false;
+            return $currency->id ?? null;
         }
 
         //Массивы валют у Мосбиржи. Что бы не ломать логику, будем возвращать рубль (если есть) или первую найденную валюту
@@ -30,7 +30,7 @@ trait CommonCatalogTrait
 
         if (in_array('SUR', $codeCur) || in_array('RUB', $codeCur)) {
             $currency = Currency::getByCode('RUB');
-            return $currency->id ?? false;
+            return $currency->id ?? null;
         }
 
         foreach ($codeCur as $code) {
@@ -41,7 +41,7 @@ trait CommonCatalogTrait
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -51,6 +51,7 @@ trait CommonCatalogTrait
      * @param $query
      * @param $prompt
      * @param $likePrompt
+     *
      * @return mixed
      */
     public static function promptScopeSearch($original, $text, $translitText, $query, $prompt, $likePrompt)
@@ -105,6 +106,7 @@ trait CommonCatalogTrait
 
     /**
      * @param $class
+     *
      * @return MorphOne
      */
     public function active(): MorphOne
