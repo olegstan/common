@@ -15,6 +15,7 @@ class RabbitMQQueue extends BaseQueue
      * @param mixed $job
      * @param mixed $data
      * @param string|null $queue
+     *
      * @return mixed
      * @throws AMQPProtocolChannelException
      */
@@ -45,16 +46,19 @@ class RabbitMQQueue extends BaseQueue
      */
     protected function isImmediateJob($job): bool
     {
+        if (is_object($job)) {
+            return in_array(class_basename($job), ['SendQueuedMailable', 'BroadcastEvent', 'MakeSearchable']);
+        }
+
         $path = str_replace('\\', '/', $job);
-        return in_array(class_basename($job), ['SendQueuedMailable', 'BroadcastEvent', 'MakeSearchable'])
-            ||
-            str_contains($path, '/Catalog/');
+        return str_contains($path, '/Catalog/');
     }
 
     /**
      * Проверяет данные на корректность.
      *
      * @param mixed $data
+     *
      * @return bool
      */
     protected function isInvalidData($data): bool
