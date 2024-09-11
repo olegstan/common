@@ -227,8 +227,8 @@ class CatalogSearch
                                 'multi_match' => [
                                     'query' => $original,
                                     'fields' => self::MOSCOW_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
-                                    'operator' => 'and',
+                                    'type' => 'best_fields',
+                                    'operator' => 'or',
                                     'analyzer' => 'custom_analyzer',  // Используем кастомный анализатор с edge_ngram
                                 ],
                             ],
@@ -236,8 +236,8 @@ class CatalogSearch
                                 'multi_match' => [
                                     'query' => $translitLat,
                                     'fields' => self::MOSCOW_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
-                                    'operator' => 'and',
+                                    'type' => 'best_fields',
+                                    'operator' => 'or',
                                     'analyzer' => 'custom_analyzer',  // Используем кастомный анализатор с edge_ngram
                                 ],
                             ],
@@ -245,8 +245,8 @@ class CatalogSearch
                                 'multi_match' => [
                                     'query' => $translitCyr,
                                     'fields' => self::MOSCOW_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
-                                    'operator' => 'and',
+                                    'type' => 'best_fields',
+                                    'operator' => 'or',
                                     'analyzer' => 'custom_analyzer',  // Используем кастомный анализатор с edge_ngram
                                 ],
                             ],
@@ -422,7 +422,7 @@ class CatalogSearch
                                     'analyzer' => 'custom_analyzer',
                                     'query' => $original,
                                     'fields' => self::CB_CURRENCIES_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
                                 ],
                             ],
                             [
@@ -430,7 +430,7 @@ class CatalogSearch
                                     'analyzer' => 'custom_analyzer',
                                     'query' => $translitLat,
                                     'fields' => self::CB_CURRENCIES_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
                                 ],
                             ],
                             [
@@ -438,7 +438,7 @@ class CatalogSearch
                                     'analyzer' => 'custom_analyzer',
                                     'query' => $translitCyr,
                                     'fields' => self::CB_CURRENCIES_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
                                 ],
                             ],
                         ],
@@ -480,7 +480,7 @@ class CatalogSearch
                                     'analyzer' => 'custom_analyzer',
                                     'query' => $original,
                                     'fields' => self::CUSTOM_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
                                 ],
                             ],
                             [
@@ -488,7 +488,7 @@ class CatalogSearch
                                     'analyzer' => 'custom_analyzer',
                                     'query' => $translitLat,
                                     'fields' => self::CUSTOM_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
                                 ],
                             ],
                             [
@@ -496,7 +496,7 @@ class CatalogSearch
                                     'analyzer' => 'custom_analyzer',
                                     'query' => $translitCyr,
                                     'fields' => self::CUSTOM_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
                                 ],
                             ],
                         ],
@@ -535,7 +535,7 @@ class CatalogSearch
                                     'analyzer' => 'custom_analyzer',
                                     'query' => $original,
                                     'fields' => self::YAHOO_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
                                 ],
                             ],
                             [
@@ -543,7 +543,7 @@ class CatalogSearch
                                     'analyzer' => 'custom_analyzer',
                                     'query' => $translitLat,
                                     'fields' => self::YAHOO_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
                                 ],
                             ],
                             [
@@ -551,7 +551,7 @@ class CatalogSearch
                                     'analyzer' => 'custom_analyzer',
                                     'query' => $translitCyr,
                                     'fields' => self::YAHOO_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
                                 ],
                             ],
                         ],
@@ -580,26 +580,29 @@ class CatalogSearch
                         'must' => [
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $original,
                                     'fields' => self::CBOND_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
+                                    'operator' => 'or',
+                                    'analyzer' => 'custom_analyzer',
                                 ],
                             ],
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $translitLat,
                                     'fields' => self::CBOND_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
+                                    'operator' => 'or',
+                                    'analyzer' => 'custom_analyzer',
                                 ],
                             ],
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $translitCyr,
                                     'fields' => self::CBOND_STOCKS_FIELDS,
-                                    'type' => 'cross_fields',
+                                    'type' => 'best_fields',
+                                    'operator' => 'or',
+                                    'analyzer' => 'custom_analyzer',
                                 ],
                             ],
                         ],
