@@ -372,7 +372,7 @@ class CatalogSearch
                         'filter' => $userId ? [
                             [
                                 'term' => [
-                                    'user_id' => $userId,
+                                    'user_id.keyword' => $userId,
                                 ],
                             ],
                         ] : [],
