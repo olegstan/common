@@ -193,6 +193,11 @@ class CatalogSearch
      */
     protected function buildQueries(string $original, string $translitLat, string $translitCyr, $userId = null): array
     {
+        //В эластике все индексируется в нижнем регистре (mb_ - требуется для кириллицы)
+        $original = mb_strtolower($original);
+        $translitLat = mb_strtolower($translitLat);
+        $translitCyr = mb_strtolower($translitCyr);
+
         // Общие параметры для запросов
         $queries = [];
 
@@ -222,134 +227,32 @@ class CatalogSearch
             [
                 'query' => [
                     'bool' => [
-                        'must' => [
+                        'should' => [
                             [
                                 'multi_match' => [
                                     'query' => $original,
-                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
+                                    'fields' => ['secid', 'isin', 'name', 'shortname', 'latname'],
                                     'type' => 'best_fields',
-                                    'operator' => 'or',
-                                    'analyzer' => 'custom_analyzer',  // Используем кастомный анализатор с edge_ngram
+                                    'operator' => 'and',
                                 ],
                             ],
                             [
                                 'multi_match' => [
                                     'query' => $translitLat,
-                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
+                                    'fields' => ['secid', 'isin', 'name', 'shortname', 'latname'],
                                     'type' => 'best_fields',
-                                    'operator' => 'or',
-                                    'analyzer' => 'custom_analyzer',  // Используем кастомный анализатор с edge_ngram
+                                    'operator' => 'and',
                                 ],
                             ],
                             [
                                 'multi_match' => [
                                     'query' => $translitCyr,
-                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
+                                    'fields' => ['secid', 'isin', 'name', 'shortname', 'latname'],
                                     'type' => 'best_fields',
-                                    'operator' => 'or',
-                                    'analyzer' => 'custom_analyzer',  // Используем кастомный анализатор с edge_ngram
+                                    'operator' => 'and',
                                 ],
                             ],
                         ],
-                        'should' => [
-                            [
-                                'wildcard' => [
-                                    'name' => [
-                                        'value' => "*$original*",
-                                        'boost' => 2.0,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'secid' => [
-                                        'value' => "*$original*",
-                                        'boost' => 1.5,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'isin' => [
-                                        'value' => "*$original*",
-                                        'boost' => 1.5,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'shortname' => [
-                                        'value' => "*$original*",
-                                        'boost' => 1.5,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'name' => [
-                                        'value' => "*$translitLat*",
-                                        'boost' => 2.0,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'secid' => [
-                                        'value' => "*$translitLat*",
-                                        'boost' => 1.5,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'isin' => [
-                                        'value' => "*$translitLat*",
-                                        'boost' => 1.5,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'shortname' => [
-                                        'value' => "*$translitLat*",
-                                        'boost' => 1.5,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'name' => [
-                                        'value' => "*$translitCyr*",
-                                        'boost' => 2.0,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'secid' => [
-                                        'value' => "*$translitCyr*",
-                                        'boost' => 1.5,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'isin' => [
-                                        'value' => "*$translitCyr*",
-                                        'boost' => 1.5,
-                                    ],
-                                ],
-                            ],
-                            [
-                                'wildcard' => [
-                                    'shortname' => [
-                                        'value' => "*$translitCyr*",
-                                        'boost' => 1.5,
-                                    ],
-                                ],
-                            ],
-                        ],
-                        // Фильтр, исключающий документы
                         'must_not' => [
                             [
                                 'terms' => [
@@ -357,56 +260,13 @@ class CatalogSearch
                                 ],
                             ],
                         ],
+                        'minimum_should_match' => 1,
                     ],
                 ],
-                'size' => 1000,  // Увеличиваем количество возвращаемых записей
+                'size' => 1000,
             ],
         ];
     }
-
-    /**
-     * Создание скрипта сортировки для 'moscow_exchange_stocks'
-     *
-     * Эта сортировка обрезает почти все, так что она не нужна
-     *
-     * @return string
-     */
-    protected function buildMoscowStocksScript(): string
-    {
-        $bondTypes = json_encode(self::BOND_TYPES); // Преобразуем массив в строку для скрипта
-        return "
-        int score = 0;
-        List bondTypes = $bondTypes;
-
-        if (doc.containsKey('listlevel') && doc['listlevel'].size() != 0 && 
-            doc.containsKey('type') && doc['type'].size() != 0) {
-
-            String type = doc['type'].value;
-
-            if (doc['listlevel'].value == 1 && type == 'common_share') { score = 1000; }
-            else if (doc['listlevel'].value == 1 && type == 'preferred_share') { score = 999; }
-            else if (doc['listlevel'].value == 1 && type == 'stock_dr') { score = 998; }
-            else if (doc['listlevel'].value == 2 && type == 'common_share') { score = 997; }
-            else if (doc['listlevel'].value == 2 && type == 'preferred_share') { score = 996; }
-            else if (doc['listlevel'].value == 2 && type == 'stock_dr') { score = 995; }
-            else if (doc['listlevel'].value == 3 && type == 'common_share') { score = 994; }
-            else if (doc['listlevel'].value == 3 && type == 'preferred_share') { score = 993; }
-            else if (doc['listlevel'].value == 3 && type == 'stock_dr') { score = 992; }
-            else if (doc['listlevel'].value == 1) { score = 100; }
-            else if (doc['listlevel'].value == 2) { score = 99; }
-            else if (doc['listlevel'].value == 3) { score = 98; }
-            else if (type == 'common_share') { score = 10; }
-            else if (type == 'preferred_share') { score = 9; }
-            else if (type == 'stock_dr') { score = 8; }
-            else if (type == 'futures') { score = 1; }
-            else if (bondTypes.contains(type)) { score = 2; }
-            else if (type == 'option') { score = 1; }
-            else if (type == 'depositary_receipt') { score = 1; }
-        }
-        return score;
-    ";
-    }
-
 
     /**
      * Создание запроса для индекса 'cb_currencies'
@@ -424,34 +284,36 @@ class CatalogSearch
             [
                 'query' => [
                     'bool' => [
-                        'must' => [
+                        'should' => [
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $original,
                                     'fields' => self::CB_CURRENCIES_FIELDS,
                                     'type' => 'best_fields',
+                                    'operator' => 'and',
                                 ],
                             ],
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $translitLat,
                                     'fields' => self::CB_CURRENCIES_FIELDS,
                                     'type' => 'best_fields',
+                                    'operator' => 'and',
                                 ],
                             ],
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $translitCyr,
                                     'fields' => self::CB_CURRENCIES_FIELDS,
                                     'type' => 'best_fields',
+                                    'operator' => 'and',
                                 ],
                             ],
                         ],
+                        'minimum_should_match' => 1,
                     ],
                 ],
+                'size' => 1000,
             ],
         ];
     }
@@ -462,7 +324,7 @@ class CatalogSearch
      * @param string $original
      * @param string $translitLat
      * @param string $translitCyr
-     * @param string|int|null $userId
+     * @param $userId
      *
      * @return array
      */
@@ -472,7 +334,6 @@ class CatalogSearch
         string $translitCyr,
         $userId = null
     ): array {
-        // Если $userId является целым числом, конвертируем его в строку с префиксом окружения
         if (is_int($userId)) {
             $userId = config('app.env') . '-' . $userId;
         }
@@ -482,29 +343,29 @@ class CatalogSearch
             [
                 'query' => [
                     'bool' => [
-                        'must' => [
+                        'should' => [
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $original,
                                     'fields' => self::CUSTOM_STOCKS_FIELDS,
                                     'type' => 'best_fields',
+                                    'operator' => 'and',
                                 ],
                             ],
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $translitLat,
                                     'fields' => self::CUSTOM_STOCKS_FIELDS,
                                     'type' => 'best_fields',
+                                    'operator' => 'and',
                                 ],
                             ],
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $translitCyr,
                                     'fields' => self::CUSTOM_STOCKS_FIELDS,
                                     'type' => 'best_fields',
+                                    'operator' => 'and',
                                 ],
                             ],
                         ],
@@ -515,8 +376,10 @@ class CatalogSearch
                                 ],
                             ],
                         ] : [],
+                        'minimum_should_match' => 1,
                     ],
                 ],
+                'size' => 1000,
             ],
         ];
     }
@@ -537,34 +400,36 @@ class CatalogSearch
             [
                 'query' => [
                     'bool' => [
-                        'must' => [
+                        'should' => [
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $original,
                                     'fields' => self::YAHOO_STOCKS_FIELDS,
                                     'type' => 'best_fields',
+                                    'operator' => 'and',
                                 ],
                             ],
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $translitLat,
                                     'fields' => self::YAHOO_STOCKS_FIELDS,
                                     'type' => 'best_fields',
+                                    'operator' => 'and',
                                 ],
                             ],
                             [
                                 'multi_match' => [
-                                    'analyzer' => 'custom_analyzer',
                                     'query' => $translitCyr,
                                     'fields' => self::YAHOO_STOCKS_FIELDS,
                                     'type' => 'best_fields',
+                                    'operator' => 'and',
                                 ],
                             ],
                         ],
+                        'minimum_should_match' => 1,
                     ],
                 ],
+                'size' => 1000,
             ],
         ];
     }
@@ -585,14 +450,13 @@ class CatalogSearch
             [
                 'query' => [
                     'bool' => [
-                        'must' => [
+                        'should' => [
                             [
                                 'multi_match' => [
                                     'query' => $original,
                                     'fields' => self::CBOND_STOCKS_FIELDS,
                                     'type' => 'best_fields',
-                                    'operator' => 'or',
-                                    'analyzer' => 'custom_analyzer',
+                                    'operator' => 'and',
                                 ],
                             ],
                             [
@@ -600,8 +464,7 @@ class CatalogSearch
                                     'query' => $translitLat,
                                     'fields' => self::CBOND_STOCKS_FIELDS,
                                     'type' => 'best_fields',
-                                    'operator' => 'or',
-                                    'analyzer' => 'custom_analyzer',
+                                    'operator' => 'and',
                                 ],
                             ],
                             [
@@ -609,13 +472,14 @@ class CatalogSearch
                                     'query' => $translitCyr,
                                     'fields' => self::CBOND_STOCKS_FIELDS,
                                     'type' => 'best_fields',
-                                    'operator' => 'or',
-                                    'analyzer' => 'custom_analyzer',
+                                    'operator' => 'and',
                                 ],
                             ],
                         ],
+                        'minimum_should_match' => 1,
                     ],
                 ],
+                'size' => 1000,
             ],
         ];
     }
