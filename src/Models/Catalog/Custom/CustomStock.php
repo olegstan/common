@@ -2,12 +2,14 @@
 
 namespace Common\Models\Catalog\Custom;
 
+use App\Models\Accounts\UserSubaccount;
 use App\Models\Actives\ActiveTrade;
 use App\Models\Aton\AtonOperation;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\Catalog\CatalogSearch;
 use Common\Helpers\LoggerHelper;
+use Common\Models\BaseModel;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
@@ -19,6 +21,7 @@ use Common\Models\Traits\Catalog\Custom\CustomReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Custom\CustomScopeTrait;
 use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property $id
@@ -84,6 +87,19 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         'rate' => 'integer',
     ];
 
+    /**
+     * @param array $attributes
+     *
+     * @return static
+     */
+    public static function create(array $attributes = []): CustomStock
+    {
+        $model = new static($attributes);
+        $model->save();
+
+        CatalogSearch::indexRecordInElasticsearch($model, 'custom_stocks');
+        return $model;
+    }
 
     /**
      * @param $data
@@ -129,8 +145,6 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                     'type_id' => $data->getCustomStockType(),
                 ]);
 
-                CatalogSearch::indexRecordInElasticsearch($custom, 'custom_stocks');
-
                 LoggerHelper::getLogger('create-custom')
                     ->info('Добавлена новая запись', [
                         'stock' => $custom,
@@ -138,7 +152,11 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
                     ]);
             }
 
-            Cache::tags([config('cache.tags')])->put('custom-' . $userId . '-' . $searchText, $custom, Carbon::now()->addDay());
+            Cache::tags([config('cache.tags')])->put(
+                'custom-' . $userId . '-' . $searchText,
+                $custom,
+                Carbon::now()->addDay(),
+            );
             return $custom;
         } catch (Exception $e) {
             LoggerHelper::getLogger('custom')->error($e);
@@ -278,7 +296,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
      */
     public function getLastPriceByDate($currency, $date = null)
     {
-        try{
+        try {
             //TODO используется класс из основного проекта, лучше бы как то переделать и вынести логику из метода
 
             //ищем все ID кастомных активов где может быть такой же каталог
@@ -304,7 +322,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
             }
 
             return 0;
-        }catch (Exception $e){
+        } catch (Exception $e) {
             LoggerHelper::getLogger('convert')->error($e);
             LoggerHelper::getLogger('convert')->error('currency ID' . $currency->id);
 
