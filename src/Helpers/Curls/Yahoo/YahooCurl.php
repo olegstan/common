@@ -172,7 +172,10 @@ class YahooCurl
 //            return self::oldHistoryData($symbol, $interval, $startDate, $endDate);
             return self::newHistoryData($symbol, $interval, $startDate, $endDate);
         } catch (Exception $e) {
-            LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb');
+            LoggerHelper::getLogger('yahoo')->error(
+                'Не могу извлечь крошку',
+                ['symbol' => $symbol, 'interval' => $interval, 'startDate' => $startDate, 'endDate' => $endDate],
+            );
 
             return [];
         }
