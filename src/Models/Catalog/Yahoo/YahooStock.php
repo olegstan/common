@@ -21,6 +21,7 @@ use Common\Models\Traits\Catalog\Yahoo\YahooRelationshipsTrait;
 use Common\Models\Traits\Catalog\Yahoo\YahooReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Yahoo\YahooScopeTrait;
 use Exception;
+use Scheb\YahooFinanceApi\ApiClientFactory;
 use Throwable;
 
 /**
@@ -141,6 +142,14 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                 ->keyBy('symbol')
                 ->toArray();
 
+            $client = ApiClientFactory::createApiClient();
+            $quotes = $client->getQuotes($symbolIds);
+
+            $currency = [];
+            foreach ($quotes as $quote) {
+                $currency[$quote->getSymbol()] = $quote->getCurrency();
+            }
+
             foreach ($foundStocks as $foundStock) {
                 try {
                     if (!isset($stockQuery[$foundStock['symbol']])) {
@@ -150,22 +159,16 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                             // Индексируем созданную запись в Elasticsearch
                             CatalogSearch::indexRecordInElasticsearch($createdStock, 'yahoo_stocks');
 
-                            $descriptionData = YahooCurl::getQuotes([$createdStock->symbol]);
-
-                            if (is_array($descriptionData)) {
-                                foreach ($descriptionData as $datum) {
-                                    if (isset($datum['symbol'], $datum['currency']) && $datum['symbol'] === $createdStock->symbol && !empty($datum['currency'])) {
-                                        $createdStock->currency = $datum['currency'];
-                                        $createdStock->save();
-                                    }
-                                }
+                            if(array_key_exists($foundStock['symbol'], $currency)) {
+                                $createdStock->currency = $currency;
+                                $createdStock->save();
                             }
 
                             $queueIds[] = $createdStock->id;
                         }
                     }
                 } catch (Exception $e) {
-                    LoggerHelper::getLogger()->error($e);
+                    LoggerHelper::getLogger()->error($e, $foundStock);
                 }
             }
         }
