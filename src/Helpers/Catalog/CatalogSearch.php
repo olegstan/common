@@ -85,7 +85,7 @@ class CatalogSearch
             LoggerHelper::getLogger(class_basename($self))
                 ->error(
                     "Ошибка индексации записи в Elasticsearch: " . $e->getMessage(),
-                    $record->toArray(),
+                    $record->toArray()
                 );
         }
     }
@@ -223,7 +223,7 @@ class CatalogSearch
         $firstWord = $words[0];
         $lastWord = end($words);
 
-        $query = [
+        return [
             ['index' => 'catalog.moscow_exchange_stocks'],
             [
                 'query' => [
@@ -232,7 +232,7 @@ class CatalogSearch
                             [
                                 'multi_match' => [
                                     'query' => $original,
-                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
+                                    'fields' => ['secid', 'isin', 'name', 'shortname', 'latname'],
                                     'type' => 'best_fields',
                                     'operator' => 'and',
                                 ],
@@ -240,7 +240,7 @@ class CatalogSearch
                             [
                                 'multi_match' => [
                                     'query' => $translitLat,
-                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
+                                    'fields' => ['secid', 'isin', 'name', 'shortname', 'latname'],
                                     'type' => 'best_fields',
                                     'operator' => 'and',
                                 ],
@@ -248,7 +248,7 @@ class CatalogSearch
                             [
                                 'multi_match' => [
                                     'query' => $translitCyr,
-                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
+                                    'fields' => ['secid', 'isin', 'name', 'shortname', 'latname'],
                                     'type' => 'best_fields',
                                     'operator' => 'and',
                                 ],
@@ -287,8 +287,6 @@ class CatalogSearch
                 'size' => 1000,
             ],
         ];
-
-        return $query;
     }
 
 
