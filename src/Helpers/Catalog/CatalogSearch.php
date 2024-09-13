@@ -16,13 +16,7 @@ use stdClass;
 class CatalogSearch
 {
     // Поля для поиска с весовыми коэффициентами для 'moscow_exchange_stocks'
-    protected const MOSCOW_STOCKS_FIELDS = [
-        'secid^5',
-        'isin^5',
-        'name^10',
-        'shortname^8',
-        'latname^2',
-    ];
+    protected const MOSCOW_STOCKS_FIELDS = ['secid', 'isin', 'name^', 'shortname', 'latname'];
 
     // Поля для поиска по 'cb_currencies'
     protected const CB_CURRENCIES_FIELDS = ['name', 'cb_id', 'char_code'];
@@ -34,7 +28,7 @@ class CatalogSearch
     protected const YAHOO_STOCKS_FIELDS = ['name', 'symbol', 'sector', 'industry'];
 
     // Поля для поиска по 'cbond_stocks'
-    protected const CBOND_STOCKS_FIELDS = ['name', 'symbol', 'isin'];
+    protected const CBOND_STOCKS_FIELDS = ['name', 'symbol', 'isin', 'shortname', 'latname'];
 
     // Типы бондов
     protected const BOND_TYPES = [
@@ -78,7 +72,7 @@ class CatalogSearch
     public static function indexRecordInElasticsearch($record, string $indexName): void
     {
         $self = new self();
-        
+
         try {
             $params = [
                 'index' => "catalog.$indexName",  // Укажи имя индекса
@@ -91,7 +85,7 @@ class CatalogSearch
             LoggerHelper::getLogger(class_basename($self))
                 ->error(
                     "Ошибка индексации записи в Elasticsearch: " . $e->getMessage(),
-                    $record->toArray()
+                    $record->toArray(),
                 );
         }
     }
@@ -222,7 +216,14 @@ class CatalogSearch
      */
     protected function buildMoscowStocksQuery(string $original, string $translitLat, string $translitCyr): array
     {
-        return [
+        // Разбиваем текст на слова
+        $words = explode(' ', $original);
+
+        // Берем первое и последнее слово из текста
+        $firstWord = $words[0];
+        $lastWord = end($words);
+
+        $query = [
             ['index' => 'catalog.moscow_exchange_stocks'],
             [
                 'query' => [
@@ -231,7 +232,7 @@ class CatalogSearch
                             [
                                 'multi_match' => [
                                     'query' => $original,
-                                    'fields' => ['secid', 'isin', 'name', 'shortname', 'latname'],
+                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
                                     'type' => 'best_fields',
                                     'operator' => 'and',
                                 ],
@@ -239,7 +240,7 @@ class CatalogSearch
                             [
                                 'multi_match' => [
                                     'query' => $translitLat,
-                                    'fields' => ['secid', 'isin', 'name', 'shortname', 'latname'],
+                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
                                     'type' => 'best_fields',
                                     'operator' => 'and',
                                 ],
@@ -247,9 +248,29 @@ class CatalogSearch
                             [
                                 'multi_match' => [
                                     'query' => $translitCyr,
-                                    'fields' => ['secid', 'isin', 'name', 'shortname', 'latname'],
+                                    'fields' => self::MOSCOW_STOCKS_FIELDS,
                                     'type' => 'best_fields',
                                     'operator' => 'and',
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'secid.keyword' => strtoupper($firstWord),
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'isin.keyword' => strtoupper($firstWord),
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'secid.keyword' => strtoupper($lastWord),
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'isin.keyword' => strtoupper($lastWord),
                                 ],
                             ],
                         ],
@@ -266,7 +287,10 @@ class CatalogSearch
                 'size' => 1000,
             ],
         ];
+
+        return $query;
     }
+
 
     /**
      * Создание запроса для индекса 'cb_currencies'
@@ -279,6 +303,10 @@ class CatalogSearch
      */
     protected function buildCbCurrenciesQuery(string $original, string $translitLat, string $translitCyr): array
     {
+        $words = explode(' ', $original);
+        $firstWord = $words[0];
+        $lastWord = end($words);
+
         return [
             ['index' => 'catalog.cb_currencies'],
             [
@@ -309,6 +337,16 @@ class CatalogSearch
                                     'operator' => 'and',
                                 ],
                             ],
+                            [
+                                'term' => [
+                                    'char_code.keyword' => strtoupper($firstWord),
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'char_code.keyword' => strtoupper($lastWord),
+                                ],
+                            ],
                         ],
                         'minimum_should_match' => 1,
                     ],
@@ -334,6 +372,10 @@ class CatalogSearch
         string $translitCyr,
         $userId = null
     ): array {
+        $words = explode(' ', $original);
+        $firstWord = $words[0];
+        $lastWord = end($words);
+
         if (is_int($userId)) {
             $userId = config('app.env') . '-' . $userId;
         }
@@ -368,6 +410,16 @@ class CatalogSearch
                                     'operator' => 'and',
                                 ],
                             ],
+                            [
+                                'term' => [
+                                    'symbol.keyword' => strtoupper($firstWord),
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'symbol.keyword' => strtoupper($lastWord),
+                                ],
+                            ],
                         ],
                         'filter' => $userId ? [
                             [
@@ -395,6 +447,10 @@ class CatalogSearch
      */
     protected function buildYahooStocksQuery(string $original, string $translitLat, string $translitCyr): array
     {
+        $words = explode(' ', $original);
+        $firstWord = $words[0];
+        $lastWord = end($words);
+
         return [
             ['index' => 'catalog.yahoo_stocks'],
             [
@@ -425,6 +481,16 @@ class CatalogSearch
                                     'operator' => 'and',
                                 ],
                             ],
+                            [
+                                'term' => [
+                                    'symbol.keyword' => strtoupper($firstWord),
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'symbol.keyword' => strtoupper($lastWord),
+                                ],
+                            ],
                         ],
                         'minimum_should_match' => 1,
                     ],
@@ -445,6 +511,10 @@ class CatalogSearch
      */
     protected function buildCbondStocksQuery(string $original, string $translitLat, string $translitCyr): array
     {
+        $words = explode(' ', $original);
+        $firstWord = $words[0];
+        $lastWord = end($words);
+
         return [
             ['index' => 'catalog.cbond_stocks'],
             [
@@ -473,6 +543,26 @@ class CatalogSearch
                                     'fields' => self::CBOND_STOCKS_FIELDS,
                                     'type' => 'best_fields',
                                     'operator' => 'and',
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'secid.keyword' => strtoupper($firstWord),
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'secid.keyword' => strtoupper($lastWord),
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'isin.keyword' => strtoupper($firstWord),
+                                ],
+                            ],
+                            [
+                                'term' => [
+                                    'isin.keyword' => strtoupper($lastWord),
                                 ],
                             ],
                         ],
