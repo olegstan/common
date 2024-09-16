@@ -673,36 +673,53 @@ class TradingViewCurl
     }
 
     /**
-     * @param $text
+     * @param string $text
+     *
      * @return false|mixed
      */
-    public static function searchTicker($text)
+    public static function searchTicker(string $text)
     {
         try {
             $text = self::tickersExplode($text);
 
-            $aUrl = 'https://symbol-search.tradingview.com/symbol_search/?text=' . $text . '&hl=1&exchange=&lang=en&domain=production';
-            $ch = curl_init($aUrl);
+            $curl = curl_init();
 
-            $payload = '{
-                text:' . $text . ',
-                hl: 1,
-                exchange:,
-                lang: en,
-                domain: production,
-            }';
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://symbol-search.tradingview.com/symbol_search/v3/?text='.$text.'&hl=1&exchange=&lang=en&search_type=undefined&domain=production&sort_by_country=US',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Accept: */*',
+                    'Accept-Encoding: gzip, deflate, br, zstd',
+                    'Accept-Language: ru,en;q=0.9',
+                    'Dnt: 1',
+                    'Origin: https://www.tradingview.com',
+                    'Priority: u=1, i',
+                    'Referer: https://www.tradingview.com/',
+                    'Sec-Ch-Ua: "Not-A.Brand";v="99", "Chromium";v="124"',
+                    'Sec-Ch-Ua-Mobile: ?0',
+                    'Sec-Ch-Ua-Platform: "Windows"',
+                    'Sec-Fetch-Dest: empty',
+                    'Sec-Fetch-Mode: cors',
+                    'Sec-Fetch-Site: same-site',
+                    'Sec-Gpc: 1',
+                    'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+                ),
+            ));
 
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $response = curl_exec($ch);
+            $response = curl_exec($curl);
             $data = json_decode($response);
-            curl_close($ch);
+            curl_close($curl);
 
             return $data;
         } catch (Exception $e) {
-            LoggerHelper::getLogger('tradingview')->error($e);
-            return false;
+            LoggerHelper::getLogger('tradingview')->error($e, ['text' => $text]);
+            return null;
         }
     }
 
