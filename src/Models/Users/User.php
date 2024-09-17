@@ -24,6 +24,7 @@ use Common\Models\Traits\Users\StrategyTrait;
 use Common\Models\Users\Collective\UserCollectiveGroup;
 use Common\Models\Users\Crm\UserConfig;
 use Common\Models\Users\Roles\Role;
+use Common\Models\Users\Roles\RoleUser;
 use Common\Models\Users\Roles\Types\Client;
 use DB;
 use Exception;
@@ -355,11 +356,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function roles(): BelongsToMany
+    public function roles(): hasMany
     {
-        return $this->belongsToMany(config('roles.models.role'), 'role_user', 'user_id')->withTimestamps();
+        return $this->hasMany(RoleUser::class, 'user_id');
     }
 
     /**
