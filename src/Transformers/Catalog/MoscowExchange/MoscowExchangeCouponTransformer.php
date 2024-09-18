@@ -3,7 +3,6 @@
 namespace Common\Transformers\Catalog\MoscowExchange;
 
 use Cache;
-use Carbon\Carbon;
 use Common\Helpers\CatalogCache;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeCoupon;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;

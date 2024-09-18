@@ -3,10 +3,7 @@
 namespace Common\Models\Users\Roles;
 
 use Common\Models\BaseModel;
-use Common\Models\Traits\Users\Roles\RoleHasRelations;
-use Common\Models\Traits\Users\Roles\Slugable;
 use Common\Models\Users\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 

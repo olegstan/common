@@ -3,7 +3,6 @@
 namespace Common\Models\Users\Roles;
 
 use Common\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class PermissionUser

@@ -5,7 +5,6 @@ use App\Models\Actives\Active;
 use Common\Models\Catalog\Custom\CustomHistory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait CustomRelationshipsTrait
 {

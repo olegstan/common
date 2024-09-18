@@ -8,7 +8,6 @@ use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\JobsEvent;
-use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Common\Models\Users\Roles\Types\Client;
 use Exception;
 

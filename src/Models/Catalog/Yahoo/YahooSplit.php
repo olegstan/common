@@ -3,7 +3,6 @@
 namespace Common\Models\Catalog\Yahoo;
 
 use Common\Models\Catalog\BaseCatalog;
-use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**

@@ -5,7 +5,6 @@ namespace Common\Models\Users\Roles;
 use Common\Models\BaseModel;
 use Common\Models\Traits\Users\Roles\PermissionHasRelations;
 use Common\Models\Traits\Users\Roles\Slugable;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property $name

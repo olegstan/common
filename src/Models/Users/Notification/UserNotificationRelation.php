@@ -5,8 +5,6 @@ namespace Common\Models\Users\Notification;
 use Common\Models\BaseModel;
 use Common\Models\Traits\Users\UserNotificationRelation\UserNotificationRelationAttributeTrait;
 use Common\Models\Traits\Users\UserNotificationRelation\UserNotificationRelationsTrait;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property $notification_id

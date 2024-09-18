@@ -2,10 +2,10 @@
 
 namespace Common\Models\Traits\Catalog\MoscowExchange;
 
+use Cache;
 use Carbon\Carbon;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeSplit;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
-use Cache;
 
 /**
  * Trait MoexReturnGetDataFunc

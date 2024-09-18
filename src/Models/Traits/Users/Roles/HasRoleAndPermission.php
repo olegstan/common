@@ -5,7 +5,6 @@ namespace Common\Models\Traits\Users\Roles;
 use Cache;
 use Common\Models\Users\Roles\Permission;
 use Common\Models\Users\Roles\Role;
-use Common\Models\Users\Roles\RoleUser;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;

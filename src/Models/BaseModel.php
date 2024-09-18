@@ -5,10 +5,6 @@ namespace Common\Models;
 use Common\Models\Traits\BaseTrait;
 use Common\Models\Traits\DuplicateTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use ReflectionClass;
 use Sofa\Eloquence\Subquery;
 
