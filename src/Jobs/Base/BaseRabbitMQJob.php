@@ -2,16 +2,15 @@
 
 namespace Common\Jobs\Base;
 
+use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Helpers\Queue\RabbitMQQueue;
-use Exception;
+use DB;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use DB;
-use Cache;
-use VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob;
 use PhpAmqpLib\Message\AMQPMessage;
+use VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob;
 
 class BaseRabbitMQJob extends RabbitMQJob
 {
