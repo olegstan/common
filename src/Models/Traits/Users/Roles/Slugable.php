@@ -12,8 +12,11 @@ trait Slugable
      * @param string $value
      * @return void
      */
-    public function setSlugAttribute(string $value)
+    public function setSlugAttribute(string $value = null)
     {
-        $this->attributes['slug'] = Str::slug($value, config('roles.separator'));
+        if($value)
+        {
+            $this->attributes['slug'] = Str::slug($value, config('roles.separator'));
+        }
     }
 }
