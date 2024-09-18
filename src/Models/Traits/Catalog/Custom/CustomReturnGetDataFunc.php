@@ -48,7 +48,7 @@ trait CustomReturnGetDataFunc
      */
     public function getLotSize(Carbon $date = null): int
     {
-        return 1;
+        return $this->lotsize ?: 1;
     }
 
     /**
