@@ -116,9 +116,9 @@ class BaseRabbitMQJob extends RabbitMQJob
     /**
      * Возвращает опции надстроек джобы
      *
-     * @return array
+     * @return object
      */
-    public function getOptions(): array
+    public function getOptions(): object
     {
         $json = json_decode($this->getRawBody());
         return $json->data->options;
