@@ -2,7 +2,7 @@
 
 namespace Common\Models\Users\Roles\Types;
 
-use App\Models\Crm\CrmResources;
+use App\Models\Crm\CrmResource;
 use Common\Models\Users\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -22,6 +22,6 @@ class Manager extends User
      */
     public function resources(): HasMany
     {
-        return $this->hasMany(CrmResources::class, 'user_id');
+        return $this->hasMany(CrmResource::class, 'user_id');
     }
 }
