@@ -24,7 +24,6 @@ use Common\Models\Traits\Users\StrategyTrait;
 use Common\Models\Users\Collective\UserCollectiveGroup;
 use Common\Models\Users\Crm\UserConfig;
 use Common\Models\Users\Roles\Role;
-use Common\Models\Users\Roles\RoleUser;
 use Common\Models\Users\Roles\Types\Client;
 use DB;
 use Exception;
@@ -138,31 +137,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
 
     //-----------------roles start-----------------------/
-
-    /**
-     * @param int|string $role
-     *
-     * @return bool
-     */
-    public function hasRole($role)
-    {
-        return $this->getRoles()->contains(function ($value, $key) use ($role) {
-            return $role == $value->id || Str::is($role, $value->slug);
-        });
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRole()
-    {
-        $roles = Role::all();
-        foreach ($roles as $role) {
-            if ($this->is($role->slug)) {
-                return $role->slug;
-            }
-        }
-    }
 
     /**
      * @return string
@@ -353,16 +327,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public static function documentPath(): string
     {
         return public_path() . self::$documentPath;
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class)
-            ->using(RoleUser::class)
-            ->withTimestamps();
     }
 
     /**

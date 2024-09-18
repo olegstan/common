@@ -5,6 +5,7 @@ namespace Common\Models\Traits\Users\Roles;
 use Cache;
 use Common\Models\Users\Roles\Permission;
 use Common\Models\Users\Roles\Role;
+use Common\Models\Users\Roles\RoleUser;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -29,13 +30,38 @@ trait HasRoleAndPermission
     protected ?Collection $permissions;
 
     /**
-     * Пользователь принадлежит ко многим ролям.
+     * @return mixed
+     */
+    public function getRole()
+    {
+        $roles = Role::all();
+        foreach ($roles as $role) {
+            if ($this->is($role->slug)) {
+                return $role->slug;
+            }
+        }
+    }
+
+    /**
+     * @param int|string $role
      *
+     * @return bool
+     */
+    public function hasRole($role)
+    {
+        return $this->getRoles()->contains(function ($value, $key) use ($role) {
+            return $role == $value->id || Str::is($role, $value->slug);
+        });
+    }
+
+    /**
      * @return BelongsToMany
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(config('roles.models.role'))->withTimestamps();
+        $table = config('database.connections.mysql.database') . '.role_user';
+
+        return $this->belongsToMany(config('roles.models.role'), $table, 'user_id')->withTimestamps();
     }
 
     /**
@@ -44,9 +70,10 @@ trait HasRoleAndPermission
     public function getRoles(): \Illuminate\Support\Collection
     {
         $collect = collect();
-        $roleSlugs = Cache::rememberForever('user.roles.' . $this->id, function ()
+        $roleSlugs = Cache::tags(config('cache.tags'))->rememberForever('user.roles.' . $this->id, function ()
         {
             $roles = $this->roles ?? $this->roles()->get();
+
             $roleSlugs = [];
 
             if($roles)
@@ -65,6 +92,7 @@ trait HasRoleAndPermission
 
             return $roleSlugs;
         });
+
 
         if($roleSlugs)
         {
@@ -134,19 +162,6 @@ trait HasRoleAndPermission
     }
 
     /**
-     * Проверьте, есть ли у пользователя роль.
-     *
-     * @param int|string $role
-     * @return bool
-     */
-    public function hasRole($role): bool
-    {
-        return $this->getRoles()->contains(function ($key, $value) use ($role) {
-            return $role == $value->id || Str::is($role, $value->slug);
-        });
-    }
-
-    /**
      * Прикрепить роль к пользователю.
      *
      * @param int|Role $role
@@ -206,9 +221,9 @@ trait HasRoleAndPermission
         }
 
         return $permissionModel::select(['permissions.*', 'permission_role.created_at as pivot_created_at', 'permission_role.updated_at as pivot_updated_at'])
-                ->join('permission_role', 'permission_role.permission_id', '=', 'permissions.id')->join('roles', 'roles.id', '=', 'permission_role.role_id')
-                ->whereIn('roles.id', $this->getRoles()->pluck('id')->toArray())->orWhere('roles.level', '<', $this->level())
-                ->groupBy(['permissions.id', 'pivot_created_at', 'pivot_updated_at']);
+            ->join('permission_role', 'permission_role.permission_id', '=', 'permissions.id')->join('roles', 'roles.id', '=', 'permission_role.role_id')
+            ->whereIn('roles.id', $this->getRoles()->pluck('id')->toArray())->orWhere('roles.level', '<', $this->level())
+            ->groupBy(['permissions.id', 'pivot_created_at', 'pivot_updated_at']);
     }
 
     /**
@@ -230,7 +245,7 @@ trait HasRoleAndPermission
     {
         return (!isset($this->permissions)) ? $this->permissions = $this->rolePermissions()->get()->merge($this->userPermissions()->get()) : $this->permissions;
     }
-    
+
 
     /**
      * Проверьте, есть ли у пользователя разрешение или permissions.
@@ -369,7 +384,7 @@ trait HasRoleAndPermission
     public function detachAllPermissions(): int
     {
         $this->permissions = null;
-        
+
         return $this->userPermissions()->detach();
     }
 

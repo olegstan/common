@@ -247,7 +247,7 @@ trait MoexReturnGetDataFunc
         if ($date) {
             $cacheKey = "moex_last_split_{$this->id}_$date";
 
-            $split = Cache::remember($cacheKey, 60 * 60, function () use ($date) {
+            $split = Cache::tags(config('cache.tags'))->remember($cacheKey, 60 * 60, function () use ($date) {
                 return MoscowExchangeSplit::where('moex_stock_id', $this->id)
                     ->where('date', '<=', $date)
                     ->orderByDesc('date')
