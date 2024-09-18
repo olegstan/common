@@ -2,14 +2,16 @@
 
 namespace Common\Jobs\Base;
 
-use Cache;
+use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Helpers\Queue\RabbitMQQueue;
-use DB;
+use Exception;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use PhpAmqpLib\Message\AMQPMessage;
+use DB;
+use Cache;
 use VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class BaseRabbitMQJob extends RabbitMQJob
 {
@@ -70,7 +72,7 @@ class BaseRabbitMQJob extends RabbitMQJob
 
                 LoggerHelper::getLogger($key)->debug(
                     "SQL => {$sqlWithBindings}" . PHP_EOL .
-                    "TIME => {$sql->time} milliseconds" . PHP_EOL
+                    "TIME => {$sql->time} milliseconds" . PHP_EOL,
                 );
             }
         });
@@ -92,6 +94,7 @@ class BaseRabbitMQJob extends RabbitMQJob
      * Обрабатывает ошибку и очищает кэш.
      *
      * @param mixed $e
+     *
      * @return void
      */
     public function fail($e = null): void
@@ -109,5 +112,66 @@ class BaseRabbitMQJob extends RabbitMQJob
         if (isset($data['data']['options']['cache_key'])) {
             Cache::tags(['job'])->forget($data['data']['options']['cache_key']);
         }
+    }
+
+    /**
+     * Возвращает опции надстроек джобы
+     *
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        $json = json_decode($this->getRawBody());
+        return $json->data->options;
+    }
+
+    /**
+     * Возвращает тип джобы
+     *
+     * @return int
+     */
+    public function getOptionsType(): int
+    {
+        return $this->getOptions()->job_type;
+    }
+
+    /**
+     * Возвращает uuid джобы
+     *
+     * @return string
+     */
+    public function getOptionsUuid(): string
+    {
+        return $this->getOptions()->uuid;
+    }
+
+    /**
+     * Возвращает дату и время создания джобы
+     *
+     * @return Carbon
+     */
+    public function getOptionsCreateAt(): Carbon
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $this->getOptions()->create_at);
+    }
+
+    /**
+     * Возвращает ключ кэша джобы
+     *
+     * @return string
+     */
+    public function getOptionsCacheKey(): string
+    {
+        return $this->getOptions()->cache_key;
+    }
+
+    /**
+     * Возвращает булево на проверку кэширования
+     *
+     * @return bool
+     */
+    public function getOptionsCacheCheck(): bool
+    {
+        return $this->getOptions()->cache_check;
     }
 }

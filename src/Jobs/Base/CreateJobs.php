@@ -185,9 +185,10 @@ class CreateJobs
     public function createEvent(?string $jobId = null): ?string
     {
         $data = $this->getData();
+        $type = $data['job_type'];
 
-        if (isset($data['job_type']) && $jobId) {
-            $event = JobsEvent::create($this->getUserId(), $jobId, $data['job_type']);
+        if ($type != 0 && $jobId) {
+            $event = JobsEvent::create($this->getUserId(), $jobId, $type);
             $event->pending();
 
             return $jobId;
@@ -214,7 +215,7 @@ class CreateJobs
 
             // Сохранить только ключи, которые находится в массиве с ключем options
             foreach ($data as $key => $value) {
-                if (is_array($value) && $key == 'options') {
+                if (is_array($value) && $key == 'options' || $key === 'job_type') {
                     $newData[$key] = $value;
                 } else {
                     $newData[] = $value; // Сбрасываем ключи для остальных данных
@@ -244,11 +245,12 @@ class CreateJobs
         $data['options']['uuid'] = $this->getUuid();
         $data['options']['create_at'] = Carbon::now()->format('Y-m-d H:i:s');
         $data['options']['cache_key'] = $this->getCacheKeyQueue();
+        $data['options']['job_type'] = $data['job_type'];
         $data['options']['cache_check'] = $data['options']['cache_check'] ?? true;
 
         // Перемещаем 'options' в конец массива
         $options = $data['options'];
-        unset($data['options']);
+        unset($data['options'], $data['job_type']);
         $data['options'] = $options;
 
         return $data;
@@ -277,7 +279,7 @@ class CreateJobs
 
             return true;
         } catch (Exception $e) {
-            LoggerHelper::getLogger(class_basename($this) . '_' . __FUNCTION__)->error($e);
+            LoggerHelper::getLogger(class_basename($this) . '_' . __FUNCTION__)->error($e, $this->getData());
             return false;
         }
     }

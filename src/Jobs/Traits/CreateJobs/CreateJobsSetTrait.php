@@ -31,6 +31,10 @@ trait CreateJobsSetTrait
      */
     public function setData($data): CreateJobs
     {
+        if (!isset($data['job_type'])) {
+            $data['job_type'] = 0;
+        }
+
         $this->data = $data;
         return $this;
     }
