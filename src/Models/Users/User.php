@@ -356,11 +356,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function roles(): hasMany
+    public function roles(): BelongsToMany
     {
-        return $this->hasMany(RoleUser::class, 'user_id');
+        return $this->belongsToMany(Role::class)
+            ->using(RoleUser::class)
+            ->withTimestamps();
     }
 
     /**

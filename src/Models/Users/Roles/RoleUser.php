@@ -12,8 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class RoleUser extends BaseModel
 {
-    use Slugable, RoleHasRelations;
-
     /**
      * @var string
      */
