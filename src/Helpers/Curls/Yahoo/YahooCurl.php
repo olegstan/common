@@ -154,7 +154,7 @@ class YahooCurl
             return json_decode('"' . $match['crumb'] . '"');
         }
 
-        LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb');
+        LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb (extractCrumb)');
         return false;
     }
 
@@ -258,7 +258,7 @@ class YahooCurl
 
             return YahooDecoder::transformQuotes($response);
         } catch (Exception $e) {
-            LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb');
+            LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb (getQuotes)');
 
             return false;
         }
