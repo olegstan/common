@@ -150,11 +150,13 @@ class YahooCurl
      */
     public static function extractCrumb($response)
     {
-        if (preg_match('#CrumbStore":{"crumb":"(?<crumb>.+?)"}#', $response, $match)) {
-            return json_decode('"' . $match['crumb'] . '"');
+        try {
+            if (preg_match('#CrumbStore":{"crumb":"(?<crumb>.+?)"}#', $response, $match)) {
+                return json_decode('"' . $match['crumb'] . '"');
+            }
+        } catch (Exception $e) {
+            LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb (extractCrumb)', [$e->getTraceAsString()]);
         }
-
-        LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb');
         return false;
     }
 
@@ -258,7 +260,7 @@ class YahooCurl
 
             return YahooDecoder::transformQuotes($response);
         } catch (Exception $e) {
-            LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb');
+            LoggerHelper::getLogger('yahoo')->error('Cannot extract crumb (getQuotes)', [$e->getTraceAsString()]);
 
             return false;
         }
