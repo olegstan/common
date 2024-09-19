@@ -259,11 +259,6 @@ trait MoexReturnGetDataFunc
             }
         }
 
-        // Фьючерсы всегда возвращают 1
-        if ($this->engine === 'futures') {
-            $lotsize = 1;
-        }
-
         return $lotsize;
     }
 
