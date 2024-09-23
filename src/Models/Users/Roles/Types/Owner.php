@@ -3,6 +3,7 @@
 namespace Common\Models\Users\Roles\Types;
 
 use Common\Models\Users\Departments\Department;
+use Common\Models\Users\Employee;
 use Common\Models\Users\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * Class Owner
  * @package Common\Models\Users
  */
-class Owner extends User
+class Owner extends Employee
 {
     /**
      * @var string

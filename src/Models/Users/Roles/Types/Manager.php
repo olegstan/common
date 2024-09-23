@@ -3,6 +3,7 @@
 namespace Common\Models\Users\Roles\Types;
 
 use App\Models\Crm\CrmResource;
+use Common\Models\Users\Employee;
 use Common\Models\Users\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * Class Manager
  * @package Common\Models\Users
  */
-class Manager extends User
+class Manager extends Employee
 {
     /**
      * @var string
