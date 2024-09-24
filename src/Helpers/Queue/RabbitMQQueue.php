@@ -12,25 +12,43 @@ class RabbitMQQueue extends BaseQueue
     /**
      * Помещает задание в очередь.
      *
-     * @param mixed $job
-     * @param mixed $data
-     * @param string|null $queue
+     * @param mixed $job  Задача, которая отправляется в очередь
+     * @param mixed $data  Данные для задачи
+     * @param null $queue  Имя очереди (по умолчанию - null)
      *
-     * @return mixed
+     * @return mixed  Возвращает UUID задания или false в случае ошибки
      * @throws AMQPProtocolChannelException
      */
     public function push($job, $data = '', $queue = null)
     {
+        // Если задача должна быть выполнена немедленно, отправляем её напрямую
         if ($this->isImmediateJob($job)) {
-            return $this->pushRaw($this->createPayload($job, $queue, $data), $queue);
+            return $this->pushRawJob($job, $queue, $data);
         }
 
+        // Если данные некорректны, логируем ошибку и не выполняем задачу
         if ($this->isInvalidData($data)) {
             return false;
         }
 
-        Cache::tags(['job'])->add($data['options']['cache_key'], true, 1440);
+        // Кэшируем задачу, если она еще не была кэширована
+        $this->cacheJobData($data);
 
+        // Отправляем задачу в очередь
+        return $this->pushRawJob($job, $queue, $data);
+    }
+
+    /**
+     * Отправляет задание в очередь напрямую.
+     *
+     * @param mixed $job  Задача, которая отправляется
+     * @param string|null $queue  Очередь
+     * @param mixed $data  Данные для задачи
+     *
+     * @return mixed
+     */
+    protected function pushRawJob($job, ?string $queue, $data)
+    {
         return $this->pushRaw($this->createPayload($job, $queue, $data), $queue);
     }
 
@@ -40,9 +58,9 @@ class RabbitMQQueue extends BaseQueue
      * является ли задание экземпляром MakeSearchable (Laravel scout)
      * или задача принадлежит к сервису Каталога (где не надо проверять на кэш)
      *
-     * @param mixed $job
+     * @param mixed $job Задача
      *
-     * @return bool
+     * @return bool  Возвращает true, если задача немедленная (без кэширования)
      */
     protected function isImmediateJob($job): bool
     {
@@ -57,9 +75,9 @@ class RabbitMQQueue extends BaseQueue
     /**
      * Проверяет данные на корректность.
      *
-     * @param mixed $data
+     * @param mixed $data Данные задачи
      *
-     * @return bool
+     * @return bool  Возвращает true, если данные некорректны
      */
     protected function isInvalidData($data): bool
     {
@@ -79,11 +97,35 @@ class RabbitMQQueue extends BaseQueue
             return false;
         }
 
-        if (Cache::tags(['job'])->has($data['options']['cache_key'])) {
-//            LoggerHelper::getLogger(class_basename($this) . '-' . __FUNCTION__)->info('Такой ключ уже существует', [$data]);
+        // Проверяем, не существует ли задача с таким ключом в кэше
+        if ($this->isCachedJob($data)) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Проверяет, находится ли задача уже в кэше.
+     *
+     * @param mixed $data  Данные задачи
+     *
+     * @return bool  Возвращает true, если задача есть в кэше
+     */
+    protected function isCachedJob($data): bool
+    {
+        return Cache::tags(['job'])->has($data['options']['cache_key']);
+    }
+
+    /**
+     * Кэширует задачу в Redis на 24 часа.
+     *
+     * @param mixed $data  Данные задачи
+     *
+     * @return void
+     */
+    protected function cacheJobData($data): void
+    {
+        Cache::tags(['job'])->add($data['options']['cache_key'], true, 1440);
     }
 }

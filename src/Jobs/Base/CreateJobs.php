@@ -9,6 +9,7 @@ use Common\Jobs\JobsEvent;
 use Common\Jobs\LogJob\LogJobParser;
 use Common\Jobs\Traits\CreateJobs\CreateJobsGetTrait;
 use Common\Jobs\Traits\CreateJobs\CreateJobsSetTrait;
+use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Common\Models\BaseModel;
 use Exception;
 use Illuminate\Support\Facades\Queue;
@@ -157,21 +158,36 @@ class CreateJobs
     /**
      * Помещает задание в очередь.
      *
-     * @return string UUID отправленного задания в случае успеха, в противном случае — false.
+     * @return string UUID отправленного задания
      */
-    public function push(): ?string
+    public function push(): string
     {
-        // Поместите задание в очередь с указанным приоритетом и данными.
-        $queue = Queue::connection($this->getConnectionName())
-            ->push($this->getJobClass(), $this->addDataParams(), $this->getPriority());
+        //Периодически возникает ошибка с подключением к каналу, тк он отключен из-за бездействия
+        //цикл помогает делать попытки переподключения
+        //сообщение ошибки - CHANNEL_ERROR - expected 'channel.open'(60 40)
+        for ($attempts = 0; $attempts < 3; $attempts++) {
+            try {
+                $queue = Queue::connection($this->getConnectionName())
+                    ->push($this->getJobClass(), $this->addDataParams(), $this->getPriority());
 
-        // Если задание было успешно отправлено, создайте запись в журнале и верните UUID.
-        if ($queue) {
-            $this->createLogParse();
-            return $this->createEvent($queue);
+                if ($queue) {
+                    $this->createLogParse();
+                    return $this->createEvent($queue);
+                }
+            } catch (AMQPProtocolChannelException $e) {
+                // Логирование предупреждения
+                LoggerHelper::getLogger(class_basename($this))->warning('Канал RabbitMQ был закрыт: ' . $e->getMessage());
+                // Сброс соединения
+                app('queue')->forget($this->getConnectionName());
+                // Небольшая задержка перед повторной попыткой
+                sleep(1);
+            } catch (Exception $e) {
+                // Логирование ошибки и выход из цикла
+                LoggerHelper::getLogger(class_basename($this))->error('Ошибка при отправке задания в очередь RabbitMQ: ' . $e->getMessage());
+                break;
+            }
         }
 
-        // Если задание не удалось отправить, верните false
         return $this->createEvent();
     }
 
