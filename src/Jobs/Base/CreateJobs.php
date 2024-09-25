@@ -231,7 +231,7 @@ class CreateJobs
 
             // Сохранить только ключи, которые находится в массиве с ключем options
             foreach ($data as $key => $value) {
-                if (is_array($value) && $key == 'options' || $key === 'job_type') {
+                if ((is_array($value) && $key == 'options') || $key === 'job_type') {
                     $newData[$key] = $value;
                 } else {
                     $newData[] = $value; // Сбрасываем ключи для остальных данных
