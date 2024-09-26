@@ -4,6 +4,7 @@ namespace Common\Observers\Catalog\Custom;
 
 use Common\Helpers\Catalog\CatalogSearch;
 use Common\Helpers\LoggerHelper;
+use Common\Models\Currency;
 use Elasticsearch\ClientBuilder;
 use Common\Models\Catalog\Custom\CustomStock;
 use Exception;
@@ -17,6 +18,12 @@ class CustomStockObserver
      */
     public function creating(CustomStock $model)
     {
+        if (empty($model->currency_id) ||
+            is_null($model->currency_id) ||
+            $model->currency_id === '' ||
+            $model->currency_id === 'RUR') {
+            $model->currency_id = Currency::RUB;
+        }
     }
 
     /**
