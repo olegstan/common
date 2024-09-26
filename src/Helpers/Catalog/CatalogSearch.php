@@ -16,7 +16,7 @@ use stdClass;
 class CatalogSearch
 {
     // Поля для поиска с весовыми коэффициентами для 'moscow_exchange_stocks'
-    protected const MOSCOW_STOCKS_FIELDS = ['secid', 'isin', 'name^', 'shortname', 'latname'];
+    protected const MOSCOW_STOCKS_FIELDS = ['secid', 'isin', 'name', 'shortname', 'latname'];
 
     // Поля для поиска по 'cb_currencies'
     protected const CB_CURRENCIES_FIELDS = ['name', 'cb_id', 'char_code'];
@@ -30,22 +30,18 @@ class CatalogSearch
     // Поля для поиска по 'cbond_stocks'
     protected const CBOND_STOCKS_FIELDS = ['name', 'symbol', 'isin', 'shortname', 'latname'];
 
-    // Типы бондов
-    protected const BOND_TYPES = [
-        'cb_bond',
-        'subfederal_bond',
-        'municipal_bond',
-        'euro_bond',
-        'state_bond',
-        'ifi_bond',
-        'exchange_bond',
-        'corporate_bond',
-        'ofz_bond',
-        'non_exchange_bond',
-        'exchange_ppif',
-        'private_ppif',
-        'public_ppif',
-        'interval_ppif',
+    public const MOEX_INDEX = 'catalog.moscow_exchange_stocks';
+    public const YAHOO_INDEX = 'catalog.yahoo_stocks';
+    public const CBOND_INDEX = 'catalog.cbond_stocks';
+    public const CB_INDEX = 'catalog.cb_currencies';
+    public const CUSTOM_INDEX = 'catalog.custom_stocks';
+
+    public const ALL_INDEXES = [
+        self::MOEX_INDEX,
+        self::YAHOO_INDEX,
+        self::CBOND_INDEX,
+        self::CB_INDEX,
+        self::CUSTOM_INDEX,
     ];
 
     /**
@@ -83,10 +79,7 @@ class CatalogSearch
             $self->client->index($params);
         } catch (Exception $e) {
             LoggerHelper::getLogger(class_basename($self))
-                ->error(
-                    "Ошибка индексации записи в Elasticsearch: " . $e->getMessage(),
-                    $record->toArray()
-                );
+                ->error("Ошибка индексации записи в Elasticsearch: " . $e->getMessage(), $record->toArray());
         }
     }
 
@@ -224,7 +217,7 @@ class CatalogSearch
         $lastWord = end($words);
 
         return [
-            ['index' => 'catalog.moscow_exchange_stocks'],
+            ['index' => self::MOEX_INDEX],
             [
                 'query' => [
                     'bool' => [
@@ -306,7 +299,7 @@ class CatalogSearch
         $lastWord = end($words);
 
         return [
-            ['index' => 'catalog.cb_currencies'],
+            ['index' => self::CB_INDEX],
             [
                 'query' => [
                     'bool' => [
@@ -379,7 +372,7 @@ class CatalogSearch
         }
 
         return [
-            ['index' => 'catalog.custom_stocks'],
+            ['index' => self::CUSTOM_INDEX],
             [
                 'query' => [
                     'bool' => [
@@ -450,7 +443,7 @@ class CatalogSearch
         $lastWord = end($words);
 
         return [
-            ['index' => 'catalog.yahoo_stocks'],
+            ['index' => self::YAHOO_INDEX],
             [
                 'query' => [
                     'bool' => [
@@ -514,7 +507,7 @@ class CatalogSearch
         $lastWord = end($words);
 
         return [
-            ['index' => 'catalog.cbond_stocks'],
+            ['index' => self::CBOND_INDEX],
             [
                 'query' => [
                     'bool' => [
@@ -582,11 +575,11 @@ class CatalogSearch
     {
         // Определяем маппинг индексов к моделям
         $indexToModelMap = [
-            'catalog.moscow_exchange_stocks' => MoscowExchangeStock::class,
-            'catalog.cbond_stocks' => CbondStock::class,
-            'catalog.cb_currencies' => CbCurrency::class,
-            'catalog.custom_stocks' => CustomStock::class,
-            'catalog.yahoo_stocks' => YahooStock::class,
+            self::MOEX_INDEX => MoscowExchangeStock::class,
+            self::CBOND_INDEX => CbondStock::class,
+            self::CB_INDEX => CbCurrency::class,
+            self::CUSTOM_INDEX => CustomStock::class,
+            self::YAHOO_INDEX => YahooStock::class,
         ];
 
         // Получаем название индекса из хита
@@ -605,7 +598,6 @@ class CatalogSearch
         // Возвращаем данные, вызвав метод getItemData
         return $model->getItemData();
     }
-
 
     /**
      * Обрабатываем и возвращаем результаты
@@ -632,5 +624,37 @@ class CatalogSearch
 
         // Возвращаем плоский массив результатов
         return !empty($results) ? array_merge(...$results) : [];
+    }
+
+    /**
+     * Удаляет запись из указанного индекса Elasticsearch
+     *
+     * @param string $index Название индекса
+     * @param string|int $id Идентификатор записи для удаления
+     *
+     * @return bool Возвращает true, если удаление прошло успешно, иначе false
+     */
+    public static function deleteFromIndex(string $index, $id): bool
+    {
+        $self = new self();
+
+        try {
+            // Выполняем удаление записи из индекса Elasticsearch
+            $self->client->delete([
+                'index' => $index,
+                'id' => $id,
+            ]);
+
+            // Логирование успешного удаления
+            LoggerHelper::getLogger()->info("Запись с ID $id была удалена из индекса $index.");
+
+            return true;
+        } catch (Exception $e) {
+            // Логируем ошибку при удалении записи
+            LoggerHelper::getLogger()
+                ->error("Ошибка при удалении записи с ID $id из индекса $index: " . $e->getMessage());
+
+            return false;
+        }
     }
 }

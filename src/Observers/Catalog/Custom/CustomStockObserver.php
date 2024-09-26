@@ -52,25 +52,7 @@ class CustomStockObserver
      */
     public function deleted(CustomStock $model)
     {
-        // Инициализация Elasticsearch клиента
-        $client = ClientBuilder::create()
-            ->setHosts(config('elasticsearch.config.hosts'))
-            ->build();
-
-        try {
-            // Удаление записи из индекса Elasticsearch
-            $client->delete([
-                'index' => 'catalog.custom_stocks', // Укажите индекс
-                'id' => $model->id, // Используйте идентификатор записи
-            ]);
-
-            LoggerHelper::getLogger()
-                ->info("Запись с ID $model->id была удалена из индекса Elasticsearch.");
-        } catch (Exception $e) {
-            // Логируем ошибку
-            LoggerHelper::getLogger()
-                ->error("Ошибка при удалении записи с ID $model->id из индекса Elasticsearch: " . $e->getMessage());
-        }
+        CatalogSearch::deleteFromIndex(CatalogSearch::CUSTOM_INDEX, $model->id);
     }
 
     /**
