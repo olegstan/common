@@ -135,9 +135,10 @@ class LoggerHelper
     }
 
     /**
+     * @param $sql
      * @param null $hash
      */
-    public static function listenQuery($hash = null)
+    public static function listenQuery($sql, $hash = null)
     {
         /**
          * @var QueryExecuted $sql
