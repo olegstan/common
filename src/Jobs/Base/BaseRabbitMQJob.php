@@ -59,20 +59,11 @@ class BaseRabbitMQJob extends RabbitMQJob
      */
     protected function listenToDatabaseQueries(): void
     {
-        DB::listen(static function ($sql) {
-            $key = $sql->time > 100 ? 'slow-query' : 'query';
-            $sqlWithBindings = $sql->sql;
-
-            if (LoggerHelper::$logQuery || $sql->time > 100) {
-                foreach ($sql->bindings as $binding) {
-                    $value = is_numeric($binding) ? $binding : "'{$binding}'";
-                    $sqlWithBindings = preg_replace('/\?/', $value, $sqlWithBindings, 1);
-                }
-
-                LoggerHelper::getLogger($key)->debug(
-                    "SQL => {$sqlWithBindings}" . PHP_EOL .
-                    "TIME => {$sql->time} milliseconds" . PHP_EOL,
-                );
+        DB::listen(static function ($sql)
+        {
+            if (LoggerHelper::$logQuery || $sql->time > 100)
+            {
+                LoggerHelper::listenQuery();
             }
         });
     }
