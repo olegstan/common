@@ -159,7 +159,7 @@ class LoggerHelper
         LoggerHelper::getLogger($key)->debug(
             'SQL => ' . $sqlWithBindings . PHP_EOL .
             'TIME => ' . $sql->time . ' milliseconds' . PHP_EOL .
-            $hash ? ('HASH => ' . $hash) : ''
+            ($hash ? ('HASH => ' . $hash) : '')
         );
     }
 }
