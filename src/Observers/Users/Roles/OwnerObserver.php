@@ -3,6 +3,7 @@
 namespace Common\Observers\Users\Roles;
 
 use Common\Models\Users\Roles\Types\Owner;
+use Cache;
 
 class OwnerObserver
 {
@@ -23,7 +24,7 @@ class OwnerObserver
      */
     public function created(Owner $user)
     {
-        $user->createAccounts();
+
     }
 
     /**
@@ -33,6 +34,7 @@ class OwnerObserver
      */
     public function updated(Owner $user)
     {
+        Cache::tags(config('cache.tags'))->forger('token.auth.user' . $user->api_token);
     }
 
     /**
@@ -42,7 +44,7 @@ class OwnerObserver
      */
     public function deleted(Owner $user)
     {
-
+        Cache::tags(config('cache.tags'))->forger('token.auth.user' . $user->api_token);
     }
 
     /**
@@ -52,5 +54,6 @@ class OwnerObserver
      */
     public function deleting(Owner $user)
     {
+
     }
 }
