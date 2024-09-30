@@ -63,7 +63,7 @@ class BaseRabbitMQJob extends RabbitMQJob
         {
             if (LoggerHelper::$logQuery || $sql->time > 100)
             {
-                LoggerHelper::listenQuery();
+                LoggerHelper::listenQuery($sql);
             }
         });
     }
