@@ -1,6 +1,7 @@
 <?php
 namespace Common\Helpers;
 
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
@@ -131,5 +132,33 @@ class LoggerHelper
         $key = str_replace(' ', '-', $key);
 
         return preg_replace('/[^A-Za-z0-9\-]/', '', $key);
+    }
+
+    /**
+     * @param null $hash
+     */
+    public static function listenQuery($hash = null)
+    {
+        /**
+         * @var QueryExecuted $sql
+         */
+        if($sql->time > 100){
+            $key = 'slow-query';
+        }else{
+            $key = 'query';
+        }
+
+        $sqlWithBindings = $sql->sql;
+
+        foreach ($sql->bindings as $binding) {
+            $value = is_numeric($binding) ? $binding : "'" . $binding . "'";
+            $sqlWithBindings = preg_replace('/\?/', $value, $sqlWithBindings, 1);
+        }
+
+        LoggerHelper::getLogger($key)->debug(
+            'SQL => ' . $sqlWithBindings . PHP_EOL .
+            'TIME => ' . $sql->time . ' milliseconds' . PHP_EOL .
+            $hash ? ('HASH => ' . $hash) : ''
+        );
     }
 }
