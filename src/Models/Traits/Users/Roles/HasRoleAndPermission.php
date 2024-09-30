@@ -44,7 +44,7 @@ trait HasRoleAndPermission
     public function getRoles(): \Illuminate\Support\Collection
     {
         $collect = collect();
-        $roleSlugs = Cache::rememberForever('user.roles.' . $this->id, function ()
+        $roleSlugs = Cache::tags([config('cache.tags')])->rememberForever('user.roles.' . $this->id, function ()
         {
             $roles = $this->roles ?? $this->roles()->get();
             $roleSlugs = [];
