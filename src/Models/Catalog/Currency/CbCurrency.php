@@ -3,6 +3,7 @@
 namespace Common\Models\Catalog\Currency;
 
 use Carbon\Carbon;
+use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
@@ -11,6 +12,8 @@ use Common\Models\Traits\Catalog\Currency\CurrencyRelationshipsTrait;
 use Common\Models\Traits\Catalog\Currency\CurrencyReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Currency\CurrencyScopeTrait;
 use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
+use Cache;
+use Exception;
 
 /**
  * @property $cb_id
@@ -168,5 +171,70 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
     public static function loadDividends($stock): void
     {
 
+    }
+
+    /**
+     * @param $code
+     *
+     * @return mixed
+     * //TODO сделать проверку что только латинские буквы должна содержать строка, никаких цифр
+     */
+    public static function getByCharCode($code)
+    {
+        if ($code === 'RUR') {
+            $code = Currency::RUB;
+        }
+
+        if (!$code) {
+            return null;
+        }
+
+        try {
+            return Cache::tags([config('cache.tags')])->rememberForever('cbcurrency.' . $code, function () use ($code) {
+                $curency = CbCurrency::where('char_code', $code)
+                    ->first();
+
+                if (!$curency) {
+                    LoggerHelper::getLogger()->error('Currency not found by code ' . $code);
+                    return null;
+                }
+
+                return $curency;
+            });
+        } catch (Exception $e) {
+            LoggerHelper::getLogger()->error($e);
+            return null;
+        }
+    }
+
+    /**
+     * @param $currencyId
+     *
+     * @return mixed
+     */
+    public static function getById($currencyId)
+    {
+        if (!$currencyId) {
+            return null;
+        }
+
+        try {
+            return Cache::tags([config('cache.tags')])->rememberForever(
+                'cbcurrency.' . $currencyId,
+                static function () use ($currencyId) {
+                    $curency = CbCurrency::where('id', $currencyId)
+                        ->first();
+
+                    if (!$curency) {
+                        throw new Exception('Cb currency not found by id ' . $currencyId);
+                    }
+
+                    return $curency;
+                },
+            );
+        } catch (Exception $e) {
+            LoggerHelper::getLogger()->error($e);
+            return null;
+        }
     }
 }
