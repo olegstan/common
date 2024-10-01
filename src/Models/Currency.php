@@ -220,15 +220,15 @@ class Currency extends BaseCatalog
 
         try {
             return Cache::tags([config('cache.tags')])->rememberForever('currency.' . $code, function () use ($code) {
-                $cuurency = Currency::where('code', $code)
+                $curency = Currency::where('code', $code)
                     ->first();
 
-                if (!$cuurency) {
+                if (!$curency) {
                     LoggerHelper::getLogger()->error('Currency not found by code ' . $code);
                     return null;
                 }
 
-                return $cuurency;
+                return $curency;
             });
         } catch (Exception $e) {
             LoggerHelper::getLogger()->error($e);
@@ -251,15 +251,15 @@ class Currency extends BaseCatalog
             return Cache::tags([config('cache.tags')])->rememberForever(
                 'currency.' . $currencyId,
                 static function () use ($currencyId) {
-                    $cuurency = Currency::where('id', $currencyId)
+                    $curency = Currency::where('id', $currencyId)
                         ->with('cb_currency')
                         ->first();
 
-                    if (!$cuurency) {
-                        throw new Exception('Currency not found by id ' . $cuurency);
+                    if (!$curency) {
+                        throw new Exception('Currency not found by id ' . $currencyId);
                     }
 
-                    return $cuurency;
+                    return $curency;
                 },
             );
         } catch (Exception $e) {
