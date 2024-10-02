@@ -3,6 +3,7 @@
 namespace Common\Models\Traits\Catalog\MoscowExchange;
 
 use Carbon\Carbon;
+use Common\Helpers\CatalogCache;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeSplit;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Cache;
@@ -227,28 +228,13 @@ trait MoexReturnGetDataFunc
     {
         $lotsize = $this->lotsize ?: 1;
 
-        // Проверка сплитов до заданной даты
-        if ($date) {
-            $dateFormatted = $date->format('Y-m-d');
-            $cacheKey = "moex_last_split_{$this->id}_$dateFormatted";
-
-            $split = Cache::tags(config('cache.tags'))->remember($cacheKey, 60 * 60, function () use ($dateFormatted) {
-                return MoscowExchangeSplit::where('moex_stock_id', $this->id)
-                    ->whereDate('date', '<=', $dateFormatted)
-                    ->orderByDesc('date')
-                    ->first() ?: 'empty';
-            });
-
-// Проверяем, нашли ли мы сплит и обрабатываем, если нет
-            if ($split !== 'empty') {
-                $lotsize = $split->after;
-            }
-        }
-
         // Фьючерсы всегда возвращают 1
         if ($this->engine === 'futures') {
             $lotsize = 1;
+            return $lotsize;//завершим чтобы не было запросов к БД в getMoexSplit
         }
+
+        CatalogCache::getMoexSplit($this->id, $lotsize, $date);
 
         return $lotsize;
     }
