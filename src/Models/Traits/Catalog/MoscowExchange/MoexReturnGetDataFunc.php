@@ -229,11 +229,12 @@ trait MoexReturnGetDataFunc
 
         // Проверка сплитов до заданной даты
         if ($date) {
-            $cacheKey = "moex_last_split_{$this->id}_$date";
+            $dateFormatted = $date->format('Y-m-d');
+            $cacheKey = "moex_last_split_{$this->id}_$dateFormatted";
 
-            $split = Cache::remember($cacheKey, 60 * 60, function () use ($date) {
+            $split = Cache::remember($cacheKey, 60 * 60, function () use ($dateFormatted) {
                 return MoscowExchangeSplit::where('moex_stock_id', $this->id)
-                    ->where('date', '<=', $date)
+                    ->whereDate('date', '<=', $dateFormatted)
                     ->orderByDesc('date')
                     ->first();
             });
