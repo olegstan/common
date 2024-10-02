@@ -232,14 +232,15 @@ trait MoexReturnGetDataFunc
             $dateFormatted = $date->format('Y-m-d');
             $cacheKey = "moex_last_split_{$this->id}_$dateFormatted";
 
-            $split = Cache::remember($cacheKey, 60 * 60, function () use ($dateFormatted) {
+            $split = Cache::tags(config('cache.tags'))->remember($cacheKey, 60 * 60, function () use ($dateFormatted) {
                 return MoscowExchangeSplit::where('moex_stock_id', $this->id)
                     ->whereDate('date', '<=', $dateFormatted)
                     ->orderByDesc('date')
-                    ->first();
+                    ->first() ?: 'empty';
             });
 
-            if ($split) {
+// Проверяем, нашли ли мы сплит и обрабатываем, если нет
+            if ($split !== 'empty') {
                 $lotsize = $split->after;
             }
         }
