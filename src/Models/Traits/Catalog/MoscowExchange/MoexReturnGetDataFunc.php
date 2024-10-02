@@ -4,6 +4,7 @@ namespace Common\Models\Traits\Catalog\MoscowExchange;
 
 use Cache;
 use Carbon\Carbon;
+use Common\Helpers\CatalogCache;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeSplit;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
@@ -225,6 +226,8 @@ trait MoexReturnGetDataFunc
      */
     public function getLotSize(Carbon $date = null): int
     {
+        $lotsize = $this->lotsize ?: 1;
+
         //У фьючерсов лот обычно представляет собой один контракт,
         // а не фиксированное количество акций или других ценных бумаг. В отличие от акций, где в одном лоте может быть, например, 10 или 100 бумаг, у фьючерсов такого понятия нет.
 
@@ -236,29 +239,13 @@ trait MoexReturnGetDataFunc
         // зависимости от типа актива (например, количество
         // баррелей нефти, унций золота и т.д.).
 
-        if($this->engine === 'futures')
-        {
-            return 1;
+        // Фьючерсы всегда возвращают 1
+        if ($this->engine === 'futures') {
+            $lotsize = 1;
+            return $lotsize;//завершим чтобы не было запросов к БД в getMoexSplit
         }
 
-        $lotsize = $this->lotsize ?: 1;
-
-        // Проверка сплитов до заданной даты
-        if ($date) {
-            $dateFormatted = $date->format('Y-m-d');
-            $cacheKey = "moex_last_split_{$this->id}_$dateFormatted";
-
-            $split = Cache::tags(config('cache.tags'))->remember($cacheKey, 60 * 60, function () use ($dateFormatted) {
-                return MoscowExchangeSplit::where('moex_stock_id', $this->id)
-                    ->whereDate('date', '<=', $dateFormatted)
-                    ->orderByDesc('date')
-                    ->first();
-            });
-
-            if ($split) {
-                $lotsize = $split->after;
-            }
-        }
+        CatalogCache::getMoexSplit($this->id, $lotsize, $date);
 
         return $lotsize;
     }
