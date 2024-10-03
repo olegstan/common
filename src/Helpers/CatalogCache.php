@@ -55,7 +55,7 @@ class CatalogCache
            $dateFormatted = $date->format('Y-m-d');
            $cacheKey = "moex_last_split_{$id}_$dateFormatted";
 
-           $split = Cache::remember($cacheKey, 60 * 60, static function () use ($dateFormatted, $id) {
+           $split = Cache::tags([config('cache.tags')])->remember($cacheKey, 60 * 60, static function () use ($dateFormatted, $id) {
                return MoscowExchangeSplit::where('moex_stock_id', $id)
                    ->whereDate('date', '<=', $dateFormatted)
                    ->orderByDesc('date')
