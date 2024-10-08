@@ -35,7 +35,9 @@ trait HasRoleAndPermission
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(config('roles.models.role'))->withTimestamps();
+        $table = config('database.connections.mysql.database') . '.role_user';
+
+        return $this->belongsToMany(config('roles.models.role'), $table, 'user_id')->withTimestamps();
     }
     
     /**
