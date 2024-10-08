@@ -37,6 +37,19 @@ trait HasRoleAndPermission
     {
         return $this->belongsToMany(config('roles.models.role'))->withTimestamps();
     }
+    
+    /**
+     * @return mixed
+     */
+    public function getRole()
+    {
+        $roles = Role::all();
+        foreach ($roles as $role) {
+            if ($this->is($role->slug)) {
+                return $role->slug;
+            }
+        }
+    }
 
     /**
      * @return \Illuminate\Support\Collection

@@ -21,10 +21,10 @@ use Common\Models\Traits\Users\Roles\UserPathTrait;
 use Common\Models\Traits\Users\Roles\UserPlanTrait;
 use Common\Models\Traits\Users\Roles\UserRelationsTrait;
 use Common\Models\Traits\Users\StrategyTrait;
-use Common\Models\Users\Collective\UserCollectiveGroup;
+use Common\Models\Traits\Users\UserConfigTrait;
+use Common\Models\Traits\Users\UserTrait;
 use Common\Models\Users\Crm\UserConfig;
 use Common\Models\Users\Roles\Role;
-use Common\Models\Users\Roles\Types\Client;
 use DB;
 use Exception;
 use File;
@@ -95,6 +95,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use UserRelationsTrait;
     use UserAttributeTrait;
     use UserPathTrait;
+    use UserTrait;
+    use UserConfigTrait;
 
     public const CONF_NOTIFICATION_DELETE_AFTER_NEVER = 1001;
     public const CONF_NOTIFICATION_DELETE_AFTER_DAY_END = 1002;
@@ -135,41 +137,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public const DEFAULT_PERCENT_NEUTRAL = 50;
     public const DEFAULT_PERCENT_NEGATIVE = 20;
 
-
-    //-----------------roles start-----------------------/
-
-    /**
-     * @param int|string $role
-     *
-     * @return bool
-     */
-    public function hasRole($role)
-    {
-        return $this->getRoles()->contains(function ($value, $key) use ($role) {
-            return $role == $value->id || Str::is($role, $value->slug);
-        });
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRole()
-    {
-        $roles = Role::all();
-        foreach ($roles as $role) {
-            if ($this->is($role->slug)) {
-                return $role->slug;
-            }
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function getFio()
-    {
-        return $this->last_name . ' ' . $this->first_name . ($this->middle_name ? ' ' . $this->middle_name : '');
-    }
 
     //-----------------roles end-----------------------/
 
@@ -307,8 +274,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'contact_id' => IntegerCast::class,
         'language_id' => IntegerCast::class,
         'application_id' => IntegerCast::class,
-        'application_max_delay_days' => IntegerCast::class,
-        'notification_delete_after_value' => IntegerCast::class,
         'is_new' => 'boolean',
         'rating' => IntegerCast::class,
         'hidden_name' => BoolCast::class,
@@ -353,88 +318,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return public_path() . self::$documentPath;
     }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(config('roles.models.role'), 'role_user', 'user_id')->withTimestamps();
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function configs(): HasMany
-    {
-        return $this->hasMany(UserConfig::class, 'user_id');
-    }
-
-    /**
-     * Получает значение конфигурации пользователя по ключу.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getConfigByKey(string $key = UserConfig::C_WEEK_HOLIDAYS)
-    {
-        $defaultConfig = UserConfig::UserDefaultConfigConstants[$key];
-        $conf = $this->configs()->where('key', $key)->value('value');
-
-        if (!$conf) {
-            return $defaultConfig;
-        }
-
-        if (is_array($defaultConfig)) {
-            // Добавил true, чтобы вернуть массив, а не объект
-            return json_decode($conf, true);
-        }
-
-        if (is_numeric($defaultConfig)) {
-            return (int)$conf;
-        }
-
-        return $conf;
-    }
-
-    /**
-     * Возвращает все данные конфигурации Атон.
-     *
-     * @return array {
-     *      aton_login: mixed,
-     *      aton_pass: mixed,
-     *      aton_group: mixed,
-     *      aton_account: mixed,
-     *      aton_path_to_2fa: mixed,
-     * }
-     */
-    public function getAtonConfigs(): array
-    {
-        $atonConfigs = $this->aton_configs;
-
-        if (empty($atonConfigs)) {
-            $this->setAtonConfigs();
-            return $this->getAtonConfigs();
-        }
-
-        return $atonConfigs;
-    }
-
-    /**
-     * Записывает конфигурацию Атон
-     *
-     * @return $this
-     */
-    public function setAtonConfigs(): User
-    {
-        if (empty($this->aton_configs)) {
-            $this->aton_configs = array_map([$this, 'getConfigByKey'], UserConfig::C_ATON_CONFIGS);
-        }
-
-        return $this;
-    }
-
     /**
      * Возвращает все айдишники клиентов
      *
@@ -528,34 +411,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * @param string $key
-     * @param $value
-     *
-     * @return void
-     */
-    public function setConfigByKey(string $key = UserConfig::C_WEEK_HOLIDAYS, $value)
-    {
-        $conf = $this->configs()->where('key', '=', $key)->first();
-        $newValue = $value;
-
-        if (is_array($value)) {
-            $newValue = json_decode($value);
-        }
-        if ($conf) {
-            $conf->value = $newValue;
-            $conf->save();
-        } else {
-            UserConfig::create(
-                [
-                    'user_id' => $this->id,
-                    'key' => $key,
-                    'value' => $newValue,
-                ],
-            );
-        }
-    }
-
-    /**
      * @param array $attributes
      *
      * @return static
@@ -627,6 +482,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function application(): HasOne
     {
         return $this->hasOne(CrmApplication::class, 'id', 'application_id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function configs(): HasMany
+    {
+        return $this->hasMany(UserConfig::class, 'user_id');
     }
 
     /**
