@@ -204,7 +204,7 @@ trait MoexReturnGetDataFunc
 
     public function getCodeCurrency()
     {
-        return $this->faceunit;
+        return $this->faceunit ?? 'RUB';
     }
 
     public function getSymbol(): string
