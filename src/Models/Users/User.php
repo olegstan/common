@@ -14,10 +14,6 @@ use Common\Casts\BoolCast;
 use Common\Casts\IntegerCast;
 use Common\Casts\StringCast;
 use Common\Models\BaseModel;
-use Common\Models\Currency;
-use Common\Models\Traits\Users\Roles\Client\DividendTrait;
-use Common\Models\Traits\Users\Roles\Client\TransactionTrait;
-use Common\Models\Traits\Users\Roles\Client\ValueTrait;
 use Common\Models\Traits\Users\Roles\HasRoleAndPermission;
 use Common\Models\Traits\Users\Roles\UserAttributeTrait;
 use Common\Models\Traits\Users\Roles\UserPathTrait;
@@ -136,7 +132,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public const DEFAULT_PERCENT_POSITIVE = 30;
     public const DEFAULT_PERCENT_NEUTRAL = 50;
     public const DEFAULT_PERCENT_NEGATIVE = 20;
-    
+
     /**
      * @var string
      */
