@@ -24,10 +24,10 @@ use Common\Models\Traits\Users\Roles\UserPathTrait;
 use Common\Models\Traits\Users\Roles\UserPlanTrait;
 use Common\Models\Traits\Users\Roles\UserRelationsTrait;
 use Common\Models\Traits\Users\StrategyTrait;
-use Common\Models\Users\Collective\UserCollectiveGroup;
+use Common\Models\Traits\Users\UserConfigTrait;
+use Common\Models\Traits\Users\UserTrait;
 use Common\Models\Users\Crm\UserConfig;
 use Common\Models\Users\Roles\Role;
-use Common\Models\Users\Roles\Types\Client;
 use DB;
 use Exception;
 use File;
@@ -95,6 +95,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use UserRelationsTrait;
     use UserAttributeTrait;
     use UserPathTrait;
+    use UserTrait;
+    use UserConfigTrait;
 
     public const CONF_NOTIFICATION_DELETE_AFTER_NEVER = 1001;
     public const CONF_NOTIFICATION_DELETE_AFTER_DAY_END = 1002;
@@ -134,20 +136,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public const DEFAULT_PERCENT_POSITIVE = 30;
     public const DEFAULT_PERCENT_NEUTRAL = 50;
     public const DEFAULT_PERCENT_NEGATIVE = 20;
-
-
-    //-----------------roles start-----------------------/
-
-    /**
-     * @return string
-     */
-    public function getFio()
-    {
-        return $this->last_name . ' ' . $this->first_name . ($this->middle_name ? ' ' . $this->middle_name : '');
-    }
-
-    //-----------------roles end-----------------------/
-
+    
     /**
      * @var string
      */
@@ -282,8 +271,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'contact_id' => IntegerCast::class,
         'language_id' => IntegerCast::class,
         'application_id' => IntegerCast::class,
-        'application_max_delay_days' => IntegerCast::class,
-        'notification_delete_after_value' => IntegerCast::class,
         'is_new' => 'boolean',
         'rating' => IntegerCast::class,
         'hidden_name' => BoolCast::class,
@@ -328,106 +315,96 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return public_path() . self::$documentPath;
     }
-
     /**
-     * @return HasMany
+     * Возвращает все айдишники клиентов
+     *
+     * @return array
      */
-    public function configs(): HasMany
+    public function getClientIds(): array
     {
-        return $this->hasMany(UserConfig::class, 'user_id');
+        $clientIds = $this->client_ids;
+
+        if (empty($clientIds)) {
+            $this->setClientIds();
+            return $this->getClientIds();
+        }
+
+        return $clientIds;
     }
 
     /**
-     * Получает значение конфигурации пользователя по ключу.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getConfigByKey(string $key = UserConfig::C_WEEK_HOLIDAYS)
-    {
-        $defaultConfig = UserConfig::UserDefaultConfigConstants[$key];
-        $conf = $this->configs()->where('key', $key)->value('value');
-
-        if (!$conf) {
-            return $defaultConfig;
-        }
-
-        if (is_array($defaultConfig)) {
-            // Добавил true, чтобы вернуть массив, а не объект
-            return json_decode($conf, true);
-        }
-
-        if (is_numeric($defaultConfig)) {
-            return (int)$conf;
-        }
-
-        return $conf;
-    }
-
-    /**
-     * Возвращает все данные конфигурации Атон.
-     *
-     * @return array {
-     *      aton_login: mixed,
-     *      aton_pass: mixed,
-     *      aton_group: mixed,
-     *      aton_account: mixed,
-     *      aton_path_to_2fa: mixed,
-     * }
-     */
-    public function getAtonConfigs(): array
-    {
-        $atonConfigs = $this->aton_configs;
-
-        if (empty($atonConfigs)) {
-            $this->setAtonConfigs();
-            return $this->getAtonConfigs();
-        }
-
-        return $atonConfigs;
-    }
-
-    /**
-     * Записывает конфигурацию Атон
+     * Записывает айдишники клиентов
      *
      * @return $this
      */
-    public function setAtonConfigs(): User
+    public function setClientIds(): User
     {
-        if (empty($this->aton_configs)) {
-            $this->aton_configs = array_map([$this, 'getConfigByKey'], UserConfig::C_ATON_CONFIGS);
+        $managerIds = [$this->id];
+
+        if ($this->getRole() === User::OWNER) {
+            $managerIds = array_merge(
+                $managerIds,
+                UserCollectiveGroup::where('user_id', $this->id)
+                    ->pluck('union_user_id')
+                    ->toArray()
+            );
+        }
+
+        if (in_array($this->getRole(), [User::MANAGER, User::OWNER])) {
+            $this->client_ids = Client::whereIn('manager_id', $managerIds)
+                ->pluck('id')
+                ->toArray();
         }
 
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param $value
-     *
-     * @return void
-     */
-    public function setConfigByKey(string $key = UserConfig::C_WEEK_HOLIDAYS, $value)
-    {
-        $conf = $this->configs()->where('key', '=', $key)->first();
-        $newValue = $value;
 
-        if (is_array($value)) {
-            $newValue = json_decode($value);
+    /**
+     * @return array
+     */
+    public function getContactIds()
+    {
+        switch ($this->getRole()) {
+            case User::MANAGER:
+                return CrmContact::where(function ($query) {
+                    $query->where('user_id', $this->id);
+                })
+                    ->pluck('id')
+                    ->toArray();
+            case User::OWNER:
+                $managerIds = UserCollectiveGroup::where('user_id', $this->id)
+                    ->pluck('union_user_id')
+                    ->toArray();
+
+                return CrmContact::where(function ($query) use ($managerIds) {
+                    $query->where('user_id', $this->id)
+                        ->orWhereIn('user_id', $managerIds);
+                })
+                    ->pluck('id')
+                    ->toArray();
+                break;
+            case User::DIRECTOR:
+
+                break;
+            case User::ASSISTANT:
+
+                break;
+            case User::ACCOUNTANT:
+
+                break;
+            case User::PARTNER:
+
+                break;
+            case User::DRIVER:
+
+                break;
+            case User::CLIENT:
+
+                break;
         }
-        if ($conf) {
-            $conf->value = $newValue;
-            $conf->save();
-        } else {
-            UserConfig::create(
-                [
-                    'user_id' => $this->id,
-                    'key' => $key,
-                    'value' => $newValue,
-                ],
-            );
-        }
+
+        return [];
     }
 
     /**
@@ -505,6 +482,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     * @return HasMany
+     */
+    public function configs(): HasMany
+    {
+        return $this->hasMany(UserConfig::class, 'user_id');
+    }
+
+    /**
      * @param $query
      * @param $slug
      * @param bool $reverse
@@ -549,26 +534,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function setBirthAtAttribute($date)
     {
         $this->setDate('birth_at', $date);
-    }
-
-
-
-    /**
-     * @return void
-     */
-    public function createWazzupUser(): void
-    {
-//        $url = 'https://api.wazzup24.com/v3/users';
-//
-//        $payload = [
-//            [
-//                'id' => (string)$this->id,
-//                'name' => $this->last_name . ' ' . $this->first_name,
-//                'phone' => str_replace(array('+', ' ', '(' , ')', '-'), '',  $this->phone)
-//            ]
-//        ];
-//
-//        WazzupControllerHelper::curlInit($url, 'post', $payload);
     }
 
     /**
