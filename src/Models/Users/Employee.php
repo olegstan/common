@@ -8,18 +8,8 @@ use Common\Models\Users\Roles\Types\Client;
 
 class Employee extends User
 {
-    public function authData(): array
-    {
-        return [
-            'configs' => $this->configs,
-            'contacts' => CrmContact::where('user_id', '=', $this->id)
-                ->with('requisite')
-                ->with('requisite_bank')
-                ->with('files')
-                ->orderBy('id', 'DESC')
-                ->get(),
-        ];
-    }
+    private array $client_ids = [];
+
 
     /**
      * @return array

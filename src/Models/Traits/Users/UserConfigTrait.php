@@ -15,6 +15,8 @@ use Common\Models\Users\User;
  */
 trait UserConfigTrait
 {
+    private array $aton_configs = [];
+
     /**
      * Получает значение конфигурации пользователя по ключу.
      *
