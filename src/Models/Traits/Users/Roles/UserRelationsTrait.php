@@ -20,6 +20,7 @@ use Common\Models\Users\Notification\UserNotification;
 use Common\Models\Users\UserCreditLog;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Aton\AtonUser;
 
 trait UserRelationsTrait
 {
@@ -202,5 +203,15 @@ trait UserRelationsTrait
     public function user_all_groups(): HasMany
     {
         return $this->hasMany(UserCollectiveGroup::class, 'user_id');
+    }
+
+    /**
+     * Все счета пользователя в Атоне
+     *
+     * @return HasMany
+     */
+    public function aton_account_numbers(): HasMany
+    {
+        return $this->hasMany(AtonUsers::class, 'user_id');
     }
 }
