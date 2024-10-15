@@ -22,6 +22,7 @@ class ExtendLogger extends Logger
                 'file' => $message->getFile(),
                 'line' => $message->getLine(),
                 'context' => $context,
+                'path_to_error' => LoggerHelper::$commandKey
             ]);
             return;
         }
@@ -35,11 +36,15 @@ class ExtendLogger extends Logger
                 $text = $text[$keys[8]]; //Получаемый путь
             }
 
-            $this->sendTelegram(['path' => $text]);
+            $this->sendTelegram([
+                'path' => $text,
+                'path_to_error' => LoggerHelper::$commandKey
+            ]);
         } catch (Exception $e) {
             $this->sendTelegram([
                 'error' => 'Не удалось обработать ошибку для отправки',
                 'exception' => $e->getMessage(),
+                'path_to_error' => LoggerHelper::$commandKey
             ]);
         }
     }
