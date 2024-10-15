@@ -64,7 +64,7 @@ class ExtendLogger extends Logger
      *
      * @return array
      */
-    public function object_to_array($obj): array
+    public function object_to_array($obj)
     {
         if (is_object($obj) || is_array($obj)) {
             $ret = (array)$obj;
