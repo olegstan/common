@@ -164,13 +164,39 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
      */
     public static function isValidData($data): bool
     {
-        if (!(is_array($data) || is_object($data)) || empty($data->getTicker())) {
+        // Проверяем, что $data — это массив или объект
+        if (!is_array($data) && !is_object($data)) {
             LoggerHelper::getLogger('custom-stock')
-                ->error('Неправильный формат данных или пустой тикер', ['data' => $data]);
+                ->error('Переданный параметр не является массивом или объектом', ['data' => $data]);
             return false;
         }
+
+        // Если $data — объект, проверяем наличие метода getTicker()
+        if (is_object($data)) {
+            if (!method_exists($data, 'getTicker')) {
+                LoggerHelper::getLogger('custom-stock')
+                    ->error('Переданный объект не содержит метода getTicker', ['data' => $data]);
+                return false;
+            }
+
+            // Проверяем, что метод getTicker() возвращает значение
+            if (empty($data->getTicker())) {
+                LoggerHelper::getLogger('custom-stock')
+                    ->error('Передан пустой тикер', ['data' => $data]);
+                return false;
+            }
+        }
+
+        // Если $data — массив, проверяем наличие ключа 'symbol' и его значение
+        if (is_array($data) && !isset($data['symbol'])) {
+            LoggerHelper::getLogger('custom-stock')
+                ->error('Передан массив с отсутствующим или пустым символом тикера', ['data' => $data]);
+            return false;
+        }
+
         return true;
     }
+
 
     /**
      * @param $original
