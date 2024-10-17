@@ -112,10 +112,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         //в $data всегда должен быть объект модели, что бы мы могли искать не по 1 параметру, а сколько требуется
         if (!is_object($data) || !$data->getTicker() || empty($data->getTicker())) {
             LoggerHelper::getLogger('custom-stock')
-                ->error('Передан пустой тикер', [
-                    'data' => $data,
-                    'ticker' => $data->getTicker(),
-                ]);
+                ->error('Передан пустой тикер', ['data' => $data]);
             return false;
         }
 
