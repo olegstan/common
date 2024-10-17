@@ -40,6 +40,8 @@ class ExtendLogger extends Logger
 
             $this->sendTelegram([
                 'path' => $text,
+                'messeage' => $message,
+                'context' => $context,
                 'path_to_error' => LoggerHelper::$commandKey,
             ]);
         } catch (Exception $e) {
