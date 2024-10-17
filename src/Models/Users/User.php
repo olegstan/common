@@ -807,4 +807,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->last_name . ' ' . $this->first_name;
     }
+
+    /**
+     * Возвращает идентификатор пользователя с префиксом приложение (production-322)
+     *
+     * @param $userId
+     *
+     * @return string
+     */
+    public static function getAppUser($userId): string
+    {
+        return config('app.env') . '-' . $userId;
+    }
 }
