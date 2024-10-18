@@ -88,67 +88,113 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
     ];
 
     /**
-     * @param $data
+     * @param array $attributes
+     *
+     * @return static
+     */
+    public static function create(array $attributes = []): CustomStock
+    {
+        $model = new static($attributes);
+        $model->save();
+
+        CatalogSearch::indexRecordInElasticsearch($model, 'custom_stocks');
+        return $model;
+    }
+
+    /**
+     * Поиск или создание кастомной бумаги
+     *
+     * @param mixed $data
      * @param bool $cache
      *
-     * @return false|void
+     * @return CustomStock|null
      */
-    public static function search($data, bool $cache = true)
+    public static function search($data, bool $cache = true): ?CustomStock
     {
-        //в $data всегда должен быть объект модели, что бы мы могли искать не по 1 параметру, а сколько требуется
-        if (!is_object($data) || !$data->getTicker() || empty($data->getTicker())) {
-            LoggerHelper::getLogger('custom-stock')
-                ->error('Передан пустой тикер', [
-                    'data' => $data,
-                    'ticker' => $data->getTicker(),
-                ]);
-            return false;
-        }
-
-        $userId = config('app.env') . '-' . $data->user_id;
-        $searchText = $data->getTicker();
-
         try {
-            if (isset($searchText) && $cache && Cache::tags([config('cache.tags')])->has(
-                    'custom-' . $userId . '-' . $searchText,
-                )) {
-                return Cache::tags([config('cache.tags')])->get('custom-' . $userId . '-' . $searchText);
+            // Проверка на валидность данных
+            if (!self::isValidData($data)) {
+                return null;
             }
 
-            $custom = CustomStock::where('symbol', $searchText ?? null)
-                ->where('name', $data->getName())
-                ->where('user_id', $userId)
-                ->where('currency_id', $data->getCurrency())
-                ->where('type_id', $data->getCustomStockType())
-                ->first();
+            // Подготавливаем данные для создания или поиска
+            $createData = is_object($data) ? [
+                'symbol' => $data->getTicker(),
+                'name' => $data->getName(),
+                'user_id' => $data->user_id,
+                'currency_id' => $data->getCurrency(),
+                'type_id' => $data->getCustomStockType(),
+            ] : $data;
 
-            if (!$custom) {
-                $custom = CustomStock::create([
-                    'symbol' => $searchText ?? null,
-                    'name' => $data->getName(),
-                    'user_id' => $userId,
-                    'currency_id' => $data->getCurrency(),
-                    'type_id' => $data->getCustomStockType(),
-                ]);
+            // Формируем ключ для кэша
+            $cacheKey = "custom-{$createData['user_id']}-{$createData['symbol']}";
 
-                LoggerHelper::getLogger('create-custom')
-                    ->info('Добавлена новая запись', [
-                        'stock' => $custom,
-                        'operation' => $data,
-                    ]);
+            // Проверка в кэше
+            if ($cache && Cache::tags([config('cache.tags')])->has($cacheKey)) {
+                return Cache::tags([config('cache.tags')])->get($cacheKey);
             }
 
-            Cache::tags([config('cache.tags')])->put(
-                'custom-' . $userId . '-' . $searchText,
-                $custom,
-                Carbon::now()->addDay(),
-            );
+            // Поиск или создание кастомной бумаги
+            $custom = self::firstOrCreate([
+                'symbol' => $createData['symbol'],
+                'user_id' => $createData['user_id'],
+                'currency_id' => $createData['currency_id'],
+                'type_id' => $createData['type_id'],
+            ], $createData);
+
+            // Сохранение в кэш
+            Cache::tags([config('cache.tags')])->put($cacheKey, $custom, now()->addDay());
+
             return $custom;
         } catch (Exception $e) {
-            LoggerHelper::getLogger('custom')->error($e);
-            return false;
+            LoggerHelper::getLogger('custom-search')->error($e->getMessage(), ['data' => $data, 'exception' => $e]);
+            return null;
         }
     }
+
+
+    /**
+     * Проверка данных перед созданием кастомной бумаги
+     *
+     * @param $data
+     *
+     * @return bool
+     */
+    public static function isValidData($data): bool
+    {
+        // Проверяем, что $data — это массив или объект
+        if (!is_array($data) && !is_object($data)) {
+            LoggerHelper::getLogger('custom-stock')
+                ->error('Переданный параметр не является массивом или объектом', ['data' => $data]);
+            return false;
+        }
+
+        // Если $data — объект, проверяем наличие метода getTicker()
+        if (is_object($data)) {
+            if (!method_exists($data, 'getTicker')) {
+                LoggerHelper::getLogger('custom-stock')
+                    ->error('Переданный объект не содержит метода getTicker', ['data' => $data]);
+                return false;
+            }
+
+            // Проверяем, что метод getTicker() возвращает значение
+            if (empty($data->getTicker())) {
+                LoggerHelper::getLogger('custom-stock')
+                    ->error('Передан пустой тикер', ['data' => $data]);
+                return false;
+            }
+        }
+
+        // Если $data — массив, проверяем наличие ключа 'symbol' и его значение
+        if (is_array($data) && !isset($data['symbol'])) {
+            LoggerHelper::getLogger('custom-stock')
+                ->error('Передан массив с отсутствующим или пустым символом тикера', ['data' => $data]);
+            return false;
+        }
+
+        return true;
+    }
+
 
     /**
      * @param $original

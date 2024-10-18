@@ -36,7 +36,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Hash;
-use Throwable;
 
 /**
  * Class User
@@ -468,5 +467,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getFullName(): string
     {
         return $this->last_name . ' ' . $this->first_name;
+    }
+
+    /**
+     * Возвращает идентификатор пользователя с префиксом приложение (production-322)
+     *
+     * @param $userId
+     *
+     * @return string
+     */
+    public static function getAppUser($userId): string
+    {
+        return config('app.env') . '-' . $userId;
     }
 }

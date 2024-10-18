@@ -22,7 +22,7 @@ class ExtendLogger extends Logger
                 'file' => $message->getFile(),
                 'line' => $message->getLine(),
                 'context' => $context,
-                'path_to_error' => LoggerHelper::$commandKey
+                'path_to_error' => LoggerHelper::$commandKey,
             ]);
             return;
         }
@@ -30,21 +30,25 @@ class ExtendLogger extends Logger
         try {
             //Если ошибка не из эксепшена прилетела, скорее всего она из Monolog
             //Полную ошибку получить не удается, но хотя бы можно узнать путь до файла с ошибкой
-            $text = $this->object_to_array($this->getHandlers()[0]);//Объект Monolog
-            if (is_array($text)) {
+            if (is_array($this->getHandlers()[0])) {
+                $text = $this->object_to_array();//Объект Monolog
                 $keys = array_keys($text); //Массив всех ключей, где выбираем url
                 $text = $text[$keys[8]]; //Получаемый путь
+            }else{
+                $text = $this->getHandlers()[0];
             }
 
             $this->sendTelegram([
                 'path' => $text,
-                'path_to_error' => LoggerHelper::$commandKey
+                'messeage' => $message,
+                'context' => $context,
+                'path_to_error' => LoggerHelper::$commandKey,
             ]);
         } catch (Exception $e) {
             $this->sendTelegram([
                 'error' => 'Не удалось обработать ошибку для отправки',
                 'exception' => $e->getMessage(),
-                'path_to_error' => LoggerHelper::$commandKey
+                'path_to_error' => LoggerHelper::$commandKey,
             ]);
         }
     }
@@ -67,7 +71,7 @@ class ExtendLogger extends Logger
     /**
      * @param $obj
      *
-     * @return array
+     * @return mixed
      */
     public function object_to_array($obj)
     {
