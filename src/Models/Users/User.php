@@ -318,6 +318,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return public_path() . self::$documentPath;
     }
+
     /**
      * Возвращает все айдишники клиентов
      *
@@ -349,7 +350,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 $managerIds,
                 UserCollectiveGroup::where('user_id', $this->id)
                     ->pluck('union_user_id')
-                    ->toArray()
+                    ->toArray(),
             );
         }
 
@@ -613,167 +614,212 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      * @return void
      * @throws Throwable
      */
-    public function recalculateGoals($currency)
+    /**
+     * @param Currency $currency
+     *
+     * @return void
+     * @throws Throwable
+     */
+    public function recalculateGoals(Currency $currency)
     {
         $dispatcher = ActiveGoal::getEventDispatcher();
-
         ActiveGoal::unsetEventDispatcher();
 
-        /**
-         * @var ActiveGoal $goals []
-         */
         $goals = ActiveGoal::where('user_id', $this->id)
             ->orderBy('order')
             ->with('goal_payments', 'items')
             ->get();
 
         $index = [];
-        $payments = [];
-        $paymentsIndex = [];
-        $paymentsDays = [];
-
         $salaries = ActiveGoal::prepareSalaries($this, $index);
 
         foreach ($goals as $goal) {
-            DB::transaction(
-                function () use ($goal, $currency, $salaries, $paymentsDays, $payments, $paymentsIndex, $index) {
-                    /**
-                     * @var ActiveGoal $goal
-                     */
-                    $data = object_to_array(json_decode($goal->data));
-
-                    if (is_array($data)) {
-                        foreach ($data as $k => $item) {
-                            //должны быть указаны оба параметра чтобы не было пустых массивов
-                            if (isset($item['sum'])) {
-                                $data[$k]['sum'] = $currency->convert(
-                                    $data[$k]['sum'],
-                                    $goal->currency_id,
-                                    Carbon::now(),
-                                );
-                            }
-                            if (isset($item['payment_per_period'])) {
-                                $data[$k]['payment_per_period'] = $currency->convert(
-                                    $data[$k]['payment_per_period'],
-                                    $goal->currency_id,
-                                    Carbon::now(),
-                                );
-                            }
-                            if (isset($item['payment_per_period_first'])) {
-                                $data[$k]['payment_per_period_first'] = $currency->convert(
-                                    $data[$k]['payment_per_period_first'],
-                                    $goal->currency_id,
-                                    Carbon::now(),
-                                );
-                            }
-                            if (isset($item['payment_per_period_last'])) {
-                                $data[$k]['payment_per_period_last'] = $currency->convert(
-                                    $data[$k]['payment_per_period_last'],
-                                    $goal->currency_id,
-                                    Carbon::now(),
-                                );
-                            }
-                            if (isset($item['future_sum'])) {
-                                $data[$k]['future_sum'] = $currency->convert(
-                                    $data[$k]['future_sum'],
-                                    $goal->currency_id,
-                                    Carbon::now(),
-                                );
-                            }
-                        }
-                    }
-
-                    //считаем сколько денег уже привязано к цели
-                    $alreadyPaid = 0;
-
-                    foreach ($goal->goal_payments as $payment) {
-                        /**
-                         * @var ActiveGoalPayment $payment
-                         */
-                        if ($payment->paid_sum > 0) {
-                            $alreadyPaid += $payment->paid_sum;
-                        }
-                    }
-
-                    foreach ($goal->items as $item) {
-                        $item->updateQuietly([
-                            'sum' => round($currency->convert($item->sum, $goal->currency_id, Carbon::now()), 2),
-                        ]);
-                    }
-
-                    //удаляем
-                    ActiveGoalPayment::where('goal_id', $goal->id)
-                        ->delete();
-
-                    $goal->updateQuietly([
-                        'spending_per_period' => round(
-                            $currency->convert($goal->spending_per_period, $goal->currency_id, Carbon::now()),
-                            2,
-                        ),
-                        'spending_per_period_future' => round(
-                            $currency->convert($goal->spending_per_period_future, $goal->currency_id, Carbon::now()),
-                            2,
-                        ),
-                        'future_sum' => round(
-                            $currency->convert($goal->future_sum, $goal->currency_id, Carbon::now()),
-                            2,
-                        ),
-                        'start_sum' => round($currency->convert($alreadyPaid, $goal->currency_id, Carbon::now()), 2),
-                        'data' => json_encode($data),
-                        'currency_id' => $currency->id,
-                    ]);
-
-
-                    if ($goal->type_id === ActiveGoal::WITHOUT_PLAN) {
-                        switch ($goal->type_id) {
-                            case ActiveGoal::SHORT:
-                                $goal->calcShortGoal();
-                                break;
-                            case ActiveGoal::MIDDLE:
-                            case ActiveGoal::LONG:
-                                $goal->calcLongGoal();
-                                break;
-                            case ActiveGoal::RETIRE:
-                                $goal->calcRetiredGoal();
-                                break;
-                        }
-                    } else {
-                        $startDate = $goal->start_at;
-
-                        $retiredYear = $this->birth_at->addYears($this->retired_age)->format('Y');
-
-                        $firstYear = null;
-
-                        ActiveGoal::preparePaymentDays(
-                            $paymentsDays,
-                            $payments,
-                            $paymentsIndex,
-                            $salaries,
-                            $firstYear,
-                            $retiredYear,
-                        );
-
-                        $data = $goal->prepareCalcData($this, $firstYear, $retiredYear, $paymentsDays, $startDate);
-
-                        [$result, $resultFile] = ActiveGoal::calcGoal($data, $goal->id);
-
-                        if ($result) {
-                            $resultData = object_to_array(json_decode(File::get($resultFile)));
-
-                            $payments = object_to_array(json_decode($goal->payments));
-                            $payments['aim_payments_index'] = $resultData['aim_payments_index'];
-                            $payments['aim_payments_values'] = $resultData['aim_payments_values'];
-
-                            $goal->updateQuietly([
-                                'payments' => json_encode($payments),
-                            ]);
-                        }
-                    }
-                },
-            );
+            $this->convertGoalData($goal, $currency);
+            $alreadyPaid = $this->calculateAlreadyPaid($goal);
+            $this->updateGoalItems($goal, $currency);
+            $this->updateGoalDetails($goal, $currency, $alreadyPaid);
+            $this->recalculateGoalPayments($goal, $salaries);
         }
 
         ActiveGoal::setEventDispatcher($dispatcher);
+    }
+
+    /**
+     * Конвертирует данные цели в нужную валюту
+     *
+     * @param ActiveGoal $goal
+     * @param Currency $currency
+     */
+    private function convertGoalData(ActiveGoal $goal, Currency $currency): void
+    {
+        $data = object_to_array(json_decode($goal->data));
+        if (is_array($data)) {
+            foreach ($data as $k => $item) {
+                $fieldsToConvert = [
+                    'sum',
+                    'payment_per_period',
+                    'payment_per_period_first',
+                    'payment_per_period_last',
+                    'future_sum',
+                ];
+                foreach ($fieldsToConvert as $field) {
+                    if (isset($item[$field])) {
+                        $data[$k][$field] = $currency->convert($item[$field], $goal->currency_id, Carbon::now());
+                    }
+                }
+            }
+        }
+        $goal->data = json_encode($data);
+    }
+
+    /**
+     * Рассчитывает уже выплаченную сумму для цели
+     *
+     * @param ActiveGoal $goal
+     *
+     * @return float
+     */
+    private function calculateAlreadyPaid(ActiveGoal $goal)
+    {
+        $alreadyPaid = 0;
+        foreach ($goal->goal_payments as $payment) {
+            if ($payment->paid_sum > 0) {
+                $alreadyPaid += $payment->paid_sum;
+            }
+        }
+        return $alreadyPaid;
+    }
+
+    /**
+     * Обновляет элементы цели в нужной валюте
+     *
+     * @param ActiveGoal $goal
+     * @param Currency $currency
+     */
+    private function updateGoalItems(ActiveGoal $goal, Currency $currency): void
+    {
+        foreach ($goal->items as $item) {
+            DB::transaction(static function () use ($item, $currency, $goal) {
+                $item->updateQuietly([
+                    'sum' => round($currency->convert($item->sum, $goal->currency_id, Carbon::now()), 2),
+                ]);
+            });
+        }
+    }
+
+    /**
+     * Обновляет основные детали цели
+     *
+     * @param ActiveGoal $goal
+     * @param Currency $currency
+     * @param float $alreadyPaid
+     */
+    private function updateGoalDetails(ActiveGoal $goal, Currency $currency, float $alreadyPaid): void
+    {
+        DB::transaction(static function () use ($goal, $currency, $alreadyPaid) {
+            ActiveGoalPayment::where('goal_id', $goal->id)->delete();
+
+            $goal->updateQuietly([
+                'spending_per_period' => round(
+                    $currency->convert($goal->spending_per_period, $goal->currency_id, Carbon::now()),
+                    2,
+                ),
+                'spending_per_period_future' => round(
+                    $currency->convert($goal->spending_per_period_future, $goal->currency_id, Carbon::now()),
+                    2,
+                ),
+                'future_sum' => round($currency->convert($goal->future_sum, $goal->currency_id, Carbon::now()), 2),
+                'start_sum' => round($currency->convert($alreadyPaid, $goal->currency_id, Carbon::now()), 2),
+                'currency_id' => $currency->id,
+            ]);
+        });
+    }
+
+    /**
+     * Пересчитывает платежи для цели
+     *
+     * @param ActiveGoal $goal
+     * @param $salaries
+     */
+    private function recalculateGoalPayments(ActiveGoal $goal, $salaries): void
+    {
+        DB::transaction(function () use ($goal, $salaries) {
+            if ($goal->type_id === ActiveGoal::WITHOUT_PLAN) {
+                $this->processGoalWithoutPlan($goal);
+            } else {
+                $this->processGoalWithPlan($goal, $salaries);
+            }
+        });
+    }
+
+    /**
+     * Обрабатывает цели без плана
+     *
+     * @param ActiveGoal $goal
+     */
+    private function processGoalWithoutPlan(ActiveGoal $goal): void
+    {
+        switch ($goal->type_id) {
+            case ActiveGoal::SHORT:
+                $goal->calcShortGoal();
+                break;
+            case ActiveGoal::MIDDLE:
+            case ActiveGoal::LONG:
+                $goal->calcLongGoal();
+                break;
+            case ActiveGoal::RETIRE:
+                $goal->calcRetiredGoal();
+                break;
+        }
+    }
+
+    /**
+     * Обрабатывает цели с планом
+     *
+     * @param ActiveGoal $goal
+     * @param $salaries
+     */
+    private function processGoalWithPlan(ActiveGoal $goal, $salaries): void
+    {
+        $paymentsDays = [];
+        $payments = [];
+        $paymentsIndex = [];
+        $startDate = $goal->start_at;
+        $retiredYear = $this->birth_at->addYears($this->retired_age)->format('Y');
+        $firstYear = null;
+
+        ActiveGoal::preparePaymentDays(
+            $paymentsDays,
+            $payments,
+            $paymentsIndex,
+            $salaries,
+            $firstYear,
+            $retiredYear,
+        );
+
+        $data = $goal->prepareCalcData($this, $firstYear, $retiredYear, $paymentsDays, $startDate);
+
+        [$result, $resultFile] = ActiveGoal::calcGoal($data, $goal->id);
+
+        if ($result) {
+            $this->updateGoalPayments($goal, $resultFile);
+        }
+    }
+
+    /**
+     * Обновляет платежи для цели на основе результатов расчета
+     *
+     * @param ActiveGoal $goal
+     * @param string $resultFile
+     */
+    private function updateGoalPayments(ActiveGoal $goal, string $resultFile): void
+    {
+        $resultData = object_to_array(json_decode(File::get($resultFile)));
+        $payments = object_to_array(json_decode($goal->payments));
+        $payments['aim_payments_index'] = $resultData['aim_payments_index'];
+        $payments['aim_payments_values'] = $resultData['aim_payments_values'];
+
+        $goal->updateQuietly(['payments' => json_encode($payments)]);
     }
 
     /**
