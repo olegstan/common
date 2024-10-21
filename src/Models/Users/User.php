@@ -26,6 +26,7 @@ use Common\Models\Traits\Users\UserTrait;
 use Common\Models\Users\Collective\UserCollectiveGroup;
 use Common\Models\Users\Crm\UserConfig;
 use Common\Models\Users\Roles\Role;
+use Common\Models\Users\Roles\Types\Client;
 use DB;
 use Exception;
 use File;
