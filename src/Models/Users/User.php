@@ -23,6 +23,7 @@ use Common\Models\Traits\Users\Roles\UserRelationsTrait;
 use Common\Models\Traits\Users\StrategyTrait;
 use Common\Models\Traits\Users\UserConfigTrait;
 use Common\Models\Traits\Users\UserTrait;
+use Common\Models\Users\Collective\UserCollectiveGroup;
 use Common\Models\Users\Crm\UserConfig;
 use Common\Models\Users\Roles\Role;
 use DB;
@@ -34,12 +35,9 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Throwable;
 
 /**
