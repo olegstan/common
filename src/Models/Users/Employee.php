@@ -3,6 +3,7 @@
 namespace Common\Models\Users;
 
 
+use App\Models\Crm\Contact\CrmContact;
 use Common\Models\Users\Collective\UserCollectiveGroup;
 use Common\Models\Users\Roles\Types\Client;
 
