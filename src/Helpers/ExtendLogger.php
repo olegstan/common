@@ -31,10 +31,14 @@ class ExtendLogger extends Logger
             //Если ошибка не из эксепшена прилетела, скорее всего она из Monolog
             //Полную ошибку получить не удается, но хотя бы можно узнать путь до файла с ошибкой
             if (is_array($this->getHandlers()[0])) {
-                $text = $this->object_to_array();//Объект Monolog
+                $text = $this->getHandlers()[0];//Объект Monolog
                 $keys = array_keys($text); //Массив всех ключей, где выбираем url
                 $text = $text[$keys[8]]; //Получаемый путь
-            }else{
+            }elseif (is_object($this->getHandlers()[0])) {
+                $text = $this->object_to_array($this->getHandlers()[0]);//Объект Monolog
+                $keys = array_keys($text); //Массив всех ключей, где выбираем url
+                $text = $text[$keys[8]]; //Получаемый путь
+            } else{
                 $text = $this->getHandlers()[0];
             }
 
