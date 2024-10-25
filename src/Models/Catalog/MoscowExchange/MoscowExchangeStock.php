@@ -838,7 +838,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                 ->get();
 
             foreach ($data as $datum) {
-                $date = Carbon::createFromFormat('Y-m-d H:i:s', $datum['coupondate'] . '00:00:00');
+                $date = Carbon::createFromFormat('Y-m-d H:i:s', $datum['coupondate'] . ' 00:00:00');
                 $coupon = $coupons->where('coupondate', $date)->first();
 
                 if (!$coupon) {
@@ -849,10 +849,6 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                     }
 
                     MoscowExchangeCoupon::create($datum);
-                }
-
-                if ($coupon && $coupon->value === 0 && $datum['value'] != 0) {
-                    $coupon->value = $datum['value'];
                 }
             }
         } else {
