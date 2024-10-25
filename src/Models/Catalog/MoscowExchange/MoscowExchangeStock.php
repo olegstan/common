@@ -831,6 +831,12 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      */
     public static function loadCoupons($stock): void
     {
+        //если уже загружали, то не будем делать запросы к moex 24 часа
+        $cacheKey = 'moex_coupons.' . $stock->secid;
+        if (Cache::tags([config('cache.tags')])->has($cacheKey)) {
+            return;
+        }
+
         $data = MoscowExchangeCurl::getCoupons($stock->secid);
 
         if ($data) {
@@ -854,6 +860,8 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         } else {
             LoggerHelper::getLogger()->info('No any coupon for ' . $stock->secid);
         }
+
+        Cache::tags([config('cache.tags')])->put($cacheKey, true, 1440);
     }
 
     /**
@@ -862,6 +870,11 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      */
     public static function loadDividends($stock): void
     {
+        $cacheKey = 'moex_dividends.' . $stock->secid;
+        if (Cache::tags([config('cache.tags')])->has($cacheKey)) {
+            return;
+        }
+
         $data = MoscowExchangeCurl::getDividends($stock->secid);
 
         if ($data) {
@@ -879,13 +892,11 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
                     MoscowExchangeDividend::create($datum);
                 }
-
-                if ($dividend && $dividend->value === 0 && $datum['value'] != 0) {
-                    $dividend->value = $datum['value'];
-                }
             }
         } else {
             LoggerHelper::getLogger()->info('No any dividend for ' . $stock->secid);
         }
+
+        Cache::tags([config('cache.tags')])->put($cacheKey, true, 1440);
     }
 }
