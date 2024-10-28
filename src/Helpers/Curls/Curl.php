@@ -393,6 +393,8 @@ class Curl
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $headers = array_filter(explode("\r\n", substr($response, 0, $header_size)));
 
+        $effectiveUrl = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
+        self::$searchTimes[$effectiveUrl][] = curl_getinfo($curl, CURLINFO_TOTAL_TIME);
         $response_headers = static::readResponseHeaders($headers, $cookies);
 
         $response = substr($response, $header_size);
