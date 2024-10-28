@@ -153,6 +153,19 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
             foreach ($foundStocks as $foundStock) {
                 try {
                     if (!isset($stockQuery[$foundStock['symbol']])) {
+                        try {
+                            $data = $foundStock['currency']; // Входные данные могут быть как JSON, так и обычной строкой
+
+// Проверяем, является ли входная строка JSON
+                            if ($decodedData = json_decode($data, true))
+                            {
+                                // Если это JSON, используем его
+                                $foundStock['currency'] = reset($decodedData);
+                            }
+                        }catch (Exception $e){
+                            LoggerHelper::getLogger()->error(var_export($foundStock, true));
+                        }
+
                         $createdStock = self::create($foundStock);
 
                         if ($createdStock) {
