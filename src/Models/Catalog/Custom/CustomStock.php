@@ -123,7 +123,7 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
             $createData = is_object($data) ? [
                 'symbol' => $data->getTicker(),
                 'name' => $data->getName(),
-                'user_id' => $data->user_id,
+                'user_id' => User::getAppUser($data->user_id),
                 'currency_id' => $data->getCurrency(),
                 'type_id' => $data->getCustomStockType(),
             ] : $data;
