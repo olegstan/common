@@ -142,12 +142,18 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                 ->keyBy('symbol')
                 ->toArray();
 
-            $client = ApiClientFactory::createApiClient();
-            $quotes = $client->getQuotes($symbolIds);
 
-            $currency = [];
-            foreach ($quotes as $quote) {
-                $currency[$quote->getSymbol()] = $quote->getCurrency();
+            try {
+                $client = ApiClientFactory::createApiClient();
+                $quotes = $client->getQuotes($symbolIds);
+
+                $currency = [];
+                foreach ($quotes as $quote) {
+                    $currency[$quote->getSymbol()] = $quote->getCurrency();
+                }
+            }catch (Exception $e)
+            {
+                LoggerHelper::getLogger()->error($e);
             }
 
             foreach ($foundStocks as $foundStock) {
@@ -171,11 +177,6 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
                         if ($createdStock) {
                             // Индексируем созданную запись в Elasticsearch
                             CatalogSearch::indexRecordInElasticsearch($createdStock, 'yahoo_stocks');
-
-                            if(array_key_exists($foundStock['symbol'], $currency)) {
-                                $createdStock->currency = $currency;
-                                $createdStock->save();
-                            }
 
                             $queueIds[] = $createdStock->id;
                         }
