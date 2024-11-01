@@ -73,5 +73,6 @@ interface CommonsFuncCatalogInterface
     public function getCapitalization();
 
     public function getUserId();
+    public function getNumberCatalog(): int;
 
 }

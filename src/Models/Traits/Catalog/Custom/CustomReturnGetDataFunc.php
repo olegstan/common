@@ -219,4 +219,14 @@ trait CustomReturnGetDataFunc
     {
         return $this->user_id;
     }
+
+    /**
+     * Возвращает номер каталога
+     *
+     * @return int
+     */
+    public function getNumberCatalog(): int
+    {
+        return DefinitionActiveConst::CUSTOM;
+    }
 }

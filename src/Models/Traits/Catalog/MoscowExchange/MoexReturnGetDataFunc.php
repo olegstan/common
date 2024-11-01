@@ -6,12 +6,13 @@ use Cache;
 use Carbon\Carbon;
 use Common\Helpers\CatalogCache;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeSplit;
+use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 /**
  * Trait MoexReturnGetDataFunc
  *
- * @mixin \Common\Models\Catalog\MoscowExchange\MoscowExchangeStock
+ * @mixin MoscowExchangeStock
  *
  * @package Common\Models\Traits\Catalog\MoscowExchange
  */
@@ -356,5 +357,15 @@ trait MoexReturnGetDataFunc
     public function getUserId(): string
     {
         return '';
+    }
+
+    /**
+     * Возвращает номер каталога
+     *
+     * @return int
+     */
+    public function getNumberCatalog(): int
+    {
+        return DefinitionActiveConst::MOSCOW_EXCHANGE_QUOTES;
     }
 }
