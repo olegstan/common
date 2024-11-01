@@ -346,4 +346,14 @@ trait MoexReturnGetDataFunc
     {
         return '';
     }
+
+    /**
+     * Возвращает номер каталога
+     *
+     * @return int
+     */
+    public function getNumberCatalog(): int
+    {
+        return DefinitionActiveConst::MOSCOW_EXCHANGE_QUOTES;
+    }
 }

@@ -74,4 +74,5 @@ interface CommonsFuncCatalogInterface
 
     public function getUserId();
 
+    public function getNumberCatalog(): int;
 }

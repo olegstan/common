@@ -199,4 +199,14 @@ trait YahooReturnGetDataFunc
     {
         return '';
     }
+
+    /**
+     * Возвращает номер каталога
+     *
+     * @return int
+     */
+    public function getNumberCatalog(): int
+    {
+        return DefinitionActiveConst::YAHOO_QUOTES;
+    }
 }
