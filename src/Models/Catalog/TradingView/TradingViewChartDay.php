@@ -3,6 +3,7 @@
 namespace Common\Models\Catalog\TradingView;
 
 use Carbon\Carbon;
+use Common\Helpers\Helper;
 use Common\Helpers\LoggerHelper;
 use Common\Helpers\PythonScript\PatternScripts;
 use Common\Models\Catalog\BaseCatalog;
@@ -107,7 +108,7 @@ class TradingViewChartDay extends BaseCatalog
                 }
 
                 //шаблон для питон скриптов
-                $arrays = object_to_array(
+                $arrays = Helper::object_to_array(
                     PatternScripts::output([$scriptPath, $ticker->symbol, $exchange, $count, 'day'])
                 );
 

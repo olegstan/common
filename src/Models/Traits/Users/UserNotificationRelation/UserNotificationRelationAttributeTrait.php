@@ -2,6 +2,11 @@
 
 namespace Common\Models\Traits\Users\UserNotificationRelation;
 
+use Common\Helpers\Helper;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 trait UserNotificationRelationAttributeTrait
 {
     /**
@@ -21,10 +26,11 @@ trait UserNotificationRelationAttributeTrait
 
     /**
      * @param $data
-     * @return void
+     *
+     * @return array|object
      */
     public function getDataAttribute($data)
     {
-        return object_to_array(json_decode($data));
+        return Helper::object_to_array(json_decode($data));
     }
 }

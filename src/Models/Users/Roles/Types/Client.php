@@ -12,6 +12,7 @@ use App\Models\Actives\ActiveGroup;
 use App\Models\Crm\Contact\CrmContact;
 use App\Models\Crm\CrmApplication;
 use Carbon\Carbon;
+use Common\Helpers\Helper;
 use Common\Models\Currency;
 use Common\Models\Traits\Users\Roles\Client\DividendTrait;
 use Common\Models\Traits\Users\Roles\Client\TransactionTrait;
@@ -157,7 +158,7 @@ class Client extends User
                     /**
                      * @var ActiveGoal $goal
                      */
-                    $data = object_to_array(json_decode($goal->data));
+                    $data = Helper::object_to_array(json_decode($goal->data));
 
                     if (is_array($data)) {
                         foreach ($data as $k => $item) {
@@ -275,9 +276,9 @@ class Client extends User
                         [$result, $resultFile] = ActiveGoal::calcGoal($data, $goal->id);
 
                         if ($result) {
-                            $resultData = object_to_array(json_decode(File::get($resultFile)));
+                            $resultData = Helper::object_to_array(json_decode(File::get($resultFile)));
 
-                            $payments = object_to_array(json_decode($goal->payments));
+                            $payments = Helper::object_to_array(json_decode($goal->payments));
                             $payments['aim_payments_index'] = $resultData['aim_payments_index'];
                             $payments['aim_payments_values'] = $resultData['aim_payments_values'];
 

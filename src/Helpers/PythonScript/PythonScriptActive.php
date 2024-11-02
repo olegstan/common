@@ -2,6 +2,7 @@
 
 namespace Common\Helpers\PythonScript;
 
+use Common\Helpers\Helper;
 use Common\Helpers\LoggerHelper;
 use Exception;
 
@@ -14,7 +15,7 @@ class PythonScriptActive
      * @param $time
      * @param $symbol
      *
-     * @return false|null
+     * @return array|false|object|null
      */
     public static function closePricedMoex($scriptPath, $count, $exchange, $time, $symbol)
     {
@@ -29,7 +30,7 @@ class PythonScriptActive
             ];
 
             //возвращается с питона все в виде объекта
-            return object_to_array(PatternScripts::output($params));
+            return Helper::object_to_array(PatternScripts::output($params));
         } catch (Exception $e) {
             LoggerHelper::getLogger('active-moex-exchange_valuation')->error($e);
 
@@ -58,7 +59,7 @@ class PythonScriptActive
             ];
 
             //возвращается с питона все в виде объекта
-            return object_to_array(PatternScripts::output($params));
+            return Helper::object_to_array(PatternScripts::output($params));
         } catch (Exception $e) {
             LoggerHelper::getLogger('active-yahoo-exchange_valuation')->error($e);
 
@@ -83,7 +84,7 @@ class PythonScriptActive
             ];
 
             //возвращается с питона все в виде объекта
-            return object_to_array(PatternScripts::output($params));
+            return Helper::object_to_array(PatternScripts::output($params));
         } catch (Exception $e) {
             LoggerHelper::getLogger('active-yahoo-exchange_valuation')->error($e);
 

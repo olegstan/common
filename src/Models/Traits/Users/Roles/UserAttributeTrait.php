@@ -2,6 +2,7 @@
 namespace Common\Models\Traits\Users\Roles;
 
 use Cache;
+use Common\Helpers\Helper;
 
 trait UserAttributeTrait
 {
@@ -22,7 +23,7 @@ trait UserAttributeTrait
     {
         if($value)
         {
-            return object_to_array(json_decode($value));
+            return Helper::object_to_array(json_decode($value));
         }
 
         return [];
