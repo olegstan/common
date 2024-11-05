@@ -23,7 +23,7 @@ class Owner extends Employee
      *
      * @return HasMany
      */
-    public function departmens(): HasMany
+    public function departments(): HasMany
     {
         return $this->hasMany(Department::class, 'user_id');
     }
