@@ -28,6 +28,10 @@ class LoggerHelper
      * @var string|bool
      */
     public static $jobKey = false;
+    /**
+     * @var string|bool
+     */
+    public static $testKey = false;
 
     /**
      * @var bool
@@ -63,12 +67,20 @@ class LoggerHelper
 
             if(self::$commandKey)
             {
-                if(self::$commandKey === 'queue')
+                //определяем путь куда писать логи
+                switch (self::$commandKey)
                 {
-                    $path = storage_path('logs/queue/' . self::prepareCommandKey(self::$jobKey));
-                }else{
-                    $path = storage_path('logs/commands/' . self::prepareCommandKey(self::$commandKey));
+                    case 'queue':
+                        $path = storage_path('logs/queue/' . self::prepareCommandKey(self::$jobKey));
+                        break;
+                    case 'tests':
+                        $path = storage_path('logs/tests/' . self::prepareCommandKey(self::$testKey));
+                        break;
+                    default:
+                        $path = storage_path('logs/commands/' . self::prepareCommandKey(self::$commandKey));
+                        break;
                 }
+
                 if(!File::exists($path)){
                     File::makeDirectory($path, 0777, true, true);
                 }
