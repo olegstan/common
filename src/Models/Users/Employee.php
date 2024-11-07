@@ -70,7 +70,7 @@ class Employee extends User
 
         if (empty($clientIds)) {
             $this->setClientIds();
-            return $this->getClientIds();
+            return $this->client_ids;
         }
 
         return $clientIds;
