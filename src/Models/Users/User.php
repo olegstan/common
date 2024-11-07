@@ -329,7 +329,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         if (empty($clientIds)) {
             $this->setClientIds();
-            return $this->getClientIds();
+            return $this->client_ids;
         }
 
         return $clientIds;
