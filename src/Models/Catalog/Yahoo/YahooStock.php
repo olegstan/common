@@ -174,7 +174,7 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
                         $createdStock = self::create($foundStock);
 
-                        if ($createdStock) {
+                        if ($createdStock && CatalogSearch::isElasticsearchHealthy()) {
                             // Индексируем созданную запись в Elasticsearch
                             CatalogSearch::indexRecordInElasticsearch($createdStock, 'yahoo_stocks');
 

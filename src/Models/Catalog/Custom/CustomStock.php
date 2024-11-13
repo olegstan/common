@@ -99,7 +99,9 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
         $model = new static($attributes);
         $model->save();
 
-        CatalogSearch::indexRecordInElasticsearch($model, 'custom_stocks');
+        if (CatalogSearch::isElasticsearchHealthy()) {
+            CatalogSearch::indexRecordInElasticsearch($model, 'custom_stocks');
+        }
         return $model;
     }
 

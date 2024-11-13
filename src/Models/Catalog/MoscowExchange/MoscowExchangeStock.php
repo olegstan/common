@@ -466,7 +466,7 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
                          */
                         $createdStock = self::create($foundStock);
 
-                        if ($createdStock) {
+                        if ($createdStock && CatalogSearch::isElasticsearchHealthy()) {
                             $createdStock->saveData();
                             CatalogSearch::indexRecordInElasticsearch($createdStock, 'moscow_exchange_stocks');
                             $queueIds[] = $createdStock->id;
