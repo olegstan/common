@@ -17,7 +17,7 @@ class YahooStockTransformer extends BaseTransformer
         $data = [
             'id' => $model->id,
             'symbol' => $model->getSymbol(),
-            'name' => $model->name,
+            'name' => $model->getStockName(),
             'exch' => $model->exch,
             'type' => $model->type,
             'exch_disp' => $model->exch_disp,
