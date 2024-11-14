@@ -41,36 +41,57 @@ trait YahooReturnGetDataFunc
         return DefinitionActiveConst::STOCK;
     }
 
+    /**
+     * @return string
+     */
     public function getDateField(): string
     {
         return 'date';
     }
 
+    /**
+     * @return string
+     */
     public function getValueField(): string
     {
         return 'close';
     }
 
+    /**
+     * @return string
+     */
     public function getSymbolField(): string
     {
         return 'symbol';
     }
 
+    /**
+     * @return mixed
+     */
     public function getCodeCurrency()
     {
         return $this->currency;
     }
 
+    /**
+     * @return string
+     */
     public function getCouponFrequency(): string
     {
         return '';
     }
 
+    /**
+     * @return string
+     */
     public function getSymbol(): string
     {
         return $this->symbol;
     }
 
+    /**
+     * @return string
+     */
     public function getSecondSymbol(): string
     {
         return $this->symbol;
@@ -88,9 +109,12 @@ trait YahooReturnGetDataFunc
         return 1;
     }
 
+    /**
+     * @return mixed
+     */
     public function getStockName()
     {
-        return $this->name;
+        return $this->name ?? $this->symbol;
     }
 
     public function getCouponPercent()
@@ -119,36 +143,61 @@ trait YahooReturnGetDataFunc
         return 'symbol';
     }
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
-        return $this->getType() . ' ' . $this->name . ' ' . $this->symbol;
+        return trim(
+            ($this->getType() ? $this->getType() . ' ' : '') .
+            ($this->name ? $this->name . ' ' : '') .
+            ($this->symbol ? $this->symbol : '')
+        );
     }
 
+    /**
+     * @return string
+     */
     public function getCatalog(): string
     {
         return DefinitionActiveConst::YAHOO_CATALOG;
     }
 
+    /**
+     * @return string
+     */
     public function getFaceValue(): string
     {
         return '';
     }
 
+    /**
+     * @return string
+     */
     public function getCouponDate(): string
     {
         return '';
     }
 
+    /**
+     * @return string
+     */
     public function getCouponValue(): string
     {
         return '';
     }
 
+    /**
+     * @return string
+     */
     public function getDecimals(): string
     {
         return '';
     }
 
+    /**
+     * @return string
+     */
     public function getCountry(): string
     {
         if (!isset($this->tradingview) || !$this->tradingview->country) {
@@ -158,6 +207,9 @@ trait YahooReturnGetDataFunc
         return $this->tradingview->country;
     }
 
+    /**
+     * @return string
+     */
     public function getIndustry(): string
     {
         if (!isset($this->tradingview) || !$this->tradingview->industry) {
@@ -167,6 +219,9 @@ trait YahooReturnGetDataFunc
         return $this->tradingview->industry;
     }
 
+    /**
+     * @return string
+     */
     public function getSector(): string
     {
         if (!isset($this->tradingview) || !$this->tradingview->sector) {
@@ -176,6 +231,9 @@ trait YahooReturnGetDataFunc
         return $this->tradingview->sector;
     }
 
+    /**
+     * @return string
+     */
     public function getCapitalization(): string
     {
         if (!isset($this->tradingview) || !$this->tradingview->capitalization) {
@@ -185,16 +243,25 @@ trait YahooReturnGetDataFunc
         return $this->tradingview->capitalization;
     }
 
+    /**
+     * @return mixed
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @return string
+     */
     public function getSymbolName(): string
     {
         return trim($this->name . ' ' . $this->symbol);
     }
 
+    /**
+     * @return string
+     */
     public function getUserId(): string
     {
         return '';
