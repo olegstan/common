@@ -234,7 +234,7 @@ trait MoexReturnGetDataFunc
             return $lotsize;//завершим чтобы не было запросов к БД в getMoexSplit
         }
 
-        CatalogCache::getMoexSplit($this->id, $lotsize, $date);
+        CatalogCache::getMoexSplit($this, $lotsize, $date);
 
         return $lotsize;
     }

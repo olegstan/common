@@ -44,27 +44,35 @@ class CatalogCache
    }
 
     /**
-     * @param $id
+     * @param $stock
      * @param $lotsize
      * @param Carbon|null $date
      */
-   public static function getMoexSplit($id, &$lotsize, Carbon $date = null)
-   {
-       if($date)
-       {
-           $dateFormatted = $date->format('Y-m-d');
-           $cacheKey = "moex_last_split_{$id}_$dateFormatted";
+    public static function getMoexSplit($stock, &$lotsize, Carbon $date = null)
+    {
+        if($date)
+        {
+            $dateFormatted = $date->format('Y-m-d');
+            $cacheKey = "moex_last_split_{$stock->id}_$dateFormatted";
 
-           $split = Cache::tags([config('cache.tags')])->remember($cacheKey, 60 * 60, static function () use ($dateFormatted, $id) {
-               return MoscowExchangeSplit::where('moex_stock_id', $id)
-                   ->whereDate('date', '<=', $dateFormatted)
-                   ->orderByDesc('date')
-                   ->first() ?: 'empty';
-           });
+            $finalLotSize = Cache::tags([config('cache.tags')])->remember($cacheKey, 60 * 60, static function () use ($dateFormatted, $stock) {
+                $issueDate = Carbon::createFromFormat('Y-m-d', $stock->issuedate);
+                $initialLotSize = $stock->lotsize ?: 1; // предположим, что исходная лотность хранится в created_at_lotsize
+                $splits = MoscowExchangeSplit::where('moex_stock_id', $stock->id)
+                    ->whereDate('date', '>=', $issueDate->format('Y-m-d'))
+                    ->whereDate('date', '<=', $dateFormatted)
+                    ->orderBy('date')
+                    ->get();
 
-           if ($split !== 'empty') {
-               $lotsize = $split->after;
-           }
-       }
-   }
+                $currentLotSize = $initialLotSize;
+                foreach ($splits as $split) {
+                    $currentLotSize = $currentLotSize * ($split->after / $split->before);
+                }
+
+                return $currentLotSize;
+            });
+
+            $lotsize = $finalLotSize;
+        }
+    }
 }
