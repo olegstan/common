@@ -3,10 +3,6 @@
 namespace Common\Models\Traits;
 
 use Carbon\Carbon;
-use Common\Helpers\LoggerHelper;
-use Exception;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Support\Collection as BaseCollection;
 use Illuminate\Support\Str;
 
 trait BaseTrait

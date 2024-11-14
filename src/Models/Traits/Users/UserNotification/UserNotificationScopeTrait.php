@@ -3,8 +3,6 @@
 namespace Common\Models\Traits\Users\UserNotification;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait UserNotificationScopeTrait
 {

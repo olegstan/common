@@ -6,7 +6,6 @@ use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Common\Models\Catalog\Yahoo\YahooHistory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait YahooRelationshipsTrait
 {

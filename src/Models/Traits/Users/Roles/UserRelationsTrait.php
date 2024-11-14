@@ -7,6 +7,7 @@ use App\Models\Actives\ActiveGoal;
 use App\Models\Actives\ActiveGroup;
 use App\Models\Aton\AtonCommission;
 use App\Models\Aton\AtonOperation;
+use App\Models\Aton\AtonUser;
 use App\Models\Bcs\BcsCommission;
 use App\Models\Bcs\BcsOperation;
 use App\Models\CreditLog;
@@ -20,7 +21,6 @@ use Common\Models\Users\Notification\UserNotification;
 use Common\Models\Users\UserCreditLog;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\Aton\AtonUser;
 
 trait UserRelationsTrait
 {

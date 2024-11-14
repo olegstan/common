@@ -5,7 +5,6 @@ namespace Common\Models\Users;
 use App\Helpers\Email;
 use Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class UserLogin

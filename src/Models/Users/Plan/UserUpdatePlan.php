@@ -4,7 +4,6 @@ namespace Common\Models\Users\Plan;
 
 use App\Traits\Models\RemoveActives\RemoveActiveByUserId;
 use Common\Models\BaseModel;
-use Common\Models\Interfaces\CommonRemoveActiveInterface;
 
 /**
  * Class UserUpdatePlan

@@ -9,7 +9,6 @@ use Common\Models\Catalog\MoscowExchange\MoscowExchangeHistory;
 use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait MoexRelationshipsTrait
 {

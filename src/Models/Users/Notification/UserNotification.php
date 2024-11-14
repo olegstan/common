@@ -8,9 +8,6 @@ use Common\Models\Interfaces\CommonRemoveActiveInterface;
 use Common\Models\Traits\Users\UserNotification\UserNotificationAttributeTrait;
 use Common\Models\Traits\Users\UserNotification\UserNotificationRelationsTrait;
 use Common\Models\Traits\Users\UserNotification\UserNotificationScopeTrait;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property $content

@@ -9,7 +9,6 @@ use Cache;
 use Carbon\Carbon;
 use Common\Helpers\Catalog\CatalogSearch;
 use Common\Helpers\LoggerHelper;
-use Common\Models\BaseModel;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
@@ -22,8 +21,6 @@ use Common\Models\Traits\Catalog\Custom\CustomScopeTrait;
 use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use Common\Models\Users\User;
 use Exception;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property $id

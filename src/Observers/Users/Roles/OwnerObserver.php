@@ -2,8 +2,8 @@
 
 namespace Common\Observers\Users\Roles;
 
-use Common\Models\Users\Roles\Types\Owner;
 use Cache;
+use Common\Models\Users\Roles\Types\Owner;
 
 class OwnerObserver
 {

@@ -14,8 +14,8 @@ use Common\Models\Traits\Catalog\Cbond\CbondReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Cbond\CbondScopeTrait;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
-use File;
 use Exception;
+use File;
 use Illuminate\Support\Collection;
 
 /**
