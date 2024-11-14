@@ -8,7 +8,6 @@ use Common\Helpers\Curls\Curl;
 use Common\Helpers\LoggerHelper;
 use Common\Helpers\Translit;
 use Exception;
-use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\SearchResult;

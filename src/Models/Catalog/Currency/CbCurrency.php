@@ -2,6 +2,7 @@
 
 namespace Common\Models\Catalog\Currency;
 
+use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
@@ -12,7 +13,6 @@ use Common\Models\Traits\Catalog\Currency\CurrencyRelationshipsTrait;
 use Common\Models\Traits\Catalog\Currency\CurrencyReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Currency\CurrencyScopeTrait;
 use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
-use Cache;
 use Exception;
 
 /**

@@ -50,8 +50,14 @@ class CatalogCache
      */
     public static function getMoexSplit($stock, &$lotsize, Carbon $date = null)
     {
-        if($date)
+        if($date && $stock)
         {
+            if(!$stock->issuedate)
+            {
+                LoggerHelper::getLogger('debug')->info('no date for moex stock by SECID '. $stock->secid);
+                return;
+            }
+
             $dateFormatted = $date->format('Y-m-d');
             $cacheKey = "moex_last_split_{$stock->id}_$dateFormatted";
 
