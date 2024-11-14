@@ -60,6 +60,44 @@ class CatalogSearch
     }
 
     /**
+     * Проверка состояния Elasticsearch
+     *
+     * @param ClientBuilder|null $client
+     *
+     * @return bool
+     */
+    public static function isElasticsearchHealthy(?ClientBuilder $client = null): bool
+    {
+        try {
+            if (!$client) {
+                // Инициализация Elasticsearch клиента
+                $client = ClientBuilder::create()
+                    ->setHosts(config('elasticsearch.config.hosts'))
+                    ->build();
+            }
+
+            // Выполняем запрос на проверку состояния Elasticsearch
+            $health = $client->cluster()->health();
+
+            // Проверяем статус кластера (green или yellow считаются нормальными)
+            if (in_array($health['status'], ['green', 'yellow'])) {
+                return true;
+            }
+
+            LoggerHelper::getLogger()->error('Отсутствует подключение к эластику', [
+                'status' => $health['status'],
+                'health' => $health,
+            ]);
+
+            return false;
+        } catch (Exception $e) {
+            // Логируем ошибку и возвращаем false, если не удалось подключиться к Elasticsearch
+            LoggerHelper::getLogger()->error($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Индексация записи в Elasticsearch
      *
      * @param $record
@@ -79,7 +117,10 @@ class CatalogSearch
             $self->client->index($params);
         } catch (Exception $e) {
             LoggerHelper::getLogger(class_basename($self))
-                ->error("Ошибка индексации записи в Elasticsearch: " . $e->getMessage(), $record->toArray());
+                ->error(
+                    "Ошибка индексации записи в Elasticsearch: " . $e->getMessage(),
+                    $record->toArray(),
+                );
         }
     }
 
