@@ -643,7 +643,10 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         $data = MoscowExchangeCurl::getData($this);
 
         if ($data && isset($data['lotsize']) && empty($this->lotsize)) {
-            $this->fill(['lotsize' => $data['lotsize']]);
+            $this->fill([
+                'lotsize' => $data['lotsize'],
+                'created_at' => Carbon::now()
+            ]);
         }
 
         if ($this->market === 'bonds' && (empty($this->faceunit) || empty($this->couponpercent) || empty($this->couponvalue))) {
