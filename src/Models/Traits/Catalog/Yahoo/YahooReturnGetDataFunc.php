@@ -114,7 +114,18 @@ trait YahooReturnGetDataFunc
      */
     public function getStockName()
     {
-        return $this->name ?? $this->symbol;
+        $name = trim($this->name);
+        $symbol = trim($this->symbol);
+
+        if($name)
+        {
+            return $name;
+        }
+
+        if($symbol)
+        {
+            return $symbol;
+        }
     }
 
     public function getCouponPercent()
