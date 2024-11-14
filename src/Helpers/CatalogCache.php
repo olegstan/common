@@ -44,7 +44,7 @@ class CatalogCache
    }
 
     /**
-     * @param $stock
+     * @param MoscowExchangeStock $stock
      * @param $lotsize
      * @param Carbon|null $date
      */
@@ -52,30 +52,55 @@ class CatalogCache
     {
         if($date && $stock)
         {
-            if(!$stock->issuedate)
+//            SELECT *
+//            FROM moscow_exchange_splits AS mes1
+//JOIN moscow_exchange_splits AS mes2
+//ON mes1.moex_stock_id = mes2.moex_stock_id
+//        AND mes1.date <> mes2.date
+//        AND DATE_FORMAT(mes1.date, '%Y-%m') = DATE_FORMAT(mes2.date, '%Y-%m')
+
+            if(!$stock->created_at)
             {
                 LoggerHelper::getLogger('debug')->info('no date for moex stock by SECID '. $stock->secid);
                 return;
             }
 
+
             $dateFormatted = $date->format('Y-m-d');
             $cacheKey = "moex_last_split_{$stock->id}_$dateFormatted";
 
-            $finalLotSize = Cache::tags([config('cache.tags')])->remember($cacheKey, 60 * 60, static function () use ($dateFormatted, $stock) {
-                $issueDate = Carbon::createFromFormat('Y-m-d', $stock->issuedate);
-                $initialLotSize = $stock->lotsize ?: 1; // предположим, что исходная лотность хранится в created_at_lotsize
-                $splits = MoscowExchangeSplit::where('moex_stock_id', $stock->id)
-                    ->whereDate('date', '>=', $issueDate->format('Y-m-d'))
-                    ->whereDate('date', '<=', $dateFormatted)
-                    ->orderBy('date')
-                    ->get();
+            $finalLotSize = Cache::tags([config('cache.tags')])->remember($cacheKey, 60 * 60, static function () use ($date, $stock) {
+                // Assuming initial lot size based on the stock's current lot size or default value
+                $createdDate = $stock->created_at;
 
-                $currentLotSize = $initialLotSize;
-                foreach ($splits as $split) {
-                    $currentLotSize = $currentLotSize * ($split->after / $split->before);
+                $initialLotSize = $stock->lotsize ?: 1;
+
+                if($date->gt($createdDate) || $createdDate->isSameDay($date))
+                {
+                    //TODO Retrieve splits from the database
+                    $splits = MoscowExchangeSplit::where('moex_stock_id', $stock->id)
+                        ->whereDate('date', '>=', $createdDate->format('Y-m-d'))
+                        ->orderBy('date')
+                        ->get();
+                }else{
+                    $splits = MoscowExchangeSplit::where('moex_stock_id', $stock->id)
+                        ->whereDate('date', '<=', $createdDate->format('Y-m-d'))
+                        ->whereDate('date', '>=', $date->format('Y-m-d'))
+                        ->orderBy('date')
+                        ->get();
+
+                    $currentLotSize = $initialLotSize;
+
+                    // Process each split
+                    foreach ($splits as $split) {
+                        $before = $split->before;
+                        $after = $split->after;
+
+                        $currentLotSize = $currentLotSize * ($after * $before);
+                    }
+
+                    return $currentLotSize;
                 }
-
-                return $currentLotSize;
             });
 
             $lotsize = $finalLotSize;
