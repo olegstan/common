@@ -55,6 +55,7 @@ class CatalogCache
             if(!$stock->issuedate)
             {
                 LoggerHelper::getLogger('debug')->info('no date for moex stock by SECID '. $stock->secid);
+                return;
             }
 
             $dateFormatted = $date->format('Y-m-d');
