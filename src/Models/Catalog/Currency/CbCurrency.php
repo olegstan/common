@@ -102,7 +102,7 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
             ->first();
 
         if ($history) {
-            $historyCurrency = Currency::getByCode($history->faceunit);
+            $historyCurrency = Currency::getByCode($this->char_code);
             if ($historyCurrency) {
                 return $currency->convert($history->getValue(), $historyCurrency->id, $date);
             }
