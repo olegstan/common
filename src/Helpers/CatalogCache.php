@@ -82,6 +82,8 @@ class CatalogCache
                         ->whereDate('date', '>=', $createdDate->format('Y-m-d'))
                         ->orderBy('date')
                         ->get();
+
+                    return $initialLotSize;
                 }else{
                     $splits = MoscowExchangeSplit::where('moex_stock_id', $stock->id)
                         ->whereDate('date', '<=', $createdDate->format('Y-m-d'))
