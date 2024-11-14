@@ -86,13 +86,29 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
     }
 
     /**
-     * @param $currency
-     * @param null $date
-     * @return int
+     * @param Currency $currency
+     * @param Carbon|null $date
+     *
+     * @return float|int
      */
-    public function getLastPriceByDate($currency, $date = null)
+    public function getLastPriceByDate(Currency $currency, Carbon $date = null)
     {
-        //TODO
+        $history = $this->history()
+            ->when($date, function ($query) use ($date){
+                $query->whereDate($this->getDateField(), '<=', $date);
+            })
+            ->where('value', '>', 0)
+            ->orderByDesc($this->getDateField())
+            ->first();
+
+        if ($history) {
+            $historyCurrency = Currency::getByCode($this->char_code);
+            if ($historyCurrency) {
+                return $currency->convert($history->getValue(), $historyCurrency->id, $date);
+            }
+
+            return $history->getValue();
+        }
 
         return 0;
     }

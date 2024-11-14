@@ -377,10 +377,11 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
     /**
      * @param Currency $currency
-     * @param null $date
-     * @return float
+     * @param Carbon|null $date
+     *
+     * @return float|int
      */
-    public function getLastPriceByDate($currency, $date = null)
+    public function getLastPriceByDate(Currency $currency, Carbon $date = null)
     {
         try{
             /**

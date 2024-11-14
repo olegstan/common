@@ -325,11 +325,11 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
 
     /**
      * @param Currency $currency
-     * @param null $date
+     * @param Carbon|null $date
      *
-     * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|int|mixed
+     * @return float|int
      */
-    public function getLastPriceByDate($currency, $date = null)
+    public function getLastPriceByDate(Currency $currency, Carbon $date = null)
     {
         try {
             //TODO используется класс из основного проекта, лучше бы как то переделать и вынести логику из метода
