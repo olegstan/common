@@ -436,10 +436,11 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
 
     /**
      * @param Currency $currency
-     * @param null $date
-     * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed
+     * @param Carbon|null $date
+     *
+     * @return float|int
      */
-    public function getLastPriceByDate($currency, $date = null)
+    public function getLastPriceByDate(Currency $currency, Carbon $date = null)
     {
         try {
             /**

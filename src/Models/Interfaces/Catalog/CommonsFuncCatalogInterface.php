@@ -3,6 +3,7 @@
 namespace Common\Models\Interfaces\Catalog;
 
 use Carbon\Carbon;
+use Common\Models\Currency;
 
 interface CommonsFuncCatalogInterface
 {
@@ -40,7 +41,7 @@ interface CommonsFuncCatalogInterface
 
     public function history();
 
-    public function getLastPriceByDate($currency, $date = null);
+    public function getLastPriceByDate(Currency $currency, Carbon $date = null);
 
     public function createBindActive($userId, $currencyId, $accountId, $classes);
 

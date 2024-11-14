@@ -290,11 +290,11 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
     /**
      * @param Currency $currency
-     * @param null $date
+     * @param Carbon|null $date
      *
-     * @return mixed
+     * @return float|int|mixed
      */
-    public function getLastPriceByDate($currency, $date = null)
+    public function getLastPriceByDate(Currency $currency, Carbon $date = null)
     {
         try {
             /**
