@@ -21,7 +21,7 @@ class TinkoffStock extends BaseCatalog
         'figi',
         'ticker',
         'isin',
-        'minPriceIncrement',
+        'min_price_increment',
         'lot',
         'currency',
         'name',
