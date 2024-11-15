@@ -52,12 +52,31 @@ class CatalogCache
     {
         if($date && $stock)
         {
+            //сравним лотность из тинька с лотностью из moex
+//            SELECT
+//    mes.secid,
+//    mes.lotsize,
+//    ts.lot AS tinkoff_lotsize
+//FROM
+//    moscow_exchange_stocks AS mes
+//LEFT JOIN
+//    tinkoff_stocks AS ts
+//ON
+//    ts.ticker = mes.secid
+//WHERE
+//    mes.group IN ('stock_shares')
+//        AND ts.lot IS NOT NULL
+//        AND ts.lot != mes.lotsize;
+
+            //поиск похожих сплитов, возжно это дубль
 //            SELECT *
 //            FROM moscow_exchange_splits AS mes1
 //JOIN moscow_exchange_splits AS mes2
 //ON mes1.moex_stock_id = mes2.moex_stock_id
 //        AND mes1.date <> mes2.date
 //        AND DATE_FORMAT(mes1.date, '%Y-%m') = DATE_FORMAT(mes2.date, '%Y-%m')
+
+
 
             if(!$stock->created_at)
             {
