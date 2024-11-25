@@ -30,6 +30,7 @@ class MoscowExchangeSplit extends BaseCatalog
         'before',
         'after',
         'date',
+        'lotsize',
     ];
 
     protected $casts = [

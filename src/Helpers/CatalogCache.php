@@ -77,13 +77,32 @@ class CatalogCache
 
                 if($date->gt($createdDate) || $createdDate->isSameDay($date))
                 {
-                    //TODO Retrieve splits from the database
                     $splits = MoscowExchangeSplit::where('moex_stock_id', $stock->id)
+                        ->whereDate('date', '<=', $date->format('Y-m-d'))
                         ->whereDate('date', '>=', $createdDate->format('Y-m-d'))
                         ->orderBy('date')
                         ->get();
 
-                    return $initialLotSize;
+                    $currentLotSize = $initialLotSize;
+
+                    // Process each split
+                    foreach ($splits as $split) {
+                        $before = $split->before;
+                        $after = $split->after;
+                        $lotsize = $split->lotsize ?? 1;
+
+                        //привет для ВТБ
+                        //начальная лотность 10000
+                        //сплит 5000 к 1 в итоге конечную лотность не высчитать используя только соотношение
+                        //поскольку также при замене меняется кол-во лотов
+                        //будем добавлять коэффициент лотностти чтобы было правильное конечное значение
+                        //формула 10000 / 5000 = 2 * 0.5 = 1 так как текущая лотность 1
+                        //но при замене $lotsize не будет исопльзоваться, поэтому замена сработает верно
+
+                        $currentLotSize = $currentLotSize / $before * $after * $lotsize;
+                    }
+
+                    return $currentLotSize;
                 }else{
                     $splits = MoscowExchangeSplit::where('moex_stock_id', $stock->id)
                         ->whereDate('date', '<=', $createdDate->format('Y-m-d'))
