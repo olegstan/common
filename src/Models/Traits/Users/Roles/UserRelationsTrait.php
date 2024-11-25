@@ -204,14 +204,4 @@ trait UserRelationsTrait
     {
         return $this->hasMany(UserCollectiveGroup::class, 'user_id');
     }
-
-    /**
-     * Все счета пользователя в Атоне
-     *
-     * @return HasMany
-     */
-    public function aton_account_numbers(): HasMany
-    {
-        return $this->hasMany(AtonUsers::class, 'user_id');
-    }
 }
