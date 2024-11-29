@@ -246,7 +246,8 @@ trait MoexReturnGetDataFunc
             return $lotsize;//завершим чтобы не было запросов к БД в getMoexSplit
         }
 
-        CatalogCache::getMoexSplit($this, $lotsize, $date);
+        //если дату не передали, то будет текущая дата
+        CatalogCache::getMoexSplit($this, $lotsize, $date ?? Carbon::now());
 
         return $lotsize;
     }
