@@ -2,6 +2,8 @@
 
 namespace Common\Helpers\Catalog;
 
+use Carbon\Carbon;
+use Common\Helpers\Helper;
 use Common\Helpers\LoggerHelper;
 use Common\Helpers\Translit;
 use Common\Models\Catalog\Cbond\CbondStock;
@@ -107,19 +109,40 @@ class CatalogSearch
     {
         $self = new self();
 
+        if (!is_object($record)) {
+            $record = Helper::object_to_array($record);
+            $record['created_at'] = Carbon::createFromFormat('Y-m-d H:i:s', $record['created_at']);
+            $record['updated_at'] = Carbon::createFromFormat('Y-m-d H:i:s', $record['updated_at']);
+        }
+
         try {
+            $index = "catalog.$indexName"; // Указываем имя индекса
+
+            // Проверяем, существует ли запись в Elasticsearch
+            $exists = $self->client->exists([
+                'index' => $index,
+                'id' => $record['id'],
+            ]);
+
+            if ($exists) {
+                return;
+            }
+
+            // Параметры для индексации
             $params = [
-                'index' => "catalog.$indexName",  // Укажи имя индекса
-                'id' => $record->id,  // ID записи
-                'body' => $record->toArray(),  // Преобразуем запись в массив
+                'index' => $index,  // Имя индекса
+                'id' => $record['id'],  // ID записи
+                'body' => $record,  // Преобразуем запись в массив
             ];
 
+            // Индексация записи
             $self->client->index($params);
         } catch (Exception $e) {
+            // Логируем ошибку при индексации
             LoggerHelper::getLogger(class_basename($self))
                 ->error(
-                    "Ошибка индексации записи в Elasticsearch: " . $e->getMessage(),
-                    $record->toArray(),
+                    "Ошибка индексации записи с ID {$record['id']} в Elasticsearch: " . $e->getMessage(),
+                    $record,
                 );
         }
     }
@@ -673,21 +696,29 @@ class CatalogSearch
      * @param string $index Название индекса
      * @param string|int $id Идентификатор записи для удаления
      *
-     * @return bool Возвращает true, если удаление прошло успешно, иначе false
+     * @return bool Возвращает true, если удаление прошло успешно или запись отсутствует, иначе false
      */
     public static function deleteFromIndex(string $index, $id): bool
     {
         $self = new self();
 
         try {
+            // Проверяем существование записи в индексе
+            $exists = $self->client->exists([
+                'index' => $index,
+                'id' => $id,
+            ]);
+
+            if (!$exists) {
+                // Возвращаем true, так как нечего удалять
+                return true;
+            }
+
             // Выполняем удаление записи из индекса Elasticsearch
             $self->client->delete([
                 'index' => $index,
                 'id' => $id,
             ]);
-
-            // Логирование успешного удаления
-            LoggerHelper::getLogger()->info("Запись с ID $id была удалена из индекса $index.");
 
             return true;
         } catch (Exception $e) {
