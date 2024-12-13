@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Common\Helpers\Helper;
 use Common\Helpers\LoggerHelper;
 use Common\Helpers\Translit;
+use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Catalog\Cbond\CbondStock;
 use Common\Models\Catalog\Currency\CbCurrency;
 use Common\Models\Catalog\Custom\CustomStock;
@@ -109,10 +110,15 @@ class CatalogSearch
     {
         $self = new self();
 
-        if (is_object($record)) {
+        if ($record instanceof BaseCatalog) {
+            $record = $record->toArray();
+        } elseif (is_object($record)) {
             $record = Helper::object_to_array($record);
-            $record['created_at'] = Carbon::createFromFormat('Y-m-d H:i:s', $record['created_at']);
-            $record['updated_at'] = Carbon::createFromFormat('Y-m-d H:i:s', $record['updated_at']);
+
+            if (isset($record['created_at'], $record['updated_at'])) {
+                $record['created_at'] = Carbon::createFromFormat('Y-m-d H:i:s', $record['created_at']);
+                $record['updated_at'] = Carbon::createFromFormat('Y-m-d H:i:s', $record['updated_at']);
+            }
         }
 
         try {
