@@ -109,7 +109,7 @@ class CatalogSearch
     {
         $self = new self();
 
-        if (!is_object($record)) {
+        if (is_object($record)) {
             $record = Helper::object_to_array($record);
             $record['created_at'] = Carbon::createFromFormat('Y-m-d H:i:s', $record['created_at']);
             $record['updated_at'] = Carbon::createFromFormat('Y-m-d H:i:s', $record['updated_at']);
