@@ -186,7 +186,7 @@ class TinkoffStock extends BaseCatalog
         'blocked_tca_flag' => 'boolean',
         'liquidity_flag' => 'boolean',
         'first_1min_candle_date' => 'datetime',
-        'first_1day_candle_date' => 'boolean',
+        'first_1day_candle_date' => 'datetime',
         'coupon_quantity_per_year' => 'integer',
         'maturity_date' => 'datetime',
         'initial_nominal' => 'double',
