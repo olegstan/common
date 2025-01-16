@@ -32,6 +32,11 @@ class LoggerHelper
      * @var string|bool
      */
     public static $testKey = false;
+    /**
+     * @var bool
+     * переменная чтобы не было двойного прослушивания DB::listen
+     */
+    public static $status = false;
 
     /**
      * @var bool

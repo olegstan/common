@@ -42,13 +42,18 @@ class ExtendedDatabaseJob extends DatabaseJob
                 }
             }
 
-            DB::listen(function ($sql)
+            if(!LoggerHelper::$status)
             {
-                if (LoggerHelper::$logQuery || $sql->time > 100)
+                LoggerHelper::$status = true;
+
+                DB::listen(function ($sql)
                 {
-                    LoggerHelper::listenQuery($sql);
-                }
-            });
+                    if (LoggerHelper::$logQuery || $sql->time > 100)
+                    {
+                        LoggerHelper::listenQuery($sql);
+                    }
+                });
+            }
         }
 
         $this->job = $job;

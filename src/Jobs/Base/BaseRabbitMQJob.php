@@ -59,13 +59,18 @@ class BaseRabbitMQJob extends RabbitMQJob
      */
     protected function listenToDatabaseQueries(): void
     {
-        DB::listen(static function ($sql)
+        if(!LoggerHelper::$status)
         {
-            if (LoggerHelper::$logQuery || $sql->time > 100)
+            LoggerHelper::$status = true;
+
+            DB::listen(static function ($sql)
             {
-                LoggerHelper::listenQuery($sql);
-            }
-        });
+                if (LoggerHelper::$logQuery || $sql->time > 100)
+                {
+                    LoggerHelper::listenQuery($sql);
+                }
+            });
+        }
     }
 
     /**
