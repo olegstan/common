@@ -68,6 +68,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property $basic_asset
  * @property $basic_asset_size
  * @property $basic_asset_position_uid
+ * @property $type
  */
 class TinkoffStock extends BaseCatalog
 {
@@ -142,6 +143,7 @@ class TinkoffStock extends BaseCatalog
         'basic_asset',
         'basic_asset_size',
         'basic_asset_position_uid',
+        'type',
     ];
 
     /**
@@ -210,6 +212,7 @@ class TinkoffStock extends BaseCatalog
         'basic_asset' => 'string',
         'basic_asset_size' => 'double',
         'basic_asset_position_uid' => 'string',
+        'type' => 'string',
     ];
 
     public $timestamps = false;
