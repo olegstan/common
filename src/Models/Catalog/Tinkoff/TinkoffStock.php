@@ -3,6 +3,7 @@
 namespace Common\Models\Catalog\Tinkoff;
 
 use Common\Models\Catalog\BaseCatalog;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property $name
@@ -212,4 +213,20 @@ class TinkoffStock extends BaseCatalog
     ];
 
     public $timestamps = false;
+
+    /**
+     * @return HasMany
+     */
+    public function dividends(): HasMany
+    {
+        return $this->hasMany(TinkoffDividend::class, 'tinkoff_stock_id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function coupons(): HasMany
+    {
+        return $this->hasMany(TinkoffCoupon::class, 'tinkoff_stock_id');
+    }
 }
