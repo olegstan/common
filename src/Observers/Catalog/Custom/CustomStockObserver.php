@@ -3,11 +3,9 @@
 namespace Common\Observers\Catalog\Custom;
 
 use Common\Helpers\Catalog\CatalogSearch;
-use Common\Helpers\LoggerHelper;
+use Common\Models\Catalog\Custom\CustomStock;
 use Common\Models\Currency;
 use Elasticsearch\ClientBuilder;
-use Common\Models\Catalog\Custom\CustomStock;
-use Exception;
 
 class CustomStockObserver
 {

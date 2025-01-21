@@ -5,7 +5,6 @@ namespace Common\Models\Traits\Catalog\MoscowExchange;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\CatalogCache;
-use Common\Models\Catalog\MoscowExchange\MoscowExchangeSplit;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 

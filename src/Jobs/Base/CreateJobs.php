@@ -9,10 +9,10 @@ use Common\Jobs\JobsEvent;
 use Common\Jobs\LogJob\LogJobParser;
 use Common\Jobs\Traits\CreateJobs\CreateJobsGetTrait;
 use Common\Jobs\Traits\CreateJobs\CreateJobsSetTrait;
-use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Common\Models\BaseModel;
 use Exception;
 use Illuminate\Support\Facades\Queue;
+use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 
 class CreateJobs
 {

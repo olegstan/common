@@ -14,7 +14,7 @@ class CbondCurl extends Curl
     /**
      *
      */
-    public const API_URL = 'http://46.8.220.5:8000';
+    public const API_URL = 'http://37.46.132.67:8000';
 
     /**
      *
