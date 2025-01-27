@@ -3,92 +3,30 @@
 namespace Common\Models\Users\Crm;
 
 use Common\Models\BaseModel;
+use Common\Models\Interfaces\Users\Crm\UserConfigConstantsTrait;
+use Common\Models\Traits\Users\UserConfigAttributeTrait;
 use Common\Models\Users\User;
+use InvalidArgumentException;
 
 /**
  * Class UserConfig
  *
+ * @property $user_id
+ * @property $key
+ * @property $value
+ * @property $type
+ *
  * @package Common\Models\Users\Crm
  */
-class UserConfig extends BaseModel
+class UserConfig extends BaseModel implements UserConfigConstantsTrait
 {
-
-    /**
-     * 1001:Не удалять, 1002:1 день', 1003:1 неделя, 1004:2 недели, 1005:1 месяц
-     */
-    const C_NOTIFICATION_DELETE_AFTER_VALUE = 'NOTIFICATION_DELETE_AFTER_VALUE';
-    /**
-     * User config (set week holidays)
-     */
-    const C_WEEK_HOLIDAYS = 'WEEK_HOLIDAYS';
-
-    /**
-     * Возможное количество переносов (с 1 до 365), 0: без лимитов
-     */
-    const C_APPLICATION_MAX_DELAY_DAYS = 'APPLICATION_MAX_DELAY_DAYS';
-
-    // CALENDAR CONFIG
-    /**
-     * Интервал сетки в минутах
-     */
-    const C_CALENDAR_SLOT_DURATION = 'CALENDAR_SLOT_DURATION';
-    /**
-     * Время начала рабочего дня
-     */
-    const C_CALENDAR_SLOT_MIN_TIME = 'CALENDAR_SLOT_MIN_TIME';
-    /**
-     * Время завершения рабочего дня
-     */
-    const C_CALENDAR_SLOT_MAX_TIME = 'CALENDAR_SLOT_MAX_TIME';
-
-    //ATON CONFIG
-    public const C_ATON_LOGIN = 'ATON_LOGIN';
-    public const C_ATON_PASS = 'ATON_PASS';
-    public const C_ATON_GROUP = 'ATON_GROUP';
-    public const C_ATON_ACCOUNT = 'ATON_ACCOUNT';
-    public const C_ATON_PATH_TO_2FA = 'ATON_PATH_TO_2FA';
-
-    const MANAGER_PHONE_NUMBER = 'MANAGER_PHONE_NUMBER';
-    const MANAGER_PHONE_TOKEN = 'MANAGER_PHONE_TOKEN';
-    const MANAGER_PHONE_PROXY_TOKEN = 'MANAGER_PHONE_PROXY_TOKEN';
-
-    const HIERARCHY_NODE_POSITIONS = 'HIERARCHY_NODE_POSITIONS';
-
-    public const C_ATON_CONFIGS = [
-        'aton_login' => self::C_ATON_LOGIN,
-        'aton_pass' => self::C_ATON_PASS,
-        'aton_group' => self::C_ATON_GROUP,
-        'aton_account' => self::C_ATON_ACCOUNT,
-        'aton_path_to_2fa' => self::C_ATON_PATH_TO_2FA,
-    ];
-
-    const UserDefaultConfigConstants = [
-        self::C_NOTIFICATION_DELETE_AFTER_VALUE => 1001,
-        self::C_APPLICATION_MAX_DELAY_DAYS => 0,
-        self::C_WEEK_HOLIDAYS => [
-            1 => false,
-            2 => false,
-            3 => false,
-            4 => false,
-            5 => false,
-            6 => true,
-            7 => true,
-        ],
-        self::C_CALENDAR_SLOT_DURATION => 30,
-        self::C_CALENDAR_SLOT_MIN_TIME => '09:00',
-        self::C_CALENDAR_SLOT_MAX_TIME => '18:00',
-        self::C_ATON_LOGIN => null,
-        self::C_ATON_ACCOUNT => null,
-        self::C_ATON_PASS => null,
-        self::C_ATON_GROUP => null,
-        self::C_ATON_PATH_TO_2FA => null,
-    ];
+    use UserConfigAttributeTrait;
 
     /**
      * @var string
      */
     public $table = 'user_configs';
-
+    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
@@ -100,7 +38,6 @@ class UserConfig extends BaseModel
         'value',
         'type',
     ];
-
     /**
      * @var array
      */
@@ -111,7 +48,54 @@ class UserConfig extends BaseModel
         'type' => 'integer',
     ];
 
-    public $timestamps = false;
+    /**
+     * Создание записи в user_configs
+     *
+     * @param array $data [
+     *     'user_id' => int,               // ID клиента (обязательное поле)
+     *     'key' => string,               // Ключ (обязательное поле, например, 'aton')
+     *     'login' => string|null,        // Логин (обязателен, если не переданы API ключи)
+     *     'password' => string|null,     // Пароль (обязателен, если не переданы API ключи)
+     *     'public_api_key' => string|null, // Публичный API ключ (обязателен, если нет логина и пароля)
+     *     'private_api_key' => string|null // Приватный API ключ (необязательный)
+     * ]
+     *
+     * @return static|null
+     * @throws InvalidArgumentException
+     */
+    public static function createConfig(array $data): ?UserConfig
+    {
+        // Проверка обязательных параметров
+        if (!array_key_exists('user_id', $data) || !array_key_exists('key', $data)) {
+            throw new InvalidArgumentException('Параметры "user_id" и "key" обязательны.');
+        }
+
+        // Проверка на наличие обязательных данных
+        $hasLoginAndPassword = !empty($data['login'] ?? null) && !empty($data['password'] ?? null);
+        $hasApiKeys = !empty($data['public_api_key'] ?? null);
+
+        if (!$hasLoginAndPassword && !$hasApiKeys) {
+            throw new InvalidArgumentException(
+                'Необходимо указать либо "login" и "password", либо "public_api_key".',
+            );
+        }
+
+        // Подготовка значения JSON
+        $value = [
+            'login' => $data['login'] ?? '', // Если ключ отсутствует, устанавливаем пустую строку
+            'password' => $data['password'] ?? '',
+            'public_api_key' => $data['public_api_key'] ?? '',
+            'private_api_key' => $data['private_api_key'] ?? '',
+        ];
+
+        // Создание записи (value обрабатывается автоматически через трейт)
+        return self::create([
+            'user_id' => $data['user_id'],
+            'key' => $data['key'],
+            'value' => json_encode($value, JSON_UNESCAPED_UNICODE), // Преобразование в JSON
+            'type' => $data['type'] ?? null,
+        ]);
+    }
 
     /**
      * @return \Common\Models\Traits\BelongsTo
