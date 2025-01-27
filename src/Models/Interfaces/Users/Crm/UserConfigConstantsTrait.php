@@ -77,10 +77,10 @@ interface UserConfigConstantsTrait
     
     ########## API SETTINGS ##########
     
-    public const ATON_API = 'aton';
-    public const BCS_API = 'bcs';
-    public const TINKOFF_API = 'tinkoff';
-    public const FREEDOM_API = 'freedom';
+    public const ATON_API = 'aton.api';
+    public const BCS_API = 'bcs.api';
+    public const TINKOFF_API = 'tinkoff.api';
+    public const FREEDOM_API = 'freedom.api';
 
     public const ALL_BROKER_API = [
         self::ATON_API,
