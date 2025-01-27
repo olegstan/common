@@ -63,32 +63,93 @@ class UserConfig extends BaseModel implements UserConfigConstantsTrait
      * @return static|null
      * @throws InvalidArgumentException
      */
-    public static function createApiConfig(array $data): ?UserConfig
+    public static function createApiConfig(array $data): ?self
     {
+        // Проверка входных данных
+        self::validateRequiredFields($data);
+
         // Проверка обязательных параметров
+        self::validateCredentials($data);
+
+        // Подготовка значения для value
+        $value = self::prepareValue($data);
+
+        // Создание или обновление записи
+        return self::findOrCreateConfig($data, $value);
+    }
+
+    /**
+     * Проверка обязательных полей
+     *
+     * @param array $data
+     * @throws InvalidArgumentException
+     */
+    protected static function validateRequiredFields(array $data): void
+    {
         if (!array_key_exists('user_id', $data) || !array_key_exists('key', $data)) {
             throw new InvalidArgumentException('Параметры "user_id" и "key" обязательны.');
         }
+    }
 
-        // Проверка на наличие обязательных данных
+    /**
+     * Проверка обязательных данных (логин/пароль или API ключи)
+     *
+     * @param array $data
+     * @throws InvalidArgumentException
+     */
+    protected static function validateCredentials(array $data): void
+    {
         $hasLoginAndPassword = !empty($data['login'] ?? null) && !empty($data['password'] ?? null);
         $hasApiKeys = !empty($data['public_api_key'] ?? null);
 
         if (!$hasLoginAndPassword && !$hasApiKeys) {
             throw new InvalidArgumentException(
-                'Необходимо указать либо "login" и "password", либо "public_api_key".',
+                'Необходимо указать либо "login" и "password", либо "public_api_key".'
             );
         }
+    }
 
-        // Подготовка значения JSON
-        $value = [
-            'login' => $data['login'] ?? '', // Если ключ отсутствует, устанавливаем пустую строку
+    /**
+     * Подготовка значения для колонки value
+     *
+     * @param array $data
+     * @return array
+     */
+    protected static function prepareValue(array $data): array
+    {
+        return [
+            'login' => $data['login'] ?? '',
             'password' => $data['password'] ?? '',
             'public_api_key' => $data['public_api_key'] ?? '',
             'private_api_key' => $data['private_api_key'] ?? '',
         ];
+    }
 
-        // Создание записи (value обрабатывается автоматически через трейт)
+    /**
+     * Создание или обновление конфигурации
+     *
+     * @param array $data
+     * @param array $value
+     * @return static|null
+     */
+    protected static function findOrCreateConfig(array $data, array $value): ?self
+    {
+        // Проверка на существующую запись
+        $existingConfig = self::where('user_id', $data['user_id'])
+            ->where('key', $data['key'])
+            ->first();
+
+        if ($existingConfig) {
+            // Обновление записи
+//            $existingConfig->update([
+//                'value' => $value,
+//                'type' => $data['type'] ?? $existingConfig->type,
+//            ]);
+
+            return $existingConfig;
+        }
+
+        // Создание новой записи
         return self::create([
             'user_id' => $data['user_id'],
             'key' => $data['key'],
