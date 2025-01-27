@@ -154,7 +154,7 @@ class UserConfig extends BaseModel implements UserConfigConstantsTrait
             'user_id' => $data['user_id'],
             'key' => $data['key'],
             'value' => $value,
-            'type' => $data['type'] ?? null,
+            'type' => $data['type'] ?? 0,
         ]);
     }
 
