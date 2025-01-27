@@ -92,7 +92,7 @@ class UserConfig extends BaseModel implements UserConfigConstantsTrait
         return self::create([
             'user_id' => $data['user_id'],
             'key' => $data['key'],
-            'value' => json_encode($value, JSON_UNESCAPED_UNICODE), // Преобразование в JSON
+            'value' => $value,
             'type' => $data['type'] ?? null,
         ]);
     }

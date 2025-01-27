@@ -12,7 +12,7 @@ trait UserConfigAttributeTrait
     public function getValueAttribute($value)
     {
         // Если поле `type` соответствует одному из ALL_BROKER_API, парсим JSON
-        if (in_array($this->type, self::ALL_BROKER_API, true)) {
+        if (in_array($this->type, self::ALL_BROKER_API)) {
             return json_decode($value, true) ?? [];
         }
 
@@ -28,7 +28,7 @@ trait UserConfigAttributeTrait
     public function setValueAttribute($value): void
     {
         // Если тип из ALL_BROKER_API, преобразуем массив в JSON
-        if (is_array($value) && in_array($this->type, self::ALL_BROKER_API, true)) {
+        if (is_array($value) && in_array($this->type, self::ALL_BROKER_API)) {
             $this->attributes['value'] = json_encode($value, JSON_UNESCAPED_UNICODE);
         } else {
             // В остальных случаях записываем как есть
