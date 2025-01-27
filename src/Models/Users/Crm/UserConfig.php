@@ -63,7 +63,7 @@ class UserConfig extends BaseModel implements UserConfigConstantsTrait
      * @return static|null
      * @throws InvalidArgumentException
      */
-    public static function createConfig(array $data): ?UserConfig
+    public static function createApiConfig(array $data): ?UserConfig
     {
         // Проверка обязательных параметров
         if (!array_key_exists('user_id', $data) || !array_key_exists('key', $data)) {
