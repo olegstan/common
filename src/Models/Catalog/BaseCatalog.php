@@ -54,10 +54,6 @@ class BaseCatalog extends BaseModel
      */
     public static function fullTextWildcards($term): array
     {
-        $reservedSymbols = ['-', '+', '<', '>', '@', '(', ')', '~',  '*', '"'];
-        $term = str_replace($reservedSymbols, ' ', $term);
-        $term = preg_replace("/\s+/", ' ', $term);
-
         $words = explode(' ', $term);
         $expectedWords = [];
 
@@ -66,8 +62,10 @@ class BaseCatalog extends BaseModel
              * applying + operator (required word) only big words
              * because smaller ones are not indexed by mysql
              */
-            if (strlen($word) >= 2)
-            {
+            if (strlen($word) >= 2) {
+                $reservedSymbols = ['-', '+', '<', '>', '@', '(', ')', '~', '*', '"', '.'];
+                $word = str_replace($reservedSymbols, ' ', $word);
+                $word = preg_replace("/\s+/", ' ', $word);
                 $expectedWords[] = '*' . $word . '*';
             }
         }
