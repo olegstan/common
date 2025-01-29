@@ -9,9 +9,10 @@ use Illuminate\Http\Response;
 class SystemController extends BaseController
 {
     /**
-     * @return Response
+     * @param $request
+     * @return mixed
      */
-    public function getIndex()
+    public function getIndex($request)
     {
         // Получение максимального размера из ini файла
         $maxFileSize = FileHelper::getMaxUploadSize();
