@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\V1\Controllers\Common;
+namespace Common\Controllers\Common;
 
 use App\Api\V1\Controllers\Common\BaseController;
 use App\Helpers\FileHelper;
