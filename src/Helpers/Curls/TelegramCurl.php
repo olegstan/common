@@ -55,6 +55,11 @@ class TelegramCurl extends Curl
         // URL API Telegram
         $url = "https://api.telegram.org/bot" . self::TELEGRAM_TOKEN . "/sendMessage";
 
+        // Убеждаемся, что сообщение не превышает лимит
+        if (strlen($text) > 4096) {
+            $text = substr($text, 0, 4093) . "..."; // Добавляем "..." в конце
+        }
+        
         // Формируем данные для отправки
         $data = json_encode([
             'chat_id' => $chatId ?? self::FINTEST_MONITOR_CHAT_ID,
