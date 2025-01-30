@@ -159,4 +159,47 @@ class TelegramCurl extends Curl
                 json_encode($caption, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT))),
         );
     }
+
+    /**
+     * Получение списка всех чатов, где подключен бот
+     *
+     * @return array|null
+     */
+    public static function getChatList(): ?array
+    {
+        // URL API Telegram для получения обновлений
+        $url = "https://api.telegram.org/bot" . self::TELEGRAM_TOKEN . "/getUpdates";
+
+        // Выполняем запрос к API Telegram
+        $response = self::post($url, json_encode([]), [
+            'Content-Type: application/json',
+        ], 'telegram');
+
+        // Декодируем ответ
+        $json = json_decode($response, true);
+
+        // Проверяем, есть ли ошибки
+        if (!isset($json['ok']) || !$json['ok']) {
+            LoggerHelper::getLogger()->error('Ошибка получения списка чатов Telegram', [
+                'url' => $url,
+                'response' => $response,
+            ]);
+            return null;
+        }
+
+        // Собираем список чатов
+        $chats = [];
+        foreach ($json['result'] as $update) {
+            if (isset($update['message']['chat'])) {
+                $chat = $update['message']['chat'];
+                $chats[$chat['id']] = [
+                    'id' => $chat['id'],
+                    'title' => $chat['title'] ?? $chat['username'] ?? 'Unknown',
+                    'type' => $chat['type'],
+                ];
+            }
+        }
+
+        return $chats;
+    }
 }
