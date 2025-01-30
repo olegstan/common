@@ -2,6 +2,7 @@
 
 namespace Common\Helpers\Curls;
 
+use Common\Helpers\LoggerHelper;
 use CURLFile;
 
 class TelegramCurl extends Curl
@@ -35,33 +36,53 @@ class TelegramCurl extends Curl
      * @var string
      */
     public const FIN_ERROR_CHAT_ID = '-1002245845350';
+    
+    /**
+     * Logger error chat
+     *
+     * @var string
+     */
+    public const FIN_VALID_ERROR_CHAT_ID = '-4624306641';
 
     /**
-     * @param $text
-     * @param $chatId
+     * @param string $text
+     * @param string|null $chatId
      *
      * @return mixed|void
      */
-    public static function postMessage($text, $chatId = null)
+    public static function postMessage(string $text, ?string $chatId = null)
     {
-        $url = "https://api.telegram.org/bot" . TelegramCurl::TELEGRAM_TOKEN . "/sendMessage";
+        // URL API Telegram
+        $url = "https://api.telegram.org/bot" . self::TELEGRAM_TOKEN . "/sendMessage";
 
+        // Формируем данные для отправки
         $data = json_encode([
-            'chat_id' => !$chatId ? TelegramCurl::FINTEST_MONITOR_CHAT_ID : $chatId,
+            'chat_id' => $chatId ?? self::FINTEST_MONITOR_CHAT_ID,
             'text' => $text,
-            'none_stop' => true,
-            'timeout' => 123
+            'disable_notification' => true, // Отключает уведомление (если нужно)
+            'parse_mode' => 'HTML', // Поддержка HTML-разметки
         ]);
 
         $response = self::post($url, $data, [
             'Content-Type: application/json',
         ], 'telegram');
 
+        // Обрабатываем ответ
         $json = json_decode($response);
 
+        // Если запрос выполнен успешно
         if (isset($json->ok) && $json->ok) {
-            return $json;
+            return $json; // Возвращаем ответ API
         }
+
+        // Если запрос не удался, логируем ошибку
+        LoggerHelper::getLogger()->error('Ошибка отправки сообщения в Telegram', [
+            'url' => $url,
+            'data' => $data,
+            'response' => $response,
+        ]);
+
+        return null;
     }
 
     /**
