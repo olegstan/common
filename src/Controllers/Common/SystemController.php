@@ -3,15 +3,16 @@
 namespace Common\Controllers\Common;
 
 use App\Api\V1\Controllers\Common\BaseController;
-use App\Helpers\FileHelper;
+use Common\Helpers\FileHelper;
 use Illuminate\Http\Response;
 
 class SystemController extends BaseController
 {
     /**
-     * @return Response
+     * @param $request
+     * @return mixed
      */
-    public function getSystemSettings()
+    public function getIndex($request)
     {
         // Получение максимального размера из ini файла
         $maxFileSize = FileHelper::getMaxUploadSize();
