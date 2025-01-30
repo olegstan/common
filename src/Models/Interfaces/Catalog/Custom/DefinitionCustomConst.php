@@ -7,7 +7,7 @@ use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 
 interface DefinitionCustomConst
 {
-    public const TYPE_FIELD = '`custom_stocks`.`type_id`';
+    public const TYPE_FIELD = 'custom_stocks.type_id';
     public const STOCK_VALUES = [
         DefinitionActiveConst::STOCK,
     ];

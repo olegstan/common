@@ -4,7 +4,7 @@ namespace Common\Models\Interfaces\Catalog\Yahoo;
 
 interface DefinitionYahooConst
 {
-    public const TYPE_FIELD = '`yahoo_stocks`.`type_disp`';
+    public const TYPE_FIELD = 'yahoo_stocks.type_disp';
     public const STOCK_VALUES = [
         'Equity'
     ];
