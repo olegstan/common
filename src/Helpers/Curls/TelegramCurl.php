@@ -202,4 +202,123 @@ class TelegramCurl extends Curl
 
         return $chats;
     }
+
+    /**
+     * Метод inline кнопки которые ведут в нужные чаты
+     * 
+     * @param array $chatCategories
+     *
+     * @return mixed|null
+     */
+    public static function postNavigationMessage(array $chatCategories)
+    {
+        $url = "https://api.telegram.org/bot" . self::TELEGRAM_TOKEN . "/sendMessage";
+
+        // Генерация кнопок
+        $buttons = [];
+        foreach ($chatCategories as $category => $chat) {
+            $buttons[] = [
+                'text' => $category, // Имя категории
+                'url' => $chat['url'], // Ссылка на чат
+            ];
+        }
+
+        // Разбиваем кнопки на строки (по 2-3 в строке для красоты)
+        $inlineKeyboard = array_chunk($buttons, 2);
+
+        $data = json_encode([
+            'chat_id' => self::FINTEST_MONITOR_CHAT_ID, // ID чата, куда отправляем сообщение
+            'text' => "Навигация по чатам и категориям:\nВыберите нужный раздел.",
+            'reply_markup' => json_encode([
+                'inline_keyboard' => $inlineKeyboard,
+            ]),
+        ]);
+
+        $response = self::post($url, $data, ['Content-Type: application/json'], 'telegram');
+
+        $json = json_decode($response, true);
+        if (isset($json['ok']) && $json['ok']) {
+            return $json['result']['message_id']; // Возвращаем ID сообщения
+        }
+
+        // Логируем ошибку, если отправка не удалась
+        LoggerHelper::getLogger()->error('Ошибка отправки сообщения с кнопками в Telegram', [
+            'url' => $url,
+            'data' => $data,
+            'response' => $response,
+        ]);
+
+        return null;
+    }
+
+    /**
+     * Закрепление в чате
+     * 
+     * @param $messageId
+     * @param $chatId
+     *
+     * @return bool
+     */
+    public static function pinMessage($messageId, $chatId): bool
+    {
+        $url = "https://api.telegram.org/bot" . self::TELEGRAM_TOKEN . "/pinChatMessage";
+
+        $data = json_encode([
+            'chat_id' => $chatId,
+            'message_id' => $messageId,
+            'disable_notification' => true, // Без уведомления
+        ]);
+
+        $response = self::post($url, $data, ['Content-Type: application/json'], 'telegram');
+        $json = json_decode($response, true);
+
+        if (isset($json['ok']) && $json['ok']) {
+            return true; // Сообщение успешно закреплено
+        }
+
+        // Логируем ошибку, если закрепление не удалось
+        LoggerHelper::getLogger()->error('Ошибка закрепления сообщения в Telegram', [
+            'url' => $url,
+            'data' => $data,
+            'response' => $response,
+        ]);
+
+        return false;
+    }
+
+    /**
+     * Логика отправки и закрепления в одном методе
+     * 
+     * @return void
+     */
+    public static function setupNavigationMessage(): void
+    {
+        // Получаем список чатов
+        $chatList = self::getChatList();
+
+        if (empty($chatList)) {
+            LoggerHelper::getLogger()->error('Список чатов пуст, невозможно создать сообщение с навигацией.');
+            return;
+        }
+
+        // Генерация кнопок
+        $buttons = [];
+        foreach ($chatList as $chat) {
+            $buttons[] = [
+                'text' => $chat['title'], // Имя чата
+                'url' => 'https://t.me/' . ($chat['username'] ?? ''), // Ссылка на чат, если есть username
+            ];
+        }
+
+        // Разбиваем кнопки на строки (по 2-3 в строке для красоты)
+        $inlineKeyboard = array_chunk($buttons, 2);
+
+        // Отправляем сообщение с кнопками
+        $messageId = self::postNavigationMessage($inlineKeyboard);
+
+        // Закрепляем сообщение
+        if ($messageId) {
+            self::pinMessage($messageId, self::FINTEST_MONITOR_CHAT_ID);
+        }
+    }
 }
