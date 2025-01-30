@@ -101,7 +101,7 @@ class Client extends User
 
         $cash = Cash::create([
             'user_id' => $this->id,
-            'name' => 'Кошелек',
+            'name' => 'Наличные',
         ]);
 
         UserSubaccount::create([

@@ -582,7 +582,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         $cash = Cash::create([
             'user_id' => $this->id,
-            'name' => 'Кошелек',
+            'name' => 'Наличные',
         ]);
 
         UserSubaccount::create([
