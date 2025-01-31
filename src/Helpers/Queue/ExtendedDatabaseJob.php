@@ -3,14 +3,15 @@
 namespace Common\Helpers\Queue;
 
 use Common\Helpers\LoggerHelper;
-use DB;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Queue\DatabaseQueue;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Jobs\DatabaseJob;
 use Illuminate\Queue\ManuallyFailedException;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 
 class ExtendedDatabaseJob extends DatabaseJob
 {
@@ -25,6 +26,7 @@ class ExtendedDatabaseJob extends DatabaseJob
     public function __construct(Container $container, DatabaseQueue $database, $job, $connectionName, $queue)
     {
         if (config('app.extended_log')) {
+            LoggerHelper::flushListeners();
             LoggerHelper::$commandKey = 'queue';
 
             $payload = $job->payload;
@@ -42,18 +44,14 @@ class ExtendedDatabaseJob extends DatabaseJob
                 }
             }
 
-            if(!LoggerHelper::$status)
+            Event::forget(QueryExecuted::class);
+            DB::listen(function ($sql)
             {
-                LoggerHelper::$status = true;
-
-                DB::listen(function ($sql)
+                if (LoggerHelper::$logQuery || $sql->time > 100)
                 {
-                    if (LoggerHelper::$logQuery || $sql->time > 100)
-                    {
-                        LoggerHelper::listenQuery($sql);
-                    }
-                });
-            }
+                    LoggerHelper::listenQuery($sql);
+                }
+            });
         }
 
         $this->job = $job;

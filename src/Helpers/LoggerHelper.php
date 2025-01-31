@@ -44,6 +44,14 @@ class LoggerHelper
     public static $removeDefaultHandler = true;
 
     /**
+     *
+     */
+    public static function flushListeners()
+    {
+        self::$loggers = [];
+    }
+
+    /**
      * @param string $key
      * @return Logger
      */
