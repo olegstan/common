@@ -4,7 +4,7 @@ namespace Common\Models\Interfaces\Catalog\Cbond;
 
 interface DefinitionCbondConst
 {
-    public const TYPE_FIELD = '`cbond_stocks`.`type`';
+    public const TYPE_FIELD = 'cbond_stocks.type';
 
     public const STOCK_VALUES = [
         'common_share',

@@ -4,7 +4,7 @@ namespace Common\Models\Interfaces\Catalog\MoscowExchange;
 
 interface DefinitionMoexConst
 {
-    public const TYPE_FIELD = '`moscow_exchange_stocks`.`type`';
+    public const TYPE_FIELD = 'moscow_exchange_stocks.type';
 
     public const STOCK_VALUES = [
         'common_share',

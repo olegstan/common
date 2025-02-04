@@ -6,9 +6,11 @@ use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
 use Common\Helpers\Queue\RabbitMQQueue;
-use DB;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use PhpAmqpLib\Message\AMQPMessage;
 use VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob;
 
@@ -42,6 +44,8 @@ class BaseRabbitMQJob extends RabbitMQJob
     protected function setupLogging($message): void
     {
         LoggerHelper::$commandKey = 'queue';
+        LoggerHelper::flushListeners();
+
         $payload = $message->getBody();
 
         if ($payload) {
@@ -59,18 +63,14 @@ class BaseRabbitMQJob extends RabbitMQJob
      */
     protected function listenToDatabaseQueries(): void
     {
-        if(!LoggerHelper::$status)
+        Event::forget(QueryExecuted::class);
+        DB::listen(function ($sql)
         {
-            LoggerHelper::$status = true;
-
-            DB::listen(static function ($sql)
+            if (LoggerHelper::$logQuery || $sql->time > 100)
             {
-                if (LoggerHelper::$logQuery || $sql->time > 100)
-                {
-                    LoggerHelper::listenQuery($sql);
-                }
-            });
-        }
+                LoggerHelper::listenQuery($sql);
+            }
+        });
     }
 
     /**
