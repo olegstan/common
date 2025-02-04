@@ -51,6 +51,17 @@ class StockMapping extends BaseCatalog
     ];
 
     /**
+     * Соответствие моделей таблицам в stock_mappings.
+     */
+    public const TABLE_COLUMNS = [
+        MoscowExchangeStock::class => 'moscow_exchange_stocks_id',
+        CbondStock::class => 'cbond_stocks_id',
+        TinkoffStock::class => 'tinkoff_stocks_id',
+        YahooStock::class => 'yahoo_stocks_id',
+        TradingViewTicker::class => 'tv_tickers_id',
+    ];
+
+    /**
      * Возвращает модели других каталогов, по переданному каталогу (переданный каталог не будет включен в возвращаемое
      * значение)
      *
