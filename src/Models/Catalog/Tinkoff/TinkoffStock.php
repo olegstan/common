@@ -232,4 +232,20 @@ class TinkoffStock extends BaseCatalog
     {
         return $this->hasMany(TinkoffCoupon::class, 'tinkoff_stock_id');
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSymbol()
+    {
+        return $this->ticker;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSecondSymbol()
+    {
+        return $this->isin;
+    }
 }
