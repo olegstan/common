@@ -7,6 +7,7 @@ use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Common\Models\Catalog\Tinkoff\TinkoffStock;
 use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Common\Models\Catalog\Yahoo\YahooStock;
+use DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -23,10 +24,29 @@ class StockMapping extends BaseCatalog
     use HasFactory;
 
     /**
+     * Соответствие моделей таблицам в stock_mappings.
+     */
+    public const TABLE_COLUMNS = [
+        MoscowExchangeStock::class => 'moscow_exchange_stocks_id',
+        CbondStock::class => 'cbond_stocks_id',
+        TinkoffStock::class => 'tinkoff_stocks_id',
+        YahooStock::class => 'yahoo_stocks_id',
+        TradingViewTicker::class => 'tv_tickers_id',
+    ];
+    /**
+     * Соответствие столбцов `stock_mappings` таблицам в БД и их полям.
+     */
+    public const TABLE_NAMES = [
+        'moscow_exchange_stocks_id' => ['table' => 'moscow_exchange_stocks', 'fields' => ['secid', 'isin']],
+        'cbond_stocks_id' => ['table' => 'cbond_stocks', 'fields' => ['secid', 'isin']],
+        'tinkoff_stocks_id' => ['table' => 'tinkoff_stocks', 'fields' => ['figi', 'ticker', 'isin']],
+        'yahoo_stocks_id' => ['table' => 'yahoo_stocks', 'fields' => ['symbol']],
+        'tv_tickers_id' => ['table' => 'tv_tickers', 'fields' => ['symbol']],
+    ];
+    /**
      * @var string
      */
     public $table = 'stock_mappings';
-
     /**
      * @var array
      */
@@ -48,17 +68,6 @@ class StockMapping extends BaseCatalog
         'custom_stocks_id' => 'integer',
         'yahoo_stocks_id' => 'integer',
         'tv_tickers_id' => 'integer',
-    ];
-
-    /**
-     * Соответствие моделей таблицам в stock_mappings.
-     */
-    public const TABLE_COLUMNS = [
-        MoscowExchangeStock::class => 'moscow_exchange_stocks_id',
-        CbondStock::class => 'cbond_stocks_id',
-        TinkoffStock::class => 'tinkoff_stocks_id',
-        YahooStock::class => 'yahoo_stocks_id',
-        TradingViewTicker::class => 'tv_tickers_id',
     ];
 
     /**
@@ -140,6 +149,65 @@ class StockMapping extends BaseCatalog
 
         // Убираем айдишник переданной модели из массива
         return array_filter($result, static fn($id) => $id !== $catalog->id);
+    }
+
+    /**
+     * Обновляет существующую запись, если появилась новая связь.
+     *
+     * @param StockMapping $mapping
+     * @param MoscowExchangeStock|CbondStock|TinkoffStock|TradingViewTicker|YahooStock $model
+     *
+     * @return void
+     */
+    public static function updateExistingMapping(StockMapping $mapping, $model): void
+    {
+        $modelClass = get_class($model);
+        $newId = $model->id;
+
+        if (isset(self::TABLE_COLUMNS[$modelClass])) {
+            $column = self::TABLE_COLUMNS[$modelClass];
+
+            if (!$mapping->$column) {
+                $mapping->$column = $newId;
+                $mapping->save();
+            }
+        }
+    }
+
+    /**
+     * Создает новую запись в `stock_mappings`, если найдено больше 1 связи.
+     *
+     * @param string $ticker
+     *
+     * @return void
+     */
+    public static function createNewMapping(string $ticker): void
+    {
+        $mapping = new StockMapping();
+        $mapping->ticker = $ticker;
+
+        $relatedCount = 0;
+
+        foreach (self::TABLE_NAMES as $column => $config) {
+            //Работаем с DB для ускорения запросов
+            $query = DB::table($config['table']);
+
+            foreach ($config['fields'] as $field) {
+                $query->orWhere($field, $ticker);
+            }
+
+            $id = $query->value('id');
+
+            if ($id) {
+                $mapping->$column = $id;
+                $relatedCount++;
+            }
+        }
+
+        // Записываем в таблицу только если найдено больше 1 связи
+        if ($relatedCount > 1) {
+            $mapping->save();
+        }
     }
 
     /**
