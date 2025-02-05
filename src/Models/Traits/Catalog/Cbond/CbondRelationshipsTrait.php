@@ -4,9 +4,11 @@ namespace Common\Models\Traits\Catalog\Cbond;
 use App\Models\Actives\Active;
 use Common\Models\Catalog\Cbond\CbondCoupon;
 use Common\Models\Catalog\Cbond\CbondHistory;
+use Common\Models\Catalog\StockMapping;
 use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait CbondRelationshipsTrait
 {
@@ -54,10 +56,18 @@ trait CbondRelationshipsTrait
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return MorphMany
      */
-    public function actives()
+    public function actives(): MorphMany
     {
         return $this->morphMany(Active::class, 'item');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function mapping(): HasOne
+    {
+        return $this->hasOne(StockMapping::class, 'cbond_stocks_id');
     }
 }
