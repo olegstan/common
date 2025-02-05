@@ -7,6 +7,7 @@ use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Common\Models\Catalog\Tinkoff\TinkoffStock;
 use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Common\Models\Catalog\Yahoo\YahooStock;
+use Common\Models\Interfaces\RelationTextInterface;
 use DB;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -89,9 +90,9 @@ class StockMapping extends BaseCatalog
 
         //TODO:: Как добавим тинек в каталог для активов, надо его сюда будет внести (еще и TV можно использовать)
         $result = [
-            'moscow_exchange_stocks' => $mapping->moscowExchangeStock,
-            'cbond_stocks' => $mapping->cbondStock,
-            'yahoo_stocks' => $mapping->yahooStock,
+            RelationTextInterface::MOEX_CATALOG => $mapping->moscowExchangeStock,
+            RelationTextInterface::CB_CATALOG => $mapping->cbondStock,
+            RelationTextInterface::YAHOO_CATALOG => $mapping->yahooStock,
 //            'tv_tickers' => $mapping->tvTicker,
         ];
 
@@ -142,9 +143,9 @@ class StockMapping extends BaseCatalog
 
         //TODO:: Как добавим тинек в каталог для активов, надо его сюда будет внести (еще и TV можно использовать)
         $result = [
-            'moscow_exchange_stocks_id' => $mapping->moscow_exchange_stocks_id,
-            'cbond_stocks_id' => $mapping->cbond_stocks_id,
-            'yahoo_stocks_id' => $mapping->yahoo_stocks_id,
+            RelationTextInterface::MOEX_CATALOG => $mapping->moscowExchangeStock,
+            RelationTextInterface::CB_CATALOG => $mapping->cbondStock,
+            RelationTextInterface::YAHOO_CATALOG => $mapping->yahooStock,
 //            'tv_tickers_id' => $mapping->tv_tickers_id,
         ];
 
