@@ -17,6 +17,32 @@ class LokiLogger
 
     /**
      * @param $message
+     * @param string $app
+     */
+    public static function debug($message, $app = 'laravel')
+    {
+        self::log($message, $app, 'debug');
+    }
+    /**
+     * @param $message
+     * @param string $app
+     */
+    public static function info($message, $app = 'laravel')
+    {
+        self::log($message, $app, 'info');
+    }
+
+    /**
+     * @param $message
+     * @param string $app
+     */
+    public static function error($message, $app = 'laravel')
+    {
+        self::log($message, $app, 'error');
+    }
+
+    /**
+     * @param $message
      * @param $app
      * @param string $level
      */
