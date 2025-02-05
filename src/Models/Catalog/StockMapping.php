@@ -34,14 +34,14 @@ class StockMapping extends BaseCatalog
         TradingViewTicker::class => 'tv_tickers_id',
     ];
     /**
-     * Соответствие столбцов `stock_mappings` таблицам в БД и их полям.
+     * Соответствие столбцов `stock_mappings` моделям и их полям.
      */
     public const TABLE_NAMES = [
-        'moscow_exchange_stocks_id' => ['table' => 'moscow_exchange_stocks', 'fields' => ['secid', 'isin']],
-        'cbond_stocks_id' => ['table' => 'cbond_stocks', 'fields' => ['secid', 'isin']],
-        'tinkoff_stocks_id' => ['table' => 'tinkoff_stocks', 'fields' => ['figi', 'ticker', 'isin']],
-        'yahoo_stocks_id' => ['table' => 'yahoo_stocks', 'fields' => ['symbol']],
-        'tv_tickers_id' => ['table' => 'tv_tickers', 'fields' => ['symbol']],
+        MoscowExchangeStock::class => ['fields' => ['secid', 'isin']],
+        CbondStock::class => ['fields' => ['secid', 'isin']],
+        TinkoffStock::class => ['fields' => ['figi', 'ticker', 'isin']],
+        YahooStock::class => ['fields' => ['symbol']],
+        TradingViewTicker::class => ['fields' => ['symbol']],
     ];
     /**
      * @var string
@@ -188,9 +188,11 @@ class StockMapping extends BaseCatalog
 
         $relatedCount = 0;
 
-        foreach (self::TABLE_NAMES as $column => $config) {
-            //Работаем с DB для ускорения запросов
-            $query = DB::table($config['table']);
+        /**
+         * @var $modelClass MoscowExchangeStock|YahooStock|TinkoffStock|CbondStock|TradingViewTicker
+         */
+        foreach (self::TABLE_NAMES as $modelClass => $config) {
+            $query = $modelClass::query();
 
             foreach ($config['fields'] as $field) {
                 $query->orWhere($field, $ticker);
@@ -199,6 +201,7 @@ class StockMapping extends BaseCatalog
             $id = $query->value('id');
 
             if ($id) {
+                $column = self::TABLE_COLUMNS[$modelClass];
                 $mapping->$column = $id;
                 $relatedCount++;
             }
