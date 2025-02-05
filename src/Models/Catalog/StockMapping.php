@@ -87,12 +87,12 @@ class StockMapping extends BaseCatalog
             return [];
         }
 
-        //TODO:: Как добавим тинек в каталог для активов, надо его сюда будет внести
+        //TODO:: Как добавим тинек в каталог для активов, надо его сюда будет внести (еще и TV можно использовать)
         $result = [
             'moscow_exchange_stocks' => $mapping->moscowExchangeStock,
             'cbond_stocks' => $mapping->cbondStock,
             'yahoo_stocks' => $mapping->yahooStock,
-            'tv_tickers' => $mapping->tvTicker,
+//            'tv_tickers' => $mapping->tvTicker,
         ];
 
         // Исключаем переданную модель из массива
@@ -140,12 +140,12 @@ class StockMapping extends BaseCatalog
             return [];
         }
 
-        //TODO:: Как добавим тинек в каталог для активов, надо его сюда будет внести
+        //TODO:: Как добавим тинек в каталог для активов, надо его сюда будет внести (еще и TV можно использовать)
         $result = [
             'moscow_exchange_stocks_id' => $mapping->moscow_exchange_stocks_id,
             'cbond_stocks_id' => $mapping->cbond_stocks_id,
             'yahoo_stocks_id' => $mapping->yahoo_stocks_id,
-            'tv_tickers_id' => $mapping->tv_tickers_id,
+//            'tv_tickers_id' => $mapping->tv_tickers_id,
         ];
 
         // Убираем айдишник переданной модели из массива
