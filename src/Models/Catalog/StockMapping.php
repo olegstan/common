@@ -91,7 +91,7 @@ class StockMapping extends BaseCatalog
         //TODO:: Как добавим тинек в каталог для активов, надо его сюда будет внести (еще и TV можно использовать)
         $result = [
             RelationTextInterface::MOEX_CATALOG => $mapping->moscowExchangeStock,
-            RelationTextInterface::CB_CATALOG => $mapping->cbondStock,
+            RelationTextInterface::CBONDS_CATALOG => $mapping->cbondStock,
             RelationTextInterface::YAHOO_CATALOG => $mapping->yahooStock,
 //            'tv_tickers' => $mapping->tvTicker,
         ];
@@ -144,7 +144,7 @@ class StockMapping extends BaseCatalog
         //TODO:: Как добавим тинек в каталог для активов, надо его сюда будет внести (еще и TV можно использовать)
         $result = [
             RelationTextInterface::MOEX_CATALOG => $mapping->moscowExchangeStock,
-            RelationTextInterface::CB_CATALOG => $mapping->cbondStock,
+            RelationTextInterface::CBONDS_CATALOG => $mapping->cbondStock,
             RelationTextInterface::YAHOO_CATALOG => $mapping->yahooStock,
 //            'tv_tickers_id' => $mapping->tv_tickers_id,
         ];
