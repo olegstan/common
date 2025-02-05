@@ -17,6 +17,7 @@ use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use Exception;
 use File;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class CbondStock
@@ -105,6 +106,8 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
 
     //Общий трейт для каталогов и Актива для поиска бумаг
     use SearchActiveCatalogTrait;
+    
+    use HasFactory;
 
     /**
      * @var string

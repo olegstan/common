@@ -23,6 +23,7 @@ use Common\Models\Traits\Catalog\Yahoo\YahooScopeTrait;
 use Exception;
 use Scheb\YahooFinanceApi\ApiClientFactory;
 use Throwable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property $id
@@ -58,6 +59,8 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
 
     //Общий трейт для каталогов и Актива для поиска бумаг
     use SearchActiveCatalogTrait;
+    
+    use HasFactory;
 
     /**
      * @var string

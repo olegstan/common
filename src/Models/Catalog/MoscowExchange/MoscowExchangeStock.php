@@ -25,6 +25,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class MoscowExchangeStock
@@ -110,6 +111,8 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
 
     //Общий трейт для каталогов и Актива для поиска бумаг
     use SearchActiveCatalogTrait;
+    
+    use HasFactory;
 
     /**
      * @var string

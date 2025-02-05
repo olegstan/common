@@ -7,6 +7,7 @@ use Common\Models\Interfaces\Catalog\TradingView\DefinitionTradingViewConst;
 use Common\Models\Traits\Catalog\TradingView\TradingViewRelationshipsTrait;
 use Common\Models\Traits\Catalog\TradingView\TradingViewReturnGetDataFunc;
 use Common\Models\Traits\Catalog\TradingView\TradingViewScopeTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
 * Class TradingViewTicker
@@ -43,6 +44,8 @@ class TradingViewTicker extends BaseCatalog implements DefinitionTradingViewCons
 
     //функции запросов
     use TradingViewReturnGetDataFunc;
+    
+    use HasFactory;
 
     /**
      * @var string

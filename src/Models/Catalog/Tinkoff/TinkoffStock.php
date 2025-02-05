@@ -4,6 +4,7 @@ namespace Common\Models\Catalog\Tinkoff;
 
 use Common\Models\Catalog\BaseCatalog;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property $name
@@ -72,6 +73,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class TinkoffStock extends BaseCatalog
 {
+    use HasFactory;
+    
     /**
      * @var string
      */
