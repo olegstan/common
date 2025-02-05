@@ -177,10 +177,11 @@ class LoggerHelper
             $sqlWithBindings = preg_replace('/\?/', $value, $sqlWithBindings, 1);
         }
 
-        LoggerHelper::getLogger($key)->debug(
-            'SQL => ' . $sqlWithBindings . PHP_EOL .
+        $string = 'SQL => ' . $sqlWithBindings . PHP_EOL .
             'TIME => ' . $sql->time . ' milliseconds' . PHP_EOL .
-            ($hash ? ('HASH => ' . $hash) : '')
-        );
+            ($hash ? ('HASH => ' . $hash) : '');
+
+        LoggerHelper::getLogger($key)->debug($string);
+        LokiLogger::log($string);
     }
 }
