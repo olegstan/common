@@ -1,19 +1,33 @@
 <?php
 namespace Common\Helpers;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Exception;
+use Illuminate\Support\Facades\Request;
 
-class LokiLogger
+class LokiLogger implements LoggerInterface
 {
     /**
      * @var array
      */
     private static array $buffer = [];
     /**
+     * @var array
+     */
+    private static array $loggers = [];
+    /**
      * @var int
      */
     private static int $batchSize = 100;
+
+    /**
+     *
+     */
+    public static function flushListeners()
+    {
+        self::$loggers = [];
+    }
 
     /**
      * @param $message
@@ -42,21 +56,78 @@ class LokiLogger
     }
 
     /**
+     * @param $key
+     */
+    public static function getLogger($key)
+    {
+        if(!isset(self::$loggers[$key]))
+        {
+            if(LoggerHelper::$commandKey)
+            {
+                //определяем путь куда писать логи
+                switch (LoggerHelper::$commandKey)
+                {
+                    case 'queue':
+                        $type = 'queue';
+                        $path = LoggerHelper::prepareCommandKey(LoggerHelper::$jobKey);
+                        break;
+                    case 'tests':
+                        $type = 'tests';
+                        $path = LoggerHelper::prepareCommandKey(LoggerHelper::$testKey);
+                        break;
+                    case 'commands':
+                    default:
+                        $type = 'commands';
+                        $path = LoggerHelper::prepareCommandKey(LoggerHelper::$commandKey);
+                        break;
+                }
+            }else{
+                $type = 'front';
+
+                $url = Request::fullUrl();
+
+                if(str_contains($url, 'api/v1/call'))
+                {
+                    $partsBeforeGetParams = explode( '?', $url);
+                    $parts = explode( '/', $partsBeforeGetParams[0] ?? '');
+                    $partsLength = count($parts);
+
+                    if(isset($parts[$partsLength - 1]) && isset($parts[$partsLength - 2]))
+                    {
+                        $controllerName = $parts[$partsLength - 2];
+                        $methodName = $parts[$partsLength - 1];
+
+                        $path = $controllerName . '/' . $methodName;
+                    }
+                }else{
+                    $path = 'common';
+                }
+            }
+
+            self::$loggers[$key] = ["app" => config('app.name'), "type" =>  $type, "path" => $path];
+        }else{
+            return self::$loggers[$key];
+        }
+    }
+
+    /**
      * @param $message
-     * @param $app
+     * @param string $key
      * @param string $level
      */
-    public static function log($message, $app = 'laravel', string $level = 'info')
+    public static function log($message, $key = 'laravel', string $level = 'info')
     {
         $formattedMessage = str_replace(PHP_EOL, "\n", $message);
 
         $timestamp = (int) floor(microtime(true) * 1e9);
 
-// Превращаем в строку
+        // Превращаем в строку
         $timestampString = (string) $timestamp;
 
+        $loggerStreams = self::getLogger($key);
+
         self::$buffer[] = [
-            "stream" => ["app" => $app, "level" => $level],
+            "stream" => [...$loggerStreams, ...['level' => $level]],
             "values" => [[$timestampString, json_encode($formattedMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]]
         ];
 

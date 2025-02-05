@@ -9,7 +9,7 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 
-class LoggerHelper
+class LoggerHelper implements LoggerInterface
 {
     /**
      * @var array
