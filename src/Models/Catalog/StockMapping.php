@@ -8,6 +8,7 @@ use Common\Models\Catalog\Tinkoff\TinkoffStock;
 use Common\Models\Catalog\TradingView\TradingViewTicker;
 use Common\Models\Catalog\Yahoo\YahooStock;
 use DB;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -180,6 +181,7 @@ class StockMapping extends BaseCatalog
      * @param string $ticker
      *
      * @return void
+     * @throws BindingResolutionException
      */
     public static function createNewMapping(string $ticker): void
     {
@@ -192,7 +194,7 @@ class StockMapping extends BaseCatalog
          * @var $modelClass MoscowExchangeStock|YahooStock|TinkoffStock|CbondStock|TradingViewTicker
          */
         foreach (self::TABLE_NAMES as $modelClass => $config) {
-            $query = $modelClass::query();
+            $query = app()->make($modelClass)->query();
 
             foreach ($config['fields'] as $field) {
                 $query->orWhere($field, $ticker);
