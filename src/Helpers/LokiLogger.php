@@ -144,7 +144,10 @@ class LokiLogger implements LoggerInterface
         if (empty(self::$buffer)) return;
 
         try {
-            $response = Http::post('http://localhost:3100/loki/api/v1/push', [
+            $response = Http::withBasicAuth(
+                config('loki.user'),
+                config('loki.password')
+            )->post(config('loki.host') . '/loki/api/v1/push', [
                 'streams' => self::$buffer
             ]);
 
