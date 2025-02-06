@@ -105,9 +105,9 @@ class LokiLogger implements LoggerInterface
             }
 
             self::$loggers[$key] = ["app" => config('app.name'), "type" =>  $type, "path" => $path];
-        }else{
-            return self::$loggers[$key];
         }
+
+        return self::$loggers[$key];
     }
 
     /**
