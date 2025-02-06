@@ -127,7 +127,7 @@ class LokiLogger implements LoggerInterface
         $loggerStreams = self::getLogger($key);
 
         self::$buffer[] = [
-            "stream" => [...$loggerStreams, ...['level' => $level]],
+            "stream" => $loggerStreams + ['level' => $level],
             "values" => [[$timestampString, json_encode($formattedMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]]
         ];
 
