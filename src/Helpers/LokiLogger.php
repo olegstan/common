@@ -144,10 +144,15 @@ class LokiLogger implements LoggerInterface
         if (empty(self::$buffer)) return;
 
         try {
-            $response = Http::withBasicAuth(
-                config('loki.user'),
-                config('loki.password')
-            )->post(config('loki.host') . '/loki/api/v1/push', [
+            $user = config('loki.user');
+            $password = config('loki.password');
+            $http = Http::withOptions([]);
+
+            if ($user && $password) {
+                $http = $http->withBasicAuth($user, $password);
+            }
+
+            $response = $http->post(config('loki.host') . '/loki/api/v1/push', [
                 'streams' => self::$buffer
             ]);
 
