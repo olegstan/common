@@ -56,6 +56,24 @@ class LokiLogger implements LoggerInterface
     }
 
     /**
+     * @param $data
+     * @return array
+     */
+    public static function filterSecureData(&$data)
+    {
+        // Если данные — массив, обрабатываем каждый элемент рекурсивно
+        if (is_array($data)) {
+            if(isset($data['sql']))
+            {
+                $data['sql'] = SqlLogSanitizer::sanitize($data['sql']);
+            }
+            return $data;
+        }
+
+        return $data;
+    }
+
+    /**
      * @param $key
      */
     public static function getLogger($key)
@@ -118,6 +136,8 @@ class LokiLogger implements LoggerInterface
     public static function log($message, $key = 'laravel', string $level = 'info')
     {
         $formattedMessage = str_replace(PHP_EOL, "\n", $message);
+
+        $formattedMessage = self::filterSecureData($formattedMessage);
 
         $timestamp = (int) floor(microtime(true) * 1e9);
 
