@@ -3,6 +3,7 @@
 namespace Common\Helpers\Queue;
 
 use Common\Helpers\LoggerHelper;
+use Common\Helpers\LokiLogger;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Events\QueryExecuted;
@@ -27,6 +28,7 @@ class ExtendedDatabaseJob extends DatabaseJob
     {
         if (config('app.extended_log')) {
             LoggerHelper::flushListeners();
+            LokiLogger::flushListeners();
             LoggerHelper::$commandKey = 'queue';
 
             $payload = $job->payload;

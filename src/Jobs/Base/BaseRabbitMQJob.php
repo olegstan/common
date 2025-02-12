@@ -5,6 +5,7 @@ namespace Common\Jobs\Base;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\LoggerHelper;
+use Common\Helpers\LokiLogger;
 use Common\Helpers\Queue\RabbitMQQueue;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -45,6 +46,7 @@ class BaseRabbitMQJob extends RabbitMQJob
     {
         LoggerHelper::$commandKey = 'queue';
         LoggerHelper::flushListeners();
+        LokiLogger::flushListeners();
 
         $payload = $message->getBody();
 
