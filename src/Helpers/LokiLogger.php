@@ -176,9 +176,10 @@ class LokiLogger implements LoggerInterface
                 'streams' => self::$buffer
             ]);
 
-            if($response->status() !== 200)
+            $successStatuses = [200, 204];
+            if(!in_array($response->status(), $successStatuses))
             {
-                throw new Exception('Ошибка отправки в loki, статус ответа ' . $response->status());
+                throw new Exception('Ошибка отправки в loki ' . config('loki.host') . ', статус ответа ' . $response->status());
             }
 
             self::$buffer = []; // Очищаем буфер при успехе
