@@ -122,7 +122,7 @@ class LokiLogger implements LoggerInterface
                 }
             }
 
-            self::$loggers[$key] = ["app" => config('app.name'), "env" => config('app.env'), "type" =>  $type, "path" => $path];
+            self::$loggers[$key] = ["app" => config('app.name'), "env" => config('app.env'), "type" =>  $type, "path" => $path, "key" => $key];
         }
 
         return self::$loggers[$key];
