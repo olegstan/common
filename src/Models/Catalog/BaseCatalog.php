@@ -79,7 +79,7 @@ class BaseCatalog extends BaseModel
      */
     protected function getStockCacheKey(): string
     {
-        // Например: App\Models\MoscowExchangeStock.12345
+        // Например: catalog.3.12345
         return $this->getMorphClass() . '.' . $this->id;
     }
 }

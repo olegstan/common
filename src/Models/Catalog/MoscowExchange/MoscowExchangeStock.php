@@ -719,12 +719,6 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
         $this->save();
     }
 
-    protected static function getStockCacheKey($stock): string
-    {
-        // Например: App\Models\MoscowExchangeStock.12345
-        return $stock->getMorphClass() . '.' . $stock->id;
-    }
-
     /**
      * @param $stock
      * @param $datum
