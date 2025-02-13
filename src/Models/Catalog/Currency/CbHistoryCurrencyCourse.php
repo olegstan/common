@@ -4,8 +4,6 @@ namespace Common\Models\Catalog\Currency;
 
 use Cache;
 use Carbon\Carbon;
-use Common\Helpers\Curls\Currency\CbCurl;
-use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogHistoryInterface;

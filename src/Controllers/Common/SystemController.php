@@ -4,7 +4,6 @@ namespace Common\Controllers\Common;
 
 use App\Api\V1\Controllers\Common\BaseController;
 use Common\Helpers\FileHelper;
-use Illuminate\Http\Response;
 
 class SystemController extends BaseController
 {

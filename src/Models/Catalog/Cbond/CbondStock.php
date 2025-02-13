@@ -16,8 +16,8 @@ use Common\Models\Traits\Catalog\CommonCatalogTrait;
 use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use Exception;
 use File;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Collection;
 
 /**
  * Class CbondStock

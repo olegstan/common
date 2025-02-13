@@ -3,8 +3,8 @@
 namespace Common\Models\Catalog\Tinkoff;
 
 use Common\Models\Catalog\BaseCatalog;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property $name

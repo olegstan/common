@@ -5,7 +5,6 @@ namespace Common\Models\Catalog\Yahoo;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\Catalog\CatalogSearch;
-use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Helpers\Curls\Yahoo\YahooCurl;
 use Common\Helpers\HistoryHelper;
 use Common\Helpers\LoggerHelper;
@@ -13,7 +12,6 @@ use Common\Jobs\Base\CreateJobs;
 use Common\Jobs\Exchanges\YahooDataJob;
 use Common\Jobs\Exchanges\YahooJob;
 use Common\Models\Catalog\BaseCatalog;
-use Common\Models\Catalog\MoscowExchange\MoscowExchangeHistory;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -24,9 +22,9 @@ use Common\Models\Traits\Catalog\Yahoo\YahooRelationshipsTrait;
 use Common\Models\Traits\Catalog\Yahoo\YahooReturnGetDataFunc;
 use Common\Models\Traits\Catalog\Yahoo\YahooScopeTrait;
 use Exception;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Scheb\YahooFinanceApi\ApiClientFactory;
 use Throwable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property $id

@@ -1,9 +1,8 @@
 <?php
 namespace Common\Helpers;
 
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Http;
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
 
 class LokiLogger implements LoggerInterface

@@ -3,9 +3,7 @@
 namespace Common\Helpers;
 
 use Carbon\Carbon;
-use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Models\Catalog\Currency\CbCurrency;
-use Common\Models\Catalog\MoscowExchange\MoscowExchangeHistory;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 

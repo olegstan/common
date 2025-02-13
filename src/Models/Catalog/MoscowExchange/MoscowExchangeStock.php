@@ -5,7 +5,6 @@ namespace Common\Models\Catalog\MoscowExchange;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\Catalog\CatalogSearch;
-use Common\Helpers\CoverageHelper;
 use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Helpers\HistoryHelper;
 use Common\Helpers\LoggerHelper;
@@ -24,10 +23,10 @@ use Common\Models\Traits\Catalog\MoscowExchange\MoexReturnGetDataFunc;
 use Common\Models\Traits\Catalog\MoscowExchange\MoexScopeTrait;
 use Common\Models\Traits\Catalog\SearchActiveCatalogTrait;
 use Exception;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class MoscowExchangeStock
