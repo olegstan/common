@@ -1,9 +1,14 @@
 <?php
 namespace Common\Helpers;
 
+use App\Jobs\Tinkoff\TinkoffJob;
+use Common\Jobs\Base\CreateJobs;
+use Common\Jobs\SendToLokiJob;
+use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Queue;
 
 class LokiLogger implements LoggerInterface
 {
@@ -156,37 +161,43 @@ class LokiLogger implements LoggerInterface
     }
 
     /**
-     *
+     * 
      */
     public static function flush()
     {
-        if (empty(self::$buffer)) return;
-
-        try {
-            $user = config('loki.user');
-            $password = config('loki.password');
-            $http = Http::withOptions([]);
-
-            if ($user && $password) {
-                $http = $http->withBasicAuth($user, $password);
-            }
-
-            $response = $http->post(config('loki.host') . '/loki/api/v1/push', [
-                'streams' => self::$buffer
-            ]);
-
-            $successStatuses = [200, 204];
-            if(!in_array($response->status(), $successStatuses))
-            {
-                throw new Exception('Ошибка отправки в loki ' . config('loki.host') . ', статус ответа ' . $response->status());
-            }
-
-            self::$buffer = []; // Очищаем буфер при успехе
-        } catch (Exception $e) {
-            LoggerHelper::getLogger('loki')->error($e->getMessage());
-            //TODO написть отправку уведомлений если вдруг loki не доступен
-            // Если отправка не удалась, сохраняем в файл
-            self::$buffer = [];
+        if (empty(self::$buffer)) {
+            return;
         }
+
+        // Копируем текущий буфер и очищаем
+        $logsToSend = self::$buffer;
+        self::$buffer = [];
+
+        CreateJobs::createNotUniq(
+            SendToLokiJob::class,
+            $logsToSend,
+            'loki',
+        );
+    }
+
+    /**
+     * Сохраняет логи в файл как альтернативный вариант.
+     */
+    private static function saveToFallbackFile()
+    {
+        $filePath = storage_path('logs/failed_loki_logs.json');
+        File::append($filePath, json_encode(self::$buffer, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL);
+        self::$buffer = []; // Очищаем буфер после сохранения
+    }
+
+    /**
+     * Повторная попытка отправки неудачных логов.
+     */
+    private static function retryFailedLogs()
+    {
+        // Можно добавить логику для повторной отправки через некоторое время
+        Queue::later(now()->addMinutes(5), function () {
+            self::flush(); // Попробовать отправить снова
+        });
     }
 }
