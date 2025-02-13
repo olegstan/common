@@ -811,9 +811,9 @@ class MoscowExchangeStock extends BaseCatalog implements DefinitionMoexConst, Co
      * @param bool $forceSkipCache
      * @return bool
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false): bool
     {
-        return HistoryHelper::loadHistory($stock, $startDate, $endDate, $forceSkipCache);
+        return HistoryHelper::load($stock, $startDate, $endDate, $forceSkipCache);
     }
 
     /**

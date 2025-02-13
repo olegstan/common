@@ -4,8 +4,12 @@ namespace Common\Models\Catalog\Currency;
 
 use Cache;
 use Carbon\Carbon;
+use Common\Helpers\Curls\Currency\CbCurl;
+use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
+use Common\Helpers\HistoryHelper;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Catalog\MoscowExchange\MoscowExchangeHistory;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Traits\Catalog\CommonCatalogTrait;
@@ -159,14 +163,46 @@ class CbCurrency extends BaseCatalog implements CommonsFuncCatalogInterface
     }
 
     /**
-     * @param $currency
+     * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate
-     * @return void
+     * @param false $forceSkipCache
+     * @return bool
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false): bool
     {
-        CbHistoryCurrencyCourse::loadHistory($stock, $startDate, $endDate);
+        return HistoryHelper::load($stock, $startDate, $endDate, $forceSkipCache);
+    }
+
+    /**
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return \SimpleXMLElement
+     */
+    public function requestDataFromApi(Carbon $startDate, Carbon $endDate)
+    {
+        return CbCurl::getCourses($this->cb_id, $startDate, $endDate);
+    }
+
+    /**
+     * @param $data
+     */
+    public function saveDataFromApi($data)
+    {
+        $date = Carbon::createFromFormat('d.m.Y', (string)$data->attributes()->Date[0]);
+
+        $cbCurrencyHistory = CbHistoryCurrencyCourse::where('currency_id', $this->id)
+            ->where('date', $date->format('Y-m-d'))
+            ->first();
+
+        if (!$cbCurrencyHistory) {
+            self::create([
+                'currency_id' => $this->id,
+                'value' => (float)str_replace(',', '.', $data->Value),
+                'nominal' => (float)str_replace(',', '.', $data->Nominal),
+                'date' => $date->format('Y-m-d'),
+            ]);
+        }
     }
 
     /**

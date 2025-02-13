@@ -5,12 +5,15 @@ namespace Common\Models\Catalog\Yahoo;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\Catalog\CatalogSearch;
+use Common\Helpers\Curls\MoscowExchange\MoscowExchangeCurl;
 use Common\Helpers\Curls\Yahoo\YahooCurl;
+use Common\Helpers\HistoryHelper;
 use Common\Helpers\LoggerHelper;
 use Common\Jobs\Base\CreateJobs;
 use Common\Jobs\Exchanges\YahooDataJob;
 use Common\Jobs\Exchanges\YahooJob;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Catalog\MoscowExchange\MoscowExchangeHistory;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
@@ -351,50 +354,45 @@ class YahooStock extends BaseCatalog implements DefinitionYahooConst, CommonsFun
      * @param $stock
      * @param Carbon $startDate
      * @param Carbon $endDate
-     *
+     * @param false $forceSkipCache
      * @return bool
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false): bool
     {
-        $cacheKey = self::getCacheKey($stock, $startDate, $endDate);
+        return HistoryHelper::load($stock, $startDate, $endDate, $forceSkipCache);
+    }
 
-        [$bool, $result] = self::cacheHistory($cacheKey);
+    /**
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return array|bool
+     */
+    public function requestDataFromApi(Carbon $startDate, Carbon $endDate)
+    {
+        return YahooCurl::getHistoricalData($this->symbol, YahooCurl::INTERVAL_1_DAY, $startDate, $endDate);
+    }
 
-        if ($bool) {
-            return $result;
+    /**
+     * @param $data
+     */
+    public function saveDataFromApi($data)
+    {
+        $history = YahooHistory::where('date', '=', $data['date']->format('Y-m-d'))
+            ->where('yahoo_stock_id', $this->id)
+            ->first();
+
+        if (!$history) {
+            YahooHistory::create([
+                'date' => $data['date']->format('Y-m-d'),
+                'open' => $data['open'],
+                'high' => $data['high'],
+                'low' => $data['low'],
+                'close' => $data['close'],
+                'adj_close' => $data['adj_close'],
+                'volume' => $data['volume'],
+                'yahoo_stock_id' => $this->id,
+            ]);
         }
-
-        $data = YahooCurl::getHistoricalData($stock->symbol, YahooCurl::INTERVAL_1_DAY, $startDate, $endDate);
-
-        if (empty($data)) {
-            Cache::tags([config('cache.tags')])->add($cacheKey, false, Carbon::now()->addDay());
-            LoggerHelper::getLogger()->info('No any history for ' . $stock->symbol);
-
-            return false;
-        }
-
-        Cache::tags([config('cache.tags')])->add($cacheKey, true, Carbon::now()->addDay());
-
-        foreach ($data as $datum) {
-            $history = YahooHistory::where('date', '=', $datum['date']->format('Y-m-d'))
-                ->where('yahoo_stock_id', $stock->id)
-                ->first();
-
-            if (!$history) {
-                YahooHistory::create([
-                    'date' => $datum['date']->format('Y-m-d'),
-                    'open' => $datum['open'],
-                    'high' => $datum['high'],
-                    'low' => $datum['low'],
-                    'close' => $datum['close'],
-                    'adj_close' => $datum['adj_close'],
-                    'volume' => $datum['volume'],
-                    'yahoo_stock_id' => $stock->id,
-                ]);
-            }
-        }
-
-        return true;
     }
 
     /**

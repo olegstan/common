@@ -600,10 +600,27 @@ class CbondStock extends BaseCatalog implements DefinitionCbondConst, CommonsFun
      * @param Carbon $endDate
      * @return true
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false): bool
     {
         //тк заранее все спаршено, будет заглушкой
         return true;
+    }
+
+    /**
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     */
+    public function requestDataFromApi(Carbon $startDate, Carbon $endDate)
+    {
+
+    }
+
+    /**
+     * @param $data
+     */
+    public function saveDataFromApi($data)
+    {
+
     }
 
     /**

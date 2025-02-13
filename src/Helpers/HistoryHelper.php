@@ -18,7 +18,7 @@ class HistoryHelper
      * @param false $forceSkipCache
      * @return bool
      */
-    public static function loadHistory(CommonsFuncCatalogInterface $stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
+    public static function load(CommonsFuncCatalogInterface $stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false): bool
     {
         $stockCacheKey = $stock->getStockCacheKey();
 

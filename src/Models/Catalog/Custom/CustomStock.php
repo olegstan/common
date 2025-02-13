@@ -8,8 +8,10 @@ use App\Models\Aton\AtonOperation;
 use Cache;
 use Carbon\Carbon;
 use Common\Helpers\Catalog\CatalogSearch;
+use Common\Helpers\Curls\Currency\CbCurl;
 use Common\Helpers\LoggerHelper;
 use Common\Models\Catalog\BaseCatalog;
+use Common\Models\Catalog\Currency\CbHistoryCurrencyCourse;
 use Common\Models\Currency;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
 use Common\Models\Interfaces\Catalog\Custom\DefinitionCustomConst;
@@ -408,9 +410,26 @@ class CustomStock extends BaseCatalog implements DefinitionCustomConst, CommonsF
      * @return bool
      * polymorhic method
      */
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false)
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false): bool
     {
         //тк заранее все спаршено, будет заглушкой
+    }
+
+    /**
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     */
+    public function requestDataFromApi(Carbon $startDate, Carbon $endDate)
+    {
+
+    }
+
+    /**
+     * @param $data
+     */
+    public function saveDataFromApi($data)
+    {
+
     }
 
     /**

@@ -45,7 +45,7 @@ interface CommonsFuncCatalogInterface
 
     public function createBindActive($userId, $currencyId, $accountId, $classes);
 
-    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false);
+    public static function loadHistory($stock, Carbon $startDate, Carbon $endDate, $forceSkipCache = false): bool;
 
     public function getPriceHistory(Carbon $startDate, Carbon $endDate);
 

@@ -73,53 +73,6 @@ class CbHistoryCurrencyCourse extends BaseCatalog implements CommonsFuncCatalogH
     }
 
     /**
-     * @param CbCurrency $currency
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @return bool
-     */
-    public static function loadHistory(CbCurrency $stock, Carbon $startDate, Carbon $endDate)
-    {
-        $cacheKey = self::getCacheKey($stock, $startDate, $endDate);
-
-        [$bool, $result] = self::cacheHistory($cacheKey);
-
-        if ($bool) {
-            return $result;
-        }
-
-        $dataRows = CbCurl::getCourses($stock->cb_id, $startDate, $endDate);
-
-        if (count($dataRows)) {
-            Cache::tags([config('cache.tags')])->add($cacheKey, true, Carbon::now()->addDay());
-
-            foreach ($dataRows as $row) {
-                $date = Carbon::createFromFormat('d.m.Y', (string)$row->attributes()->Date[0]);
-
-                $cbCurrencyHistory = self::where('currency_id', $stock->id)
-                    ->where('date', $date->format('Y-m-d'))
-                    ->first();
-
-                if (!$cbCurrencyHistory) {
-                    self::create([
-                        'currency_id' => $stock->id,
-                        'value' => (float)str_replace(',', '.', $row->Value),
-                        'nominal' => (float)str_replace(',', '.', $row->Nominal),
-                        'date' => $date->format('Y-m-d'),
-                    ]);
-                }
-            }
-
-            return true;
-        }
-
-        Cache::tags([config('cache.tags')])->add($cacheKey, false, Carbon::now()->addDay());
-        LoggerHelper::getLogger()->info('No any history for ' . $stock->char_code);
-
-        return false;
-    }
-
-    /**
      * @param $query
      * @param CbCurrency $item
      * @return void
