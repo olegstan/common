@@ -4,11 +4,8 @@ namespace Common\Helpers;
 use App\Jobs\Tinkoff\TinkoffJob;
 use Common\Jobs\Base\CreateJobs;
 use Common\Jobs\SendToLokiJob;
-use Common\Models\Interfaces\Catalog\DefinitionActiveConst;
-use Exception;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Request;
 
 class LokiLogger implements LoggerInterface
 {
@@ -177,6 +174,7 @@ class LokiLogger implements LoggerInterface
             SendToLokiJob::class,
             $logsToSend,
             'loki',
+            'rabbitmq_whiteswan'
         );
     }
 

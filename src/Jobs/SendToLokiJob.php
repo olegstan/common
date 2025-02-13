@@ -5,10 +5,10 @@ namespace Common\Jobs;
 use Common\Helpers\LoggerHelper;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
 
 class SendToLokiJob implements ShouldQueue
 {
