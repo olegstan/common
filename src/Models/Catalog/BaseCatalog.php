@@ -72,4 +72,14 @@ class BaseCatalog extends BaseModel
 
         return $expectedWords;
     }
+
+    /**
+     * @param $stock
+     * @return string
+     */
+    protected function getStockCacheKey(): string
+    {
+        // Например: App\Models\MoscowExchangeStock.12345
+        return $this->getMorphClass() . '.' . $this->id;
+    }
 }

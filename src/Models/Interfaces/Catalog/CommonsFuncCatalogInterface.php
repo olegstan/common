@@ -74,5 +74,10 @@ interface CommonsFuncCatalogInterface
     public function getCapitalization();
 
     public function getUserId();
+
     public function getNumberCatalog(): int;
+
+    public function requestDataFromApi(Carbon $startDate, Carbon $endDate);
+
+    public function saveDataFromApi($data);
 }
