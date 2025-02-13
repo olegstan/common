@@ -15,29 +15,17 @@ class SendToLokiJob implements ShouldQueue
     use InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * Массив логов, которые нужно отправить.
-     *
-     * @var array
-     */
-    protected array $logs;
-
-    /**
-     * @param array $logs
-     */
-    public function __construct(array $logs)
-    {
-        $this->logs = $logs;
-    }
-
-    /**
-     * Логика отправки логов в Loki через метод fire.
-     *
-     * @param mixed $job
-     * @param array $data
+     * @param $job
+     * @param $data
      */
     public function fire($job, $data)
     {
         try {
+            if($data['options'])
+            {
+                unset($data['options']);
+            }
+
             $user     = config('loki.user');
             $password = config('loki.password');
 
@@ -48,7 +36,7 @@ class SendToLokiJob implements ShouldQueue
 
             // Отправляем данные в Loki
             $response = $http->post(config('loki.host') . '/loki/api/v1/push', [
-                'streams' => $this->logs,
+                'streams' => $data,
             ]);
 
             // Проверяем статус ответа

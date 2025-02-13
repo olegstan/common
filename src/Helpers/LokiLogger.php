@@ -161,7 +161,7 @@ class LokiLogger implements LoggerInterface
     }
 
     /**
-     * 
+     *
      */
     public static function flush()
     {
