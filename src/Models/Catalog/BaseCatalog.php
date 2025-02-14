@@ -77,7 +77,7 @@ class BaseCatalog extends BaseModel
      * @param $stock
      * @return string
      */
-    protected function getStockCacheKey(): string
+    public function getStockCacheKey(): string
     {
         // Например: catalog.3.12345
         return $this->getMorphClass() . '.' . $this->id;
