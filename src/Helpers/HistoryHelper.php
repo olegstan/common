@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Common\Models\Catalog\Currency\CbCurrency;
 use Common\Models\Catalog\MoscowExchange\MoscowExchangeStock;
 use Common\Models\Interfaces\Catalog\CommonsFuncCatalogInterface;
+use Cache;
 
 class HistoryHelper
 {
