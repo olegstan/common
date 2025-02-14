@@ -5,6 +5,7 @@ namespace Common\Helpers\Queue;
 use Common\Helpers\LoggerHelper;
 use Common\Helpers\LokiLogger;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Queue\DatabaseQueue;
@@ -64,6 +65,18 @@ class ExtendedDatabaseJob extends DatabaseJob
     }
 
     /**
+     * Удаляет задание из очереди и очищает кэш.
+     *
+     * @return void
+     * @throws BindingResolutionException
+     */
+    public function delete(): void
+    {
+        parent::delete();
+        LokiLogger::flush();
+    }
+
+    /**
      * @param $e
      * @return void
      */
@@ -72,6 +85,7 @@ class ExtendedDatabaseJob extends DatabaseJob
         $this->markAsFailed();
 
         if ($this->isDeleted()) {
+            LokiLogger::flush();
             return;
         }
 
@@ -88,5 +102,7 @@ class ExtendedDatabaseJob extends DatabaseJob
 
             $this->resolve(Dispatcher::class)->dispatch(new JobFailed($this->connectionName, $this, $e ?: new ManuallyFailedException));
         }
+
+        LokiLogger::flush();
     }
 }

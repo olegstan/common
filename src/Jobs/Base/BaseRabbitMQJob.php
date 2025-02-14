@@ -85,6 +85,7 @@ class BaseRabbitMQJob extends RabbitMQJob
     {
         parent::delete();
         $this->clearCache();
+        LokiLogger::flush();
     }
 
     /**
@@ -98,6 +99,7 @@ class BaseRabbitMQJob extends RabbitMQJob
     {
         parent::fail($e);
         $this->clearCache();
+        LokiLogger::flush();
     }
 
     /**
